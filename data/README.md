@@ -1,0 +1,2 @@
+# SPAVE-28G
+The Geo-Positioning-System (GPS), Inertial Motion Unit (IMU), and Power-Delay-Profiles (PDP) samples associated with this signal propagation modeling activity on the NSF POWDER testbed are too large to be archived here. Hence, researchers needing these collected measurement samples should send an email to <bkeshav1@asu.edu> or <bkeshava@purdue.edu> for instructions on accessing them on our compute clusters via a custom API.

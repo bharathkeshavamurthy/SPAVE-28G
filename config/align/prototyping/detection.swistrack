@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<swistrack>
+  <components>
+    <component type="InputCameraUSB">
+      <enabledinterval value="1"/>
+      <parameter name="CameraNumber" value="0"/>
+    </component>
+    <component type="ConvertToColor">
+      <enabledinterval value="1"/>
+    </component>
+    <component type="ColorMask">
+      <enabledinterval value="0"/>
+      <parameter name="MaskImage" value="mask_quad.jpg"/>
+    </component>
+    <component type="SpecificColorSubtraction">
+      <enabledinterval value="1"/>
+      <parameter name="BlueChannel" value="255"/>
+      <parameter name="CorrectMean" value="false"/>
+      <parameter name="GreenChannel" value="156"/>
+      <parameter name="RedChannel" value="0"/>
+      <parameter name="SpecifyColorBool" value="false"/>
+    </component>
+    <component type="ThresholdColorIndependent">
+      <enabledinterval value="1"/>
+      <parameter name="BlueThreshold" value="255"/>
+      <parameter name="GreenThreshold" value="255"/>
+      <parameter name="InvertThreshold" value="true"/>
+      <parameter name="OrBool" value="false"/>
+      <parameter name="RedThreshold" value="0"/>
+    </component>
+    <component type="ThresholdColorCommon">
+      <enabledinterval value="0"/>
+      <parameter name="InvertThreshold" value="true"/>
+      <parameter name="Threshold" value="50"/>
+    </component>
+    <component type="BinarySmooth">
+      <enabledinterval value="0"/>
+      <parameter name="param" value="7"/>
+      <parameter name="smoothtype" value="3"/>
+    </component>
+    <component type="BlobDetectionMinMax">
+      <enabledinterval value="1"/>
+      <parameter name="AreaBool" value="true"/>
+      <parameter name="MaxArea" value="1700"/>
+      <parameter name="MaxNumber" value="1"/>
+      <parameter name="MinArea" value="17"/>
+    </component>
+    <component type="NearestNeighborTracking">
+      <enabledinterval value="1"/>
+      <parameter name="MaxDistance" value="1000.000000"/>
+      <parameter name="MaxNumber" value="1"/>
+    </component>
+    <component type="OutputParticles">
+      <enabledinterval value="1"/>
+    </component>
+  </components>
+  <server>
+    <port>3000</port>
+  </server>
+</swistrack>
