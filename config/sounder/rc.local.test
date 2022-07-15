@@ -1,0 +1,7 @@
+# Give execute permissions to the boot-up controller script
+chmod +x /home/pi/Workspaces/odin/sounder/src/Pi_Startup_Controller.sh
+
+# Run the boot-up controller script in the background -- continuously
+sh /home/pi/Workspaces/odin/sounder/src/Pi_Startup_Controller.sh &
+
+exit 0

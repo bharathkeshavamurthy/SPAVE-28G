@@ -1,0 +1,27 @@
+[submodule "related/RENEWLab"]
+	path = related/RENEWLab
+	url = https://github.com/renew-wireless/RENEWLab.git
+[submodule "related/faros-renew"]
+	path = related/faros-renew
+	url = https://gitlab.flux.utah.edu/doost/faros-renew.git
+[submodule "related/bifrost-mMIMO"]
+	path = related/bifrost-mMIMO
+	url = https://github.com/bharathkeshavamurthy/bifrost-mMIMO.git
+[submodule "related/faros-simple"]
+	path = related/faros-simple
+	url = https://gitlab.flux.utah.edu/kwebb/faros-simple.git
+[submodule "related/Talos"]
+	path = related/Talos
+	url = git@github.com:bharathkeshavamurthy/Talos.git
+[submodule "related/UtahMeasurementCampaignCode"]
+	path = related/UtahMeasurementCampaignCode
+	url = https://github.com/YaguangZhang/UtahMeasurementCampaignCode.git
+[submodule "related/PurdueMeasurementCampaignCode"]
+	path = related/PurdueMeasurementCampaignCode
+	url = https://github.com/YaguangZhang/PurdueMeasurementCampaignCode.git
+[submodule "related/EarsMeasurementCampaignCode"]
+	path = related/EarsMeasurementCampaignCode
+	url = https://github.com/YaguangZhang/EarsMeasurementCampaignCode.git
+[submodule "related/Stormbreaker"]
+	path = related/Stormbreaker
+	url = https://github.com/bharathkeshavamurthy/Stormbreaker.git
