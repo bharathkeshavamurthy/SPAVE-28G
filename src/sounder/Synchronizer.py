@@ -1,5 +1,6 @@
 """
 This script allows me to test the timing synchronization across modules in Project Odin v21.06.
+
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
 Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
 Copyright (c) 2021. All Rights Reserved.

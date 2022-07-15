@@ -1,5 +1,5 @@
 """
-TxRealm Simulator for RxRealm Outdoor Testing at the University of Utah
+TxRealm Simulator for RxRealm Outdoor Testing on NSF POWDER
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
 Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.

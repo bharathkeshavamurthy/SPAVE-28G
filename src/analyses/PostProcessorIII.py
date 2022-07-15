@@ -1,6 +1,4 @@
 """
-Yggdrasil: A consolidated post-processor for Project Odin
-
 This script reads a 'parsed_metadata.log' file -- obtained by running the gr_read_file_metadata Linux utility on the
 'samples_with_metadata.log' file of a specific route traversed by us during our POWDER measurement campaign -- in order
 to evaluate the various metadata fields incorporated within it.
@@ -15,8 +13,6 @@ Organization: School of Electrical and Computer Engineering, Purdue University, 
               School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ.
 Copyright (c) 2021. All Rights Reserved.
 """
-
-# Project Odin Consolidated Post-Processing Engine (Yggdrasil)
 
 # The imports
 import os
