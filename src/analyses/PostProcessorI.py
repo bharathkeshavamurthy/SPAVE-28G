@@ -1,5 +1,5 @@
 """
-Poetic Edda : GPS TxRealm and/or RxRealm route (and/or signal power) visualizations using Bokeh and the Google Maps API
+GPS TxRealm and/or RxRealm route (and/or signal power) visualizations using Bokeh and the Google Maps API
 
 This Python script encapsulates the operations involved in the visualization of the routes traversed by the Tx and Rx
 realm units -- on the Google Maps API [2D Maps | 3D Maps | Satellite | Hybrid | Earth | Roads].
@@ -9,8 +9,6 @@ Organization: School of Electrical and Computer Engineering, Purdue University, 
               School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ.
 Copyright (c) 2021. All Rights Reserved.
 """
-
-# Project Odin Route Post-Processing Engine (Codex Regius | Poetic Edda)
 
 # The imports
 import os

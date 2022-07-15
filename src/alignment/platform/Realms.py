@@ -21,8 +21,6 @@ Organization: School of Electrical & Computer Engineering, Purdue University, We
 Copyright (c) 2021. All Rights Reserved.
 """
 
-# Project Odin Realm Controllers Indexing Control (The All-father)
-
 # The imports
 import os
 import rpyc
@@ -31,7 +29,7 @@ import ntplib
 import asyncio
 import platform
 import subprocess
-from Forge import *
+from Utilities import *
 import logging.handlers
 from ntplib import NTPException
 from jproperties import Properties

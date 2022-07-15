@@ -1,15 +1,10 @@
 """
-Prose Edda : GPS real-time visualization using Dash and MapBox
-
-This Python script encapsulates the operations involved in the visualization of the routes traversed by the Tx and Rx
-realm units -- on the MapBox API.
+GPS real-time visualization using Dash
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
 Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
-Copyright (c) 2021. All Rights Reserved
+Copyright (c) 2021. All Rights Reserved.
 """
-
-# Project Odin Route Post-Processing Engine (Codex Regius | Prose Edda)
 
 # The imports
 import os
@@ -17,22 +12,23 @@ import json
 import numpy
 import planar
 import random
-import plotly.graph_objects as go
+import plotly.graph_objs as go
+from jupyter_dash import JupyterDash
 import dash_core_components as dcc
 import dash_html_components as html
-from jupyter_dash import JupyterDash
 from dash.dependencies import Input, Output
 
 # A boolean flag to indicate that the reason for this run is either "Simulation" or "Actual Field Work"
-field_work = False
+field_work = True
 
 # The data storage collections
 """
 TODO: Change the initial positioning of the Rx installation
 """
-gps_logs_dir = 'D:/Odin/logs/rx-realm/controller/events/publishes/'
+gps_logs_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/tx-realm/' \
+               'rx-subscriptions/urban-vegetation/'
 number_of_files = len(os.listdir(gps_logs_dir))
-latitudes, longitudes, altitudes = [0.0], [0.0], [0.0]
+latitudes, longitudes, altitudes = [40.76617367], [-111.84793933], [1451.121]
 
 # Jupyter Dash: Layout Configurations
 app = JupyterDash('Odin | Freya | Dash')

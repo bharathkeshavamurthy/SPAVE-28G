@@ -3,7 +3,7 @@ TxRealm Simulator for RxRealm Outdoor Testing at the University of Utah
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
 Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
-Copyright (c) 2021. All Rights Reserved
+Copyright (c) 2021. All Rights Reserved.
 """
 
 # The imports

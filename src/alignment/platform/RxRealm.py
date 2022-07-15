@@ -31,14 +31,12 @@ Organization: School of Electrical & Computer Engineering, Purdue University, We
 Copyright (c) 2021. All Rights Reserved.
 """
 
-# Project Odin RxRealm (Asgard)
-
 # Scale horizontally at installation via Docker (centralized distribution OR in-situ)
 
 # The imports
 import os
 import rpyc
-from Forge import *
+from Utilities import *
 import logging.handlers
 from typing import List
 from concurrent.futures import ThreadPoolExecutor

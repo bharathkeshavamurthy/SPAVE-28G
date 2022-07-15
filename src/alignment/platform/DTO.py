@@ -12,8 +12,6 @@ Organization: School of Electrical & Computer Engineering, Purdue University, We
 Copyright (c) 2021. All Rights Reserved.
 """
 
-# Project Odin Data Objects and Utilities/Configuration Enumerations (Raven)
-
 # The imports
 from enum import Enum
 from typing import Tuple, Any
@@ -318,7 +316,7 @@ class KafkaTopics(Enum):
            the key-based message filtering for actual message consumption from the subscribed topic will be done based
            on the allowed_publishers filter (v21.09); and
 
-        c. Generally, the Kafka topic to which a XXRealm Python Controller subscribes to belongs to the opposite Realm.
+        c. Generally, the Kafka topic to which a XXRealm Python Controller subscribes-to belongs to the opposite Realm.
     """
 
     """

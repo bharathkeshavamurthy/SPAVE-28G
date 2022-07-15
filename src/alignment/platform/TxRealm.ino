@@ -1,11 +1,8 @@
 /*
- * Eitri: The metal worker in Project Odin.
  * An Arduino sketch to perform the following tasks: 
  * 1. Publish the GPS readings received from the SparkFun UBlox ZED-F9P RTK-GPS module;
  * 2. Receive the required angles of rotation (yaw and pitch) from the XXRealm Python Controller over Bluetooth/USB; and
  * 3. Yaw and Pitch rotations using the SparkFun Blackboard Rev C, IMU BNO080, and ServoCity continuous servos -- along with IMU logging.
- * 
- * Eitri_Tx: No GPS
  * 
  * Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
  * Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN.

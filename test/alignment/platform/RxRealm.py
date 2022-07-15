@@ -1,5 +1,9 @@
 """
 RxRealm Python Controller Eitri Bluetooth Test
+
+Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
+Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
+Copyright (c) 2021. All Rights Reserved.
 """
 
 import time

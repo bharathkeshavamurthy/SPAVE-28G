@@ -381,12 +381,12 @@ pdp_samples_file = ''.join([comm_data_dir, pdp_samples_file_name])
 with open(''.join([comm_data_dir, parsed_metadata_file_name])) as file:
     for line_num, line in enumerate(file):
         if line_num % 18 == 0:  # FileY-based Contractual Constraint-1
-            seq_number = int(re.search(r'[0-9]+', line)[0])
+            seq_number = int(re.search(r'\d+', line)[0])
         elif (line_num - 3) % 18 == 0:  # FileY-based Contractual Constraint-2
             # noinspection RegExpAnonymousGroup
             timestamp = timestamp_0 + datetime.timedelta(seconds=float(re.search(r'[+-]?\d+(\.\d+)?', line)[0]))
         elif (line_num - 11) % 18 == 0 and timestamp >= timestamp_ref:  # FileY-based Contractual Constraint-3
-            num_samples = int(re.search(r'[0-9]+', line)[0])
+            num_samples = int(re.search(r'\d+', line)[0])
             segment_done = True
         else:
             """

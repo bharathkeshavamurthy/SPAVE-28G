@@ -4,10 +4,8 @@ representation callees, message validations, message parsers, and core utility m
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
 Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
-Copyright (c) 2021. All Rights Reserved
+Copyright (c) 2021. All Rights Reserved.
 """
-
-# Project Odin Utilities (The Forge: Nidavellir) | Eitri (The Arduino Metal/Silicon Worker) fits in here...
 
 # The imports
 import time
@@ -18,7 +16,7 @@ import warnings
 import functools
 import traceback
 import dataclasses
-from Raven import *
+from DTO import *
 from typing import Dict
 from logging import Logger
 from threading import Lock
@@ -184,14 +182,14 @@ def connect(funcs):
         funcs: The routines to be pipelined in the order in which they are provided
 
     Returns: A wrapper method that encapsulates the provided routines (in the order in which they are provided) in a
-             a data/functional pipeline
+             data/functional pipeline
     """
 
     @functools.wraps(funcs)
     def wrapper(*args, **kwargs):
         """
         A wrapper method that encapsulates the provided routines (in the order in which they are provided) in a
-        a data/functional pipeline
+        data/functional pipeline
 
         Args:
             *args: The non-keyword arguments that serve as the input to the created pipeline
@@ -797,7 +795,7 @@ def get_file_name_for_traces(trace_number: int, key: str) -> str:
     Get the exclusive trace log file name in accordance with the specified key and trace number
 
     DESIGN NOTE: Note the classification of logs - Events correspond to those exchanged over a publish/subscribe
-                 framework (e.g., ODIN_GPS_EVENT over Kafka MOM); while Traces are further sub-divided into
+                 framework (e.g., ODIN_GPS_EVENT over Kafka MOM); while Traces are further subdivided into
                  "General Logs" (functional errors and warnings) and "Non-MOM Logs" (IMUTrace over Serial)
 
     Args:

@@ -1,5 +1,12 @@
 """
-Freya : GPS real-time visualization using Dash
+GPS real-time visualization using Dash and MapBox
+
+This Python script encapsulates the operations involved in the visualization of the routes traversed by the Tx and Rx
+realm units -- on the MapBox API.
+
+Author: Bharath Keshavamurthy <bkeshava@purdue.edu>
+Organization: School of Electrical & Computer Engineering, Purdue University, West Lafayette, IN.
+Copyright (c) 2021. All Rights Reserved
 """
 
 # The imports
@@ -8,23 +15,22 @@ import json
 import numpy
 import planar
 import random
-import plotly.graph_objects as go
-from jupyter_dash import JupyterDash
+import plotly.graph_objs as go
 import dash_core_components as dcc
 import dash_html_components as html
+from jupyter_dash import JupyterDash
 from dash.dependencies import Input, Output
 
 # A boolean flag to indicate that the reason for this run is either "Simulation" or "Actual Field Work"
-field_work = True
+field_work = False
 
 # The data storage collections
 """
 TODO: Change the initial positioning of the Rx installation
 """
-gps_logs_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/tx-realm/' \
-               'rx-subscriptions/urban-vegetation/'
+gps_logs_dir = 'D:/Odin/logs/rx-realm/controller/events/publishes/'
 number_of_files = len(os.listdir(gps_logs_dir))
-latitudes, longitudes, altitudes = [40.76617367], [-111.84793933], [1451.121]
+latitudes, longitudes, altitudes = [0.0], [0.0], [0.0]
 
 # Jupyter Dash: Layout Configurations
 app = JupyterDash('Odin | Freya | Dash')
