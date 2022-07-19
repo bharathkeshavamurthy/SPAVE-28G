@@ -3,6 +3,28 @@
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/related/Talos" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/QtCore" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/QtCore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/QtGui" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/QtGui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/QtOpenGL" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/QtOpenGL" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/QtPrintSupport" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/QtPrintSupport" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/QtSvg" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/QtSvg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/QtWidgets" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/QtWidgets" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Versions/Current" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/liblto_plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/liblto_plugin.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcc1plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcc1plugin.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcp1plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcp1plugin.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/libcc1.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/libcc1.so" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,6 +33,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIV.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
