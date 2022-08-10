@@ -2,59 +2,49 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/related/Talos" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/QtCore" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/QtCore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtCore.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/QtGui" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/QtGui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtGui.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/QtOpenGL" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/QtOpenGL" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtOpenGL.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/QtPrintSupport" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/QtPrintSupport" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtPrintSupport.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/QtSvg" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/QtSvg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtSvg.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/QtWidgets" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/QtWidgets" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Resources" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/apps/macOS/monitor-bluetooth-usb/EPuckMonitor.app/Contents/Frameworks/QtWidgets.framework/Versions/Current" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/liblto_plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/liblto_plugin.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcc1plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcc1plugin.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcp1plugin.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/gcc/arm-none-eabi/7.2.1/plugin/libcp1plugin.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/libcc1.so" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos/firmwares/stm32f407/e-puck2-pc-dev-macos/gcc-arm-none-eabi-7-2017-q4-major/lib/libcc1.so" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIV.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIII.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIV.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2BzxR9Sgb4v0cqZTN5L5scN6IL3" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/Users/kesha/Workspaces/SPAVE-28G/src/analyses",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kesha/Workspaces/SPAVE-28G&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses" />
@@ -81,5 +71,18 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" />
+      <path value="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" />
+      <path value="$PROJECT_DIR$/related/RENEWLab" />
+      <path value="$PROJECT_DIR$/related/Stormbreaker" />
+      <path value="$PROJECT_DIR$/related/Talos" />
+      <path value="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" />
+      <path value="$PROJECT_DIR$/related/bifrost-mMIMO" />
+      <path value="$PROJECT_DIR$/related/faros-renew" />
+      <path value="$PROJECT_DIR$/related/faros-simple" />
+    </ignored-roots>
   </component>
 </project>
