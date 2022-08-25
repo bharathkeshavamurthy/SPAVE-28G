@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/SAGEParameterEstimator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/SAGEParameterEstimator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/SVModelValidator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/SVCModelValidator.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +23,7 @@
     <setting file="file://$PROJECT_DIR$/src/analyses/DDCModelValidator.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIII.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIV.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/src/analyses/QDCModelValidator.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/analyses/QDCModelValidator.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/analyses/SAGEParameterEstimator.py" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/src/analyses/SVCModelValidator.py" root0="SKIP_INSPECTION" />
   </component>
