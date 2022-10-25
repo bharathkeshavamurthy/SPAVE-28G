@@ -148,15 +148,16 @@ class Pod:
 """
 CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenna pattern logs
 """
-az_pat_png, el_pat_png,  = 'az-antenna-pattern.png', 'el-antenna-pattern.png'
+ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
+gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp'
+output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+az_pat_png, el_pat_png, = 'az-antenna-pattern.png', 'el-antenna-pattern.png'
 az_pat_3d_png, el_pat_3d_png = 'az-antenna-pattern-3d.png', 'el-antenna-pattern-3d.png'
 rx_pwr_png, pathloss_png = 'urban-campus-II-pathloss.png', 'urban-campus-II-rx-power.png'
-ant_log_file = 'C:/Users/kesha/Workspaces/SPAVE-28G/measurement-campaign/antenna_pattern.mat'
-gps_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/measurement-campaign/gps-data/urban-campus-II/'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
-comm_dir, output_dir = 'D:/playground/backups/urban-campus-II/', 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
-cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/playground/backups/USRP_76dB/', 'u76_', '_samples.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
+cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration', 'u76_', '_samples.log'
 
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
@@ -166,7 +167,7 @@ rx_gain, sample_rate, invalid_min_magnitude = 76.0, 2e6, 1e5
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
-# The reference received powers observed on a spectrum analyzer for calibration fit comparisons [76dB USRP gain]
+# The reference received powers observed on a spectrum analyzer for calibration fit comparisons [at 76dB USRP gain]
 meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
@@ -181,7 +182,6 @@ google_maps_api_key, map_type, timeout = 'AIzaSyDzb5CB4L9l42MyvSmzvaSZ3bnRINIjpU
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
 map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 tx_location = GPSEvent(seq_number=-1, latitude=Member(component=40.76617367), longitude=Member(component=-111.84793933))
-
 
 """
 CORE ROUTINES
@@ -278,7 +278,6 @@ meas_pwrs_ = np.arange(start=0.0, stop=-80.0, step=-2.0)
 calc_pwrs_ = interp1d(meas_pwrs, calc_pwrs)(meas_pwrs_)
 cali_fit = lambda cpwr: meas_pwrs_[min([_ for _ in range(len(calc_pwrs_))], key=lambda x: abs(cpwr - calc_pwrs_[x]))]
 
-
 """
 CORE OPERATIONS-II: Antenna patterns
 """
@@ -293,7 +292,6 @@ az_pattern = pattern(az_angles, az_amps, az_amps_db, az_angles_hpbw, az_powers_h
 el_angles, el_amps, el_amps_db = el_log.els, el_log.amps, decibel_2(el_log.amps)
 el_angles_hpbw, el_powers_hpbw, el_hpbw = hpbw(el_angles, el_amps_db, max_ant_gain)
 el_pattern = pattern(el_angles, el_amps, el_amps_db, el_angles_hpbw, el_powers_hpbw, el_hpbw)
-
 
 """
 CORE OPERATIONS-III: Received power maps
