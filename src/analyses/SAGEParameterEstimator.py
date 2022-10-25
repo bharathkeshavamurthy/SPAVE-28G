@@ -31,18 +31,20 @@ import datetime
 import dataclasses
 import numpy as np
 from enum import Enum
+from scipy import signal
 from geopy import distance
 from typing import Dict, List
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import sk_dsp_comm.fir_design_helper as fir_d
 
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-decibel_1, decibel_2 = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x)
 pi, rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = np.pi, [], [], [], [], []
+decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
 
 """
-INITIALIZATIONS-II: Enumerations & Dataclasses
+INITIALIZATIONS-II: Enumerations & Dataclasses (Inputs)
 """
 
 
@@ -131,6 +133,51 @@ class GPSEvent:
     total_length: int = 39
 
 
+"""
+CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
+"""
+
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+sc_distance_png, sc_alignment_png = 'sc_distance.png', 'sc_alignment.png'
+delay_spread_png, direction_spread_png = 'delay_spread.png', 'direction_spread.png'
+pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
+
+tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
+                        longitude=Member(component=-111.847939330),
+                        altitude_ellipsoid=Member(component=1459.1210))
+
+time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
+min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
+tx_fc, rx_fc_, pn_v0, pn_l, pn_m, max_mpcs = 400e6, 399.95e6, 5.0, 2047, 11, 30
+noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
+                            'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
+prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
+
+"""
+INITIALIZATIONS-III: Enumerations & Dataclasses (Temps | Outputs)
+"""
+
+
+@dataclass(order=True)
+class MPCParameters:
+    path_number: int = 0
+    attenuation: float = 0.0
+    delay: float = 0.0
+    aod_azimuth: float = 0.0
+    aod_elevation: float = 0.0
+    aoa_azimuth: float = 0.0
+    aoa_elevation: float = 0.0
+    doppler_shift: float = 0.0
+    profile_point_power: float = 0.0
+    rms_delay_spread: float = 0.0
+    rms_tx_direction_spread: float = 0.0
+    rms_rx_direction_spread: float = 0.0
+
+
 @dataclass(order=True)
 class PDPSegment:
     seq_number: int = 0
@@ -143,8 +190,11 @@ class PDPSegment:
     header_length: int = 171
     num_samples: int = 1000000
     num_bytes: int = num_samples * item_size
-    rx_samples: np.array = np.array([], dtype=np.csingle)
+    raw_rx_samples: np.array = np.array([], dtype=np.csingle)
+    processed_rx_samples: np.array = np.array([], dtype=np.csingle)
     correlation_peak: float = 0.0
+    n_mpcs: int = max_mpcs
+    mpc_parameters: List[MPCParameters] = field(default_factory=lambda: [MPCParameters() for _ in range(max_mpcs)])
 
 
 @dataclass(order=True)
@@ -159,24 +209,6 @@ class Pod:
     tx_rx_distance: float = 0.0
     tx_rx_alignment: float = 0.0
 
-
-"""
-CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles
-"""
-
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
-rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-sc_distance_png, sc_alignment_png = 'sc_distance.png', 'sc_alignment.png'
-delay_spread_png, direction_spread_png = 'delay_spread.png', 'direction_spread.png'
-pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
-
-min_threshold, datetime_format = 1e5, '%Y-%m-%d %H:%M:%S.%f'
-tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
-                        longitude=Member(component=-111.847939330),
-                        altitude_ellipsoid=Member(component=1459.1210))
 
 """
 CORE ROUTINES
@@ -253,6 +285,73 @@ def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) 
     return 0.5 * (d_yaw + d_pitch)
 
 
+def process_rx_samples(x: np.array) -> np.array:
+    fs = sample_rate
+    t_mul, t_len = time_windowing_config.values()
+    f_pass, f_stop, d_pass, d_stop = prefilter_config.values()
+    ne_mul, min_peak_idx, n_min, n_max, rel_range, amp_threshold = noise_elimination_config.values()
+
+    # Frequency Manipulation: Pre-filtering via a Low Pass Filter (LPF) [FIR filtering via SciPy-Scikit-Remez]
+    b = fir_d.fir_remez_lpf(fs=fs, f_pass=f_pass, f_stop=f_stop, d_pass=d_pass, d_stop=d_stop)
+    samps = signal.lfilter(b=b, a=1, x=x, axis=0)
+
+    # Temporal Manipulation: Initial temporal truncation | Time-windowing
+    samps = samps[t_len:] if samps.shape[0] > (4 * t_len) else samps
+    window_size, n_samples = int(fs * t_mul), samps.shape[0]
+    if n_samples > window_size:
+        n_samples = window_size
+        samps = samps[int(0.5 * n_samples) + (np.array([-1, 1]) * int(window_size / 2))]
+
+    # Noise Elimination: The peak search method is 'TallEnoughAbs' | Thresholded at (ne_mul * sigma) + mu
+    samps_ = samps[n_min:n_max] if n_samples > n_max else samps[n_min:]
+    a_samps = np.abs(samps_)[min_peak_idx:]
+    samps_ = samps_[((np.where(a_samps > amp_threshold * max(a_samps))[0][0] + min_peak_idx - 1) *
+                     np.array(rel_range)).astype(dtype=int)]
+    th_min, th_max = np.array([-1, 1]) * ne_mul * np.std(samps_) + np.mean(samps_)
+    thresholder = np.vectorize(lambda s: 0 + 0j if (s > th_min) and (s < th_max) else s)
+    return thresholder(samps)
+
+
+# See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
+def rms_delay_spread(pdp: PDPSegment) -> float:
+    num, den = [], []
+    for i_mpc in range(pdp.n_mpcs):
+        mpc = pdp.mpc_parameters[i_mpc]
+        tau, p_tau = mpc.delay, mpc.profile_point_power
+        num.append(np.square(tau) * p_tau)
+        den.append(p_tau)
+
+    num_sum, den_sum = np.sum(num), np.sum(den)
+    return np.sqrt((num_sum / den_sum) - np.square((num_sum / den_sum)))
+
+
+# See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5956639]
+def rms_direction_spread(pdp: PDPSegment, is_aod=True) -> float:
+    e_vecs, p_vec, mu_vec = [], [], []
+
+    for i_mpc in range(pdp.n_mpcs):
+        mpc = pdp.mpc_parameters[i_mpc]
+        p = mpc.profile_point_power
+        if is_aod:
+            phi, theta = mpc.aod_azimuth, mpc.aod_elevation
+        else:
+            phi, theta = mpc.aoa_azimuth, mpc.aoa_elevation
+        e_vecs.append(np.array([np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]))
+        mu_vec.append(p * e_vecs[i_mpc])
+        p_vec.append(p)
+
+    mu_omega = np.sum(mu_vec)
+    return np.sqrt(np.sum([np.square(np.linalg.norm(e_vecs[i_mpc] -
+                                                    mu_omega)) * p_vec[i_mpc] for i_mpc in range(pdp.n_mpcs)]))
+
+
+def estimate_mpc_parameters(rx_samples: np.array) -> List[MPCParameters]:
+    """
+    SAGE Algorithm
+    """
+    return [MPCParameters()]
+
+
 """
 CORE OPERATIONS-I: Parsing the GPS, IMU, and PDP logs
 """
@@ -296,13 +395,19 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
 
         if segment_done:
             segment_done = False
-            rx_samples = np.fromfile(pdp_samples_file,
-                                     offset=seq_number * num_samples,
-                                     count=num_samples, dtype=np.csingle)
-            if np.isnan(rx_samples).any() or np.abs(np.min(rx_samples)) > min_threshold:
+            raw_rx_samples = np.fromfile(pdp_samples_file,
+                                         offset=seq_number * num_samples,
+                                         count=num_samples, dtype=np.csingle)
+
+            if np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > min_threshold:
                 continue
+
+            processed_rx_samples = process_rx_samples(raw_rx_samples)
+            n_mpcs, mpc_parameters = estimate_mpc_parameters(processed_rx_samples)
             pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp),
-                                           num_samples=num_samples, rx_samples=rx_samples, correlation_peak=-np.inf))
+                                           num_samples=num_samples, raw_rx_samples=raw_rx_samples,
+                                           processed_rx_samples=processed_rx_samples, n_mpcs=n_mpcs,
+                                           correlation_peak=-np.inf, mpc_parameters=mpc_parameters))
 
 # Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps
 for rx_gps_event in rx_gps_events:
