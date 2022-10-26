@@ -1,8 +1,32 @@
 """
 This script encapsulates the operations involved in visualizing the antenna patterns (elevation & azimuth) and Rx power
 maps of our mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently,
-this script generates the path-loss and SNR maps of the routes traversed during this measurement campaign, along with
-plots of path-loss/path-gain versus distance which will help us visualize the spatial consistency characteristics.
+this script generates the path-loss maps of the routes traversed during this measurement campaign, along with plots
+of path-loss/path-gain versus distance which will help us with next-generation mmWave V2V/V2I network design.
+
+Also, we conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor UMa large-scale path-loss standards.
+
+Reference Papers:
+
+@INPROCEEDINGS{PL-Models-I,
+  author={Haneda, Katsuyuki and Zhang, Jianhua and Tan, Lei and Liu, Guangyi and Zheng, Yi and Asplund, Henrik, et al.},
+  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)},
+  title={5G 3GPP-Like Channel Models for Outdoor Urban Microcellular and Macrocellular Environments},
+  year={2016},
+  volume={},
+  number={},
+  pages={1-7},
+  doi={10.1109/VTCSpring.2016.7503971}}
+
+@ARTICLE{PL-Models-II,
+  author={Rappaport, Theodore S. and Xing, Yunchou and MacCartney, George R. and Molisch, Andreas F. et al.},
+  journal={IEEE Transactions on Antennas and Propagation},
+  title={Overview of mmWave Communications for 5G Wireless Networks—With a Focus on Propagation Models},
+  year={2017},
+  volume={65},
+  number={12},
+  pages={6213-6230},
+  doi={10.1109/TAP.2017.2734243}}
 
 Author: Bharath Keshavamurthy <bkeshav1@asu.edu | bkeshava@purdue.edu>
 Organization: School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ

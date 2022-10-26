@@ -1,6 +1,8 @@
 """
-This script encapsulates the operations involved in estimating the propagation parameters associated with the various
-Multi-Path Components (MPCs) in our 28-GHz outdoor measurement campaign on the POWDER testbed in Salt Lake City, UT.
+First, this script encapsulates the operations involved in estimating the propagation parameters associated with the
+various Multi-Path Components (MPCs) in our 28-GHz outdoor measurement campaign on the POWDER testbed; next, it details
+the visualizations of the RMS delay- & direction-spread characteristics obtained from this 28-GHz V2X channel modeling;
+and finally, it incorporates spatial consistency analyses vis-à-vis distance, alignment, and velocity.
 
 The constituent algorithm is Space-Alternating Generalized Expectation-Maximization (SAGE), derived from the following
 reference paper:
@@ -11,11 +13,33 @@ reference paper:
   title={A sliding-correlator-based SAGE algorithm for Mm-wave wideband channel parameter estimation},
   year={2014},
   pages={625-629},
-  doi={10.1109/EuCAP.2014.6901837}}
+  doi={10.1109/EuCAP.2014.6901837}}.
 
 The plots resulting from this analysis script include RMS delay-spread CDF, RMS direction-spread CDF, and spatial
-decoherence characteristics under Tx-Rx distance and Tx-Rx alignment accuracy variations, i.e., the relative drop in
-the observed time-dilated cross-correlation peak magnitudes (w.r.t previous 'x') under distance and alignment effects.
+decoherence characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity variations: the
+relative drop in the time-dilated cross-correlation peak magnitudes under distance, alignment, and velocity variations.
+
+Other Reference Papers:
+
+@ARTICLE{Visualizations-I,
+  author={Gustafson, Carl and Haneda, Katsuyuki and Wyne, Shurjeel and Tufvesson, Fredrik},
+  journal={IEEE Transactions on Antennas and Propagation},
+  title={On mm-Wave Multipath Clustering and Channel Modeling},
+  year={2014},
+  volume={62},
+  number={3},
+  pages={1445-1455},
+  doi={10.1109/TAP.2013.2295836}}; and
+
+@INPROCEEDINGS{Visualizations-II,
+  author={Gustafson, Carl and Tufvesson, Fredrik and Wyne, Shurjeel and Haneda, Katsuyuki and Molisch, Andreas F.},
+  booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
+  title={Directional Analysis of Measured 60 GHz Indoor Radio Channels Using SAGE},
+  year={2011},
+  volume={},
+  number={},
+  pages={1-5},
+  doi={10.1109/VETECS.2011.5956639}}.
 
 Author: Bharath Keshavamurthy <bkeshav1@asu.edu | bkeshava@purdue.edu>
 Organization: School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
@@ -279,10 +303,26 @@ def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> List[flo
 def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) -> float:
     m_tx_yaw_, m_tx_pitch_ = d_alignment(tx, rx, m_tx)
     m_rx_yaw_, m_rx_pitch_ = d_alignment(rx, tx, m_rx, False)
+    return 0.5 * (np.abs(180.0 - m_tx_yaw_ - m_rx_yaw_) + np.abs(180.0 - m_tx_pitch_ - m_rx_pitch_))
 
-    d_yaw = np.abs(180.0 - m_tx_yaw_ - m_rx_yaw_)
-    d_pitch = np.abs(180.0 - m_tx_pitch_ - m_rx_pitch_)
-    return 0.5 * (d_yaw + d_pitch)
+
+def tx_rx_relative_velocity(tx_i: GPSEvent, tx_j: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> float:
+    tx_i_lat, tx_i_lon = latitude(tx_i), longitude(tx_i)
+    tx_j_lat, tx_j_lon = latitude(tx_j), longitude(tx_j)
+    rx_i_lat, rx_i_lon = latitude(rx_i), longitude(rx_i)
+    rx_j_lat, rx_j_lon = latitude(rx_j), longitude(rx_j)
+    tx_i_dt = datetime.datetime.strptime(tx_i.timestamp, datetime_format)
+    tx_j_dt = datetime.datetime.strptime(tx_j.timestamp, datetime_format)
+    rx_i_dt = datetime.datetime.strptime(rx_i.timestamp, datetime_format)
+    rx_j_dt = datetime.datetime.strptime(rx_j.timestamp, datetime_format)
+    tx_v = distance.distance((tx_i_lat, tx_i_lon), (tx_j_lat, tx_j_lon)).m / (tx_j_dt - tx_i_dt).total_seconds()
+    rx_v = distance.distance((rx_i_lat, rx_i_lon), (rx_j_lat, rx_j_lon)).m / (rx_j_dt - rx_i_dt).total_seconds()
+
+    if ((tx_j_lat > tx_i_lat or tx_j_lon < tx_i_lon) and (rx_j_lat > rx_i_lat or rx_j_lon < rx_i_lon)) or \
+            ((tx_j_lat < tx_i_lat or tx_j_lon > tx_i_lon) and (rx_j_lat < rx_i_lat or rx_j_lon > rx_i_lon)):
+        return abs(tx_v - rx_v)
+    else:
+        return abs(tx_v + rx_v)
 
 
 def process_rx_samples(x: np.array) -> np.array:
@@ -312,7 +352,7 @@ def process_rx_samples(x: np.array) -> np.array:
     return thresholder(samps)
 
 
-# See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
+# See Visualizations-I: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
 def rms_delay_spread(pdp: PDPSegment) -> float:
     num, den = [], []
     for i_mpc in range(pdp.n_mpcs):
@@ -320,12 +360,11 @@ def rms_delay_spread(pdp: PDPSegment) -> float:
         tau, p_tau = mpc.delay, mpc.profile_point_power
         num.append(np.square(tau) * p_tau)
         den.append(p_tau)
-
     num_sum, den_sum = np.sum(num), np.sum(den)
     return np.sqrt((num_sum / den_sum) - np.square((num_sum / den_sum)))
 
 
-# See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5956639]
+# See Visualizations-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5956639]
 def rms_direction_spread(pdp: PDPSegment, is_aod=True) -> float:
     e_vecs, p_vec, mu_vec = [], [], []
 
