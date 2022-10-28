@@ -51,12 +51,14 @@ Copyright (c) 2022. All Rights Reserved.
 import os
 import re
 import json
+import requests
 import datetime
 import dataclasses
 import numpy as np
 from enum import Enum
 from scipy import signal
 from geopy import distance
+from scipy import constants
 from typing import Dict, List
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
@@ -64,7 +66,7 @@ import sk_dsp_comm.fir_design_helper as fir_d
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-pi, rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = np.pi, [], [], [], [], []
+pi, c, rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = np.pi, constants.c, [], [], [], [], []
 decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
 
 """
@@ -230,8 +232,11 @@ class Pod:
     tx_imu_trace: IMUTrace = IMUTrace()
     rx_imu_trace: IMUTrace = IMUTrace()
     pdp_segment: PDPSegment = PDPSegment()
-    tx_rx_distance: float = 0.0
+    tx_rx_distance_2d: float = 0.0
+    tx_rx_distance_3d: float = 0.0
     tx_rx_alignment: float = 0.0
+    tx_elevation: float = 0.0
+    rx_elevation: float = 0.0
 
 
 """
@@ -267,10 +272,15 @@ def altitude(y: GPSEvent) -> float:
     return y.altitude_ellipsoid.component
 
 
-def tx_rx_distance(tx: GPSEvent, rx: GPSEvent) -> float:
-    coords_1 = (latitude(tx), longitude(rx))
-    coords_2 = (latitude(rx), longitude(rx))
-    return distance.distance(coords_1, coords_2).m
+def tx_rx_distance_2d(tx: GPSEvent, rx: GPSEvent) -> float:
+    coords_tx = (latitude(tx), longitude(tx))
+    coords_rx = (latitude(rx), longitude(rx))
+    return distance.distance(coords_tx, coords_rx).m
+
+
+def tx_rx_distance_3d(tx: GPSEvent, rx: GPSEvent) -> float:
+    alt_tx, alt_rx = altitude(tx), altitude(rx)
+    return np.sqrt(np.square(tx_rx_distance_2d(tx, rx)) + np.square(alt_tx - alt_rx))
 
 
 def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> List[float]:
@@ -323,6 +333,13 @@ def tx_rx_relative_velocity(tx_i: GPSEvent, tx_j: GPSEvent, rx_i: GPSEvent, rx_j
         return abs(tx_v - rx_v)
     else:
         return abs(tx_v + rx_v)
+
+
+def elevation(y: GPSEvent) -> float:
+    lat, lon, alt = latitude(y), longitude(y), altitude(y)
+    base_epqs_url = 'https://nationalmap.gov/epqs/pqs.php?x={}&y={}output=json&units=Meters'
+    epqs_kw, eq_kw, e_kw = 'USGS_Elevation_Point_Query_Service', 'Elevation_Query', 'Elevation'
+    return abs(alt - requests.get(base_epqs_url.format(lat, lon)).json()[epqs_kw][eq_kw][e_kw])
 
 
 def process_rx_samples(x: np.array) -> np.array:
@@ -463,5 +480,7 @@ for rx_gps_event in rx_gps_events:
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     tx_gps_event=tx_gps_event, tx_imu_trace=tx_imu_trace,
                     rx_gps_event=rx_gps_event, rx_imu_trace=rx_imu_trace,
-                    pdp_segment=pdp_segment, tx_rx_distance=tx_rx_distance(tx_gps_event, rx_gps_event),
+                    tx_rx_distance_2d=tx_rx_distance_2d(tx_gps_event, rx_gps_event),
+                    tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
+                    pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event),
                     tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, tx_imu_trace, rx_imu_trace)))

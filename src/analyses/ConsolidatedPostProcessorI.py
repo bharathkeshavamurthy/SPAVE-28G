@@ -41,10 +41,13 @@ import json
 import plotly
 import scipy.io
 import datetime
+import requests
 import dataclasses
 import numpy as np
 import pandas as pd
 from enum import Enum
+from geopy import distance
+from scipy import constants
 from typing import Dict, Tuple
 from bokeh.plotting import gmap
 from bokeh.io import export_png
@@ -59,8 +62,8 @@ from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMap
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-gps_events, pdp_segments, pods, calc_pwrs = [], [], [], []
 decibel_1, decibel_2 = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x)
+pi, c, gps_events, pdp_segments, pods, calc_pwrs = np.pi, constants.c, [], [], [], []
 pattern = namedtuple('pattern', ['angles', 'amplitudes', 'amplitudes_db', 'angles_hpbw', 'powers_hpbw', 'hpbw'])
 
 """
@@ -167,11 +170,15 @@ class Pod:
     timestamp: str = str(datetime.datetime.utcnow())
     gps_event: GPSEvent = GPSEvent()
     pdp_segment: PDPSegment = PDPSegment()
+    elevation: float = 0.0
+    distance_2d: float = 0.0
+    distance_3d: float = 0.0
 
 
 """
 CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenna pattern logs
 """
+
 ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
 gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps'
 comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp'
@@ -183,12 +190,16 @@ pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 't
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
 cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration', 'u76_', '_samples.log'
 
+tx = GPSEvent(latitude=Member(component=40.766173670),
+              longitude=Member(component=-111.847939330),
+              altitude_ellipsoid=Member(component=1459.1210))
+
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-max_ant_gain, angle_res_ext = 22.0, 5.0
-rx_gain, sample_rate, invalid_min_magnitude = 76.0, 2e6, 1e5
+carrier_freq, max_ant_gain, angle_res_ext = 28e9, 22.0, 5.0
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
+h_avg, w_avg, rx_gain, sample_rate, invalid_min_magnitude = 30.0, 15.39, 76.0, 2e6, 1e5
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
 # The reference received powers observed on a spectrum analyzer for calibration fit comparisons [at 76dB USRP gain]
@@ -228,8 +239,39 @@ def longitude(y: GPSEvent) -> float:
     return y.longitude.component
 
 
-def rx_power(y: PDPSegment) -> float:
-    return y.rx_power
+def altitude(y: GPSEvent) -> float:
+    return y.altitude_ellipsoid.component
+
+
+def distance_2d(y: GPSEvent) -> float:
+    coords_rx = (latitude(y), longitude(y))
+    coords_tx = (latitude(tx), longitude(tx))
+    return distance.distance(coords_tx, coords_rx).m
+
+
+def distance_3d(y: GPSEvent) -> float:
+    alt_rx, alt_tx = altitude(y), altitude(tx)
+    return np.sqrt(np.square(distance_2d(y)) + np.square(alt_rx - alt_tx))
+
+
+def elevation(y: GPSEvent) -> float:
+    lat, lon, alt = latitude(y), longitude(y), altitude(y)
+    base_epqs_url = 'https://nationalmap.gov/epqs/pqs.php?x={}&y={}output=json&units=Meters'
+    epqs_kw, eq_kw, e_kw = 'USGS_Elevation_Point_Query_Service', 'Elevation_Query', 'Elevation'
+    return abs(alt - requests.get(base_epqs_url.format(lat, lon)).json()[epqs_kw][eq_kw][e_kw])
+
+
+def hpbw(angles: np.array, amps: np.array, max_gain: float) -> Tuple:
+    angles_ = np.arange(start=0.0, stop=360.0, step=360.0 / (angle_res_ext * len(angles)))
+
+    # 1D interpolation of the angles and amplitudes parsed from the antenna pattern logs
+    amps_ = interp1d(angles, amps)(angles_)
+    amps_th_idx = np.where(amps_ <= max_gain - 3.0)[0]
+
+    # Threshold index window determination for HPBW computation
+    low, high = amps_th_idx[0], amps_th_idx[-1]
+    angles_hpbw, powers_hpbw = (angles_[low], angles_[high]), (amps_[low], amps_[high])
+    return angles_hpbw, powers_hpbw, angles_hpbw[0] + 360.0 + angles_hpbw[1]
 
 
 def compute_rx_power(x: np.array) -> float:
@@ -270,17 +312,51 @@ def compute_rx_power(x: np.array) -> float:
     return -np.inf
 
 
-def hpbw(angles: np.array, amps: np.array, max_gain: float) -> Tuple:
-    angles_ = np.arange(start=0.0, stop=360.0, step=360.0 / (angle_res_ext * len(angles)))
+def rx_power(y: PDPSegment) -> float:
+    return y.rx_power
 
-    # 1D interpolation of the angles and amplitudes parsed from the antenna pattern logs
-    amps_ = interp1d(angles, amps)(angles_)
-    amps_th_idx = np.where(amps_ <= max_gain - 3.0)[0]
 
-    # Threshold index window determination for HPBW computation
-    low, high = amps_th_idx[0], amps_th_idx[-1]
-    angles_hpbw, powers_hpbw = (angles_[low], angles_[high]), (amps_[low], amps_[high])
-    return angles_hpbw, powers_hpbw, angles_hpbw[0] + 360.0 + angles_hpbw[1]
+# See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294]
+def pathloss_3gpp_tr38901uma(y: GPSEvent) -> float:
+    h_ue, h_bs = elevation(y), elevation(tx)
+    f_c, h_ue_, h_bs_ = carrier_freq / 1e9, h_ue - 1.0, h_bs - 1.0
+    d_bp_, d_2d, d_3d = 4 * h_ue_ * h_bs_ * f_c * (1e9 / c), distance_2d(y), distance_3d(y)
+
+    if 10.0 <= d_2d <= d_bp_:
+        pl_los = 28.0 + (22.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c))
+    elif d_bp_ <= d_2d <= 5000.0:
+        pl_los = 28.0 + (40.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (9.0 * np.log10(np.square(d_bp_) +
+                                                                                           np.square(h_ue - h_bs)))
+    else:
+        raise NotImplementedError("The 3GPP TR39.901 UMa model does not address this use case.")
+
+    pl_nlos = 13.54 + (39.08 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (0.6 * (h_ue - 1.5))
+
+    return max(pl_los, pl_nlos)
+
+
+# See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294]
+def pathloss_itur_m2135uma(y: GPSEvent) -> float:
+    h, w, h_ue, h_bs, f_c = h_avg, w_avg, elevation(y), elevation(tx), carrier_freq
+    d_bp, d_2d, d_3d = 2 * pi * h_ue * h_bs * (f_c / c), distance_2d(y), distance_3d(y)
+
+    if 10.0 <= d_2d <= d_bp:
+        pl_los = (np.log10(d_3d) * min(0.03 * (h ** 1.72), 10.0)) + \
+                 (20.0 * np.log10(40.0 * pi * d_3d * (f_c / 3e9))) - \
+                 (0.002 * np.log10(h) * d_3d) - min(0.044 * (h ** 1.72), 14.77)
+    elif d_bp <= d_2d <= 10000.0:
+        pl_los = (np.log10(d_3d) * min(0.03 * (h ** 1.72), 10.0)) + \
+                 (20.0 * np.log10(40.0 * pi * d_3d * (f_c / 3e9))) - \
+                 (0.002 * np.log10(h) * d_3d) - min(0.044 * (h ** 1.72), 14.77) + (40.0 * np.log10(d_3d / d_bp))
+    else:
+        raise NotImplementedError("The ITU-R M.2135 UMa model does not address this use case.")
+
+    pl_nlos = 161.04 - (7.1 * np.log10(w)) + (7.5 * np.log10(h)) - \
+              ((24.37 - (3.7 * np.square(h / h_bs))) * np.log10(h_bs)) + \
+              ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
+              (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
+
+    return max(pl_los, pl_nlos)
 
 
 """
@@ -360,9 +436,14 @@ for gps_event in gps_events:
     seq_number, timestamp = gps_event.seq_number, gps_event.timestamp
     pdp_segment = min(pdp_segments, key=lambda x: abs(datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f') -
                                                       datetime.datetime.strptime(x.timestamp, '%Y-%m-%d %H:%M:%S.%f')))
+
     if pdp_segment.rx_power == -np.inf:
         continue
-    pods.append(Pod(seq_number=seq_number, timestamp=timestamp, gps_event=gps_event, pdp_segment=pdp_segment))
+
+    pods.append(Pod(seq_number=seq_number,
+                    timestamp=timestamp, gps_event=gps_event,
+                    pdp_segment=pdp_segment, elevation=elevation(gps_event),
+                    distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
 
 # Visualization: Google Maps rendition of the received signal power levels along the specified route
 dataframe = pd.DataFrame(data=[[latitude(x.gps_event), longitude(x.gps_event), rx_power(x.pdp_segment)]
@@ -375,7 +456,7 @@ color_bar = ColorBar(color_mapper=color_mapper, width=color_bar_width, height=co
 google_maps_options = GMapOptions(lat=map_central.latitude.component, lng=map_central.longitude.component,
                                   map_type=map_type, zoom=map_zoom_level)
 figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
-figure.add_layout(color_bar, color_bar_layout_location)
+figure.add_layout(color_bar)
 figure_rx_points = figure.circle('longitude', 'latitude', size=rx_pins_size, alpha=rx_pins_alpha,
                                  color={'field': 'rx-power', 'transform': color_mapper},
                                  source=ColumnDataSource(dataframe))
