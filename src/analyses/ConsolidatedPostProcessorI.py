@@ -2,39 +2,30 @@
 This script encapsulates the operations involved in visualizing the antenna patterns (elevation & azimuth) and Rx power
 maps of our mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently,
 this script generates the path-loss maps of the routes traversed during this measurement campaign, along with plots
-of path-loss/path-gain versus distance which will help us with next-generation mmWave V2V/V2I network design.
-
-Also, we conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor UMa large-scale path-loss standards.
+of path-loss/path-gain versus distance which will help us with next-generation mmWave V2V/V2I network design. Also,
+we conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor large-scale UMa pathloss approaches.
 
 Reference Papers:
 
 @INPROCEEDINGS{PL-Models-I,
   author={Haneda, Katsuyuki and Zhang, Jianhua and Tan, Lei and Liu, Guangyi and Zheng, Yi and Asplund, Henrik, et al.},
-  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)},
   title={5G 3GPP-Like Channel Models for Outdoor Urban Microcellular and Macrocellular Environments},
-  year={2016},
-  volume={},
-  number={},
-  pages={1-7},
-  doi={10.1109/VTCSpring.2016.7503971}}
+  year={2016}, volume={}, number={}, pages={1-7}, doi={10.1109/VTCSpring.2016.7503971},
+  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)}}
 
 @ARTICLE{PL-Models-II,
   author={Rappaport, Theodore S. and Xing, Yunchou and MacCartney, George R. and Molisch, Andreas F. et al.},
-  journal={IEEE Transactions on Antennas and Propagation},
   title={Overview of mmWave Communications for 5G Wireless Networks—With a Focus on Propagation Models},
-  year={2017},
-  volume={65},
-  number={12},
-  pages={6213-6230},
-  doi={10.1109/TAP.2017.2734243}}
+  year={2017}, volume={65}, number={12}, pages={6213-6230}, doi={10.1109/TAP.2017.2734243},
+  journal={IEEE Transactions on Antennas and Propagation}}
 
-Author: Bharath Keshavamurthy <bkeshav1@asu.edu | bkeshava@purdue.edu>
-Organization: School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
-              School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
+Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
+Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
+              School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
+
 Copyright (c) 2022. All Rights Reserved.
 """
 
-# The imports
 import os
 import re
 import json
@@ -46,29 +37,39 @@ import dataclasses
 import numpy as np
 import pandas as pd
 from enum import Enum
+from pyproj import Proj
 from geopy import distance
 from scipy import constants
-from typing import Dict, Tuple
+from typing import Tuple, Dict
 from bokeh.plotting import gmap
 from bokeh.io import export_png
-from dataclasses import dataclass
 from bokeh.palettes import brewer
 from collections import namedtuple
 from scipy import signal, integrate
 from scipy.interpolate import interp1d
+from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
 from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper
 
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-decibel_1, decibel_2 = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x)
-pi, c, gps_events, pdp_segments, pods, calc_pwrs = np.pi, constants.c, [], [], [], []
+pi, c = np.pi, constants.speed_of_light
+deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
+linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
+decibel_1, decibel_2 = lambda x: 10.0 * np.log10(x), lambda x: 20.0 * np.log10(x)
+gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods, calc_pwrs = [], [], [], [], [], []
 pattern = namedtuple('pattern', ['angles', 'amplitudes', 'amplitudes_db', 'angles_hpbw', 'powers_hpbw', 'hpbw'])
 
 """
 INITIALIZATIONS-II: Enumerations & Dataclasses
 """
+
+
+class PathlossApproaches(Enum):
+    SPAVE_28G_ODIN = 0
+    TR38901_3GPP = 1
+    M2135_ITUR = 2
 
 
 class Units(Enum):
@@ -149,6 +150,14 @@ class GPSEvent:
 
 
 @dataclass(order=True)
+class IMUTrace:
+    seq_number: int = 0
+    timestamp: str = str(datetime.datetime.utcnow())
+    yaw_angle: float = 0.0
+    pitch_angle: float = 0.0
+
+
+@dataclass(order=True)
 class PDPSegment:
     seq_number: int = 0
     timestamp: str = str(datetime.datetime.utcnow())
@@ -160,8 +169,8 @@ class PDPSegment:
     header_length: int = 171
     num_samples: int = 1000000
     num_bytes: int = num_samples * item_size
-    rx_samples: np.array = np.array([], dtype=np.csingle)
-    rx_power: float = 0.0
+    raw_rx_samples: np.array = np.array([], dtype=np.csingle)
+    processed_rx_samples: np.array = np.array([], dtype=np.csingle)
 
 
 @dataclass(order=True)
@@ -169,46 +178,49 @@ class Pod:
     seq_number: int = 0
     timestamp: str = str(datetime.datetime.utcnow())
     gps_event: GPSEvent = GPSEvent()
+    tx_imu_trace: IMUTrace = IMUTrace()
+    rx_imu_trace: IMUTrace = IMUTrace()
     pdp_segment: PDPSegment = PDPSegment()
     elevation: float = 0.0
     distance_2d: float = 0.0
     distance_3d: float = 0.0
+    rx_power: float = 0.0
+    tx_ant_gain: float = 0.0
+    rx_ant_gain: float = 0.0
+    pathloss: Dict = field(default_factory=lambda: {pl_model.value: 0.0 for pl_model in PathlossApproaches})
 
 
 """
 CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenna pattern logs
 """
-
 ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
 gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps'
 comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp'
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
-az_pat_png, el_pat_png, = 'az-antenna-pattern.png', 'el-antenna-pattern.png'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 az_pat_3d_png, el_pat_3d_png = 'az-antenna-pattern-3d.png', 'el-antenna-pattern-3d.png'
 rx_pwr_png, pathloss_png = 'urban-campus-II-pathloss.png', 'urban-campus-II-rx-power.png'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
 cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration', 'u76_', '_samples.log'
 
-tx = GPSEvent(latitude=Member(component=40.766173670),
-              longitude=Member(component=-111.847939330),
-              altitude_ellipsoid=Member(component=1459.1210))
-
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-carrier_freq, max_ant_gain, angle_res_ext = 28e9, 22.0, 5.0
-time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
-h_avg, w_avg, rx_gain, sample_rate, invalid_min_magnitude = 30.0, 15.39, 76.0, 2e6, 1e5
+carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, dconv_gain = 28e9, 22.0, 5.0, -7.0, 13.4
+h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 30.0, 15.39, 76.0, 2e6, 1e5
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
-# The reference received powers observed on a spectrum analyzer for calibration fit comparisons [at 76dB USRP gain]
+datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 0.5, 'truncation_length': 200000}
 meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
-CONFIGURATIONS-III: Bokeh & Plotly visualization options | Antenna patterns | Rx power maps | Path-loss maps
+CONFIGURATIONS-III: Bokeh & Plotly visualization options | Antenna patterns | Rx power maps | Pathloss maps
 """
+
+lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn', 11
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
 map_width, map_height, map_zoom_level, map_title = 5500.0, 2800.0, 20, 'urban-campus-II'
@@ -216,7 +228,9 @@ tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 
 google_maps_api_key, map_type, timeout = 'AIzaSyDzb5CB4L9l42MyvSmzvaSZ3bnRINIjpUk', 'hybrid', 300
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
 map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
-tx_location = GPSEvent(seq_number=-1, latitude=Member(component=40.76617367), longitude=Member(component=-111.84793933))
+
+tx = GPSEvent(latitude=Member(component=40.766173670),
+              longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 """
 CORE ROUTINES
@@ -229,6 +243,14 @@ def pack_dict_into_dataclass(dict_: Dict, dataclass_: dataclass) -> dataclass:
     for k, v in dict_.items():
         loaded_dict[k] = (lambda: v, lambda: pack_dict_into_dataclass(v, Member))[fields[k] == Member]()
     return dataclass_(**loaded_dict)
+
+
+def yaw(m: IMUTrace) -> float:
+    return m.yaw_angle
+
+
+def pitch(m: IMUTrace) -> float:
+    return m.pitch_angle
 
 
 def latitude(y: GPSEvent) -> float:
@@ -258,7 +280,15 @@ def elevation(y: GPSEvent) -> float:
     lat, lon, alt = latitude(y), longitude(y), altitude(y)
     base_epqs_url = 'https://nationalmap.gov/epqs/pqs.php?x={}&y={}output=json&units=Meters'
     epqs_kw, eq_kw, e_kw = 'USGS_Elevation_Point_Query_Service', 'Elevation_Query', 'Elevation'
-    return abs(alt - requests.get(base_epqs_url.format(lat, lon)).json()[epqs_kw][eq_kw][e_kw])
+    return abs(alt - requests.get(base_epqs_url.format(lon, lat)).json()[epqs_kw][eq_kw][e_kw])
+
+
+def cart2sph(x: float, y: float, z: float) -> Tuple:
+    return np.sqrt((x ** 2) + (y ** 2) + (z ** 2)), np.arctan2(z, np.sqrt((x ** 2) + (y ** 2))), np.arctan2(y, x)
+
+
+def sph2cart(r: float, theta: float, phi: float) -> Tuple:
+    return r * np.sin(theta) * np.cos(phi), r * np.sin(theta) * np.sin(phi), r * np.cos(theta)
 
 
 def hpbw(angles: np.array, amps: np.array, max_gain: float) -> Tuple:
@@ -271,10 +301,11 @@ def hpbw(angles: np.array, amps: np.array, max_gain: float) -> Tuple:
     # Threshold index window determination for HPBW computation
     low, high = amps_th_idx[0], amps_th_idx[-1]
     angles_hpbw, powers_hpbw = (angles_[low], angles_[high]), (amps_[low], amps_[high])
+
     return angles_hpbw, powers_hpbw, angles_hpbw[0] + 360.0 + angles_hpbw[1]
 
 
-def compute_rx_power(x: np.array) -> float:
+def process_rx_samples(x: np.array) -> Tuple:
     fs = sample_rate
     t_mul, t_len = time_windowing_config.values()
     f_pass, f_stop, d_pass, d_stop = prefilter_config.values()
@@ -294,30 +325,81 @@ def compute_rx_power(x: np.array) -> float:
     # Noise Elimination: The peak search method is 'TallEnoughAbs' | Thresholded at (ne_mul * sigma) + mu
     samps_ = samps[n_min:n_max] if n_samples > n_max else samps[n_min:]
     a_samps = np.abs(samps_)[min_peak_idx:]
-    samps_ = samps_[((np.where(a_samps > amp_threshold * max(a_samps))[0][0] + min_peak_idx - 1) *
-                     np.array(rel_range)).astype(dtype=int)]
+    samps_ = samps_[((np.where(a_samps > amp_threshold * max(a_samps))[0][0] +
+                      min_peak_idx - 1) * np.array(rel_range)).astype(dtype=int)]
     th_min, th_max = np.array([-1, 1]) * ne_mul * np.std(samps_) + np.mean(samps_)
     thresholder = np.vectorize(lambda s: 0 + 0j if (s > th_min) and (s < th_max) else s)
-    samps = thresholder(samps)
 
+    return n_samples, thresholder(samps)
+
+
+def compute_rx_power(n: int, x: np.array) -> float:
     # PSD Evaluation: Received signal power computation (calibration or campaign)
-    pwr_values = np.square(np.abs(np.fft.fft(samps))) / n_samples
-    freq_values = np.fft.fftfreq(n_samples, (1 / fs))
+    fs, pwr_values = sample_rate, np.square(np.abs(np.fft.fft(x))) / n
+    freq_values = np.fft.fftfreq(n, (1 / fs))
     indices = np.argsort(freq_values)
 
     # Trapezoidal numerical integration to compute signal power at the Rx from the organized PSD data
     computed_rx_power = integrate.trapz(y=pwr_values[indices], x=freq_values[indices])
-    if computed_rx_power != 0.0:
-        return 10 * np.log10(computed_rx_power) - rx_gain
-    return -np.inf
+
+    return (10 * np.log10(computed_rx_power) - rx_usrp_gain) if (computed_rx_power != 0.0) else -np.inf
 
 
-def rx_power(y: PDPSegment) -> float:
+def rx_power(y: Pod) -> float:
     return y.rx_power
 
 
+def compute_antenna_gain(y: GPSEvent, m: IMUTrace, is_tx=True) -> float:
+    az0, el0 = deg2rad(yaw(m)), deg2rad(pitch(m))
+    rx_lat, rx_lon, rx_alt = latitude(y), longitude(y), altitude(y)
+    tx_lat, tx_lon, tx_alt = latitude(tx), longitude(tx), altitude(tx)
+
+    rx_e, rx_n = lla_utm_proj(rx_lon, rx_lat)
+    tx_e, tx_n = lla_utm_proj(tx_lon, tx_lat)
+
+    if is_tx:
+        x0, y0, z0, x, y, z = tx_n, -tx_e, tx_alt, rx_n, -rx_e, rx_alt
+    else:
+        x0, y0, z0, x, y, z = rx_n, -rx_e, rx_alt, tx_n, -tx_e, tx_alt
+
+    r1, az1, el1 = cart2sph(x - x0, y - y0, z - z0)
+
+    r21, r22, r23 = 0.0, 1.0, 0.0
+    r11, r12, r13 = sph2cart(0.0, -el0, 1.0)
+    r31, r32, r33 = sph2cart(0.0, -el0 + (pi / 2.0), 1.0)
+
+    x1, y1, z1 = sph2cart(r1, el1, az1 - az0)
+    f_arr = np.matmul(np.array([x1, y1, z1]), np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]]))
+
+    az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
+    xs, ys, zs = sph2cart(1.0, deg2rad(el), deg2rad(az))
+    azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
+    els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
+
+    az_amps_norm_db = az_amps_db - max(az_amps_db) + max_ant_gain
+    el_amps_norm_db = el_amps_db - max(el_amps_db) + max_ant_gain
+    az_amps_norm = np.array([linear_1(db) for db in az_amps_norm_db])
+    el_amps_norm = np.array([linear_1(db) for db in el_amps_norm_db])
+
+    az_amps0 = interp1d(az_angles, az_amps_norm)(azs0)
+    el_amps0 = interp1d(el_angles, el_amps_norm)(els0)
+    return decibel_1(((az_amps0 * abs(ys)) + (el_amps0 * abs(zs))) / (abs(ys) + abs(zs)))
+
+
+def tx_ant_gain(y: Pod) -> float:
+    return y.tx_ant_gain
+
+
+def rx_ant_gain(y: Pod) -> float:
+    return y.rx_ant_gain
+
+
+def pathloss_spave28g_odin(t_gain: float, r_gain: float, rx_pwr: float) -> float:
+    return tx_pwr + t_gain + r_gain + dconv_gain - rx_pwr
+
+
 # See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294]
-def pathloss_3gpp_tr38901uma(y: GPSEvent) -> float:
+def pathloss_3gpp_tr38901(y: GPSEvent) -> float:
     h_ue, h_bs = elevation(y), elevation(tx)
     f_c, h_ue_, h_bs_ = carrier_freq / 1e9, h_ue - 1.0, h_bs - 1.0
     d_bp_, d_2d, d_3d = 4 * h_ue_ * h_bs_ * f_c * (1e9 / c), distance_2d(y), distance_3d(y)
@@ -336,7 +418,7 @@ def pathloss_3gpp_tr38901uma(y: GPSEvent) -> float:
 
 
 # See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294]
-def pathloss_itur_m2135uma(y: GPSEvent) -> float:
+def pathloss_itur_m2135(y: GPSEvent) -> float:
     h, w, h_ue, h_bs, f_c = h_avg, w_avg, elevation(y), elevation(tx), carrier_freq
     d_bp, d_2d, d_3d = 2 * pi * h_ue * h_bs * (f_c / c), distance_2d(y), distance_3d(y)
 
@@ -352,11 +434,15 @@ def pathloss_itur_m2135uma(y: GPSEvent) -> float:
         raise NotImplementedError("The ITU-R M.2135 UMa model does not address this use case.")
 
     pl_nlos = 161.04 - (7.1 * np.log10(w)) + (7.5 * np.log10(h)) - \
-              ((24.37 - (3.7 * np.square(h / h_bs))) * np.log10(h_bs)) + \
-              ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
-              (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
+        ((24.37 - (3.7 * np.square(h / h_bs))) * np.log10(h_bs)) + \
+        ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
+        (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
 
     return max(pl_los, pl_nlos)
+
+
+def pathloss(y: Pod) -> float:
+    return y.pathloss[0]
 
 
 """
@@ -365,13 +451,15 @@ CORE OPERATIONS-I: Calibration
 
 # Evaluate parsed_metadata | Extract power-delay profile samples | Compute received power in this calibration paradigm
 for att_val in att_indices:
+    cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', att_val, cali_samples_file_right])
     with open(''.join([cali_dir, cali_metadata_file_left, 'a', att_val, cali_metadata_file_right])) as file:
         for line_num, line in enumerate(file):
             if (line_num - 11) % 18 == 0:
                 num_samples = int(re.search(r'\d+', line)[0])
-            cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', att_val, cali_samples_file_right])
-            cali_samples = np.fromfile(cali_samples_file, count=num_samples, dtype=np.csingle)
-            calc_pwrs.append(compute_rx_power(cali_samples))
+                cali_samples = np.fromfile(cali_samples_file, count=num_samples, dtype=np.csingle)
+                num_samples, processed_rx_samples = process_rx_samples(cali_samples)
+                calc_pwrs.append(compute_rx_power(num_samples, processed_rx_samples))
+                break
 
 # 1D interpolation of the measured and calculated powers for curve fitting
 meas_pwrs_ = np.arange(start=0.0, stop=-80.0, step=-2.0)
@@ -394,78 +482,126 @@ el_angles_hpbw, el_powers_hpbw, el_hpbw = hpbw(el_angles, el_amps_db, max_ant_ga
 el_pattern = pattern(el_angles, el_amps, el_amps_db, el_angles_hpbw, el_powers_hpbw, el_hpbw)
 
 """
-CORE OPERATIONS-III: Received power maps
+CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 """
 
-# Extract gps_event
+# Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
 for filename in os.listdir(gps_dir):
     with open(''.join([gps_dir, filename])) as file:
         gps_events.append(pack_dict_into_dataclass(json.load(file), GPSEvent))
 
+# Extract Tx imu_traces
+for filename in os.listdir(tx_imu_dir):
+    with open(''.join([tx_imu_dir, filename])) as file:
+        tx_imu_traces.append(pack_dict_into_dataclass(json.load(file), IMUTrace))
+
+# Extract Rx imu_traces
+for filename in os.listdir(rx_imu_dir):
+    with open(''.join([rx_imu_dir, filename])) as file:
+        rx_imu_traces.append(pack_dict_into_dataclass(json.load(file), IMUTrace))
+
 # Extract timestamp_0 (start_timestamp)
 with open(''.join([comm_dir, start_timestamp_file])) as file:
     elements = file.readline().split()
-    timestamp_0 = datetime.datetime.strptime(''.join([elements[2], ' ', elements[3]]), '%Y-%m-%d %H:%M:%S.%f')
+    timestamp_0 = datetime.datetime.strptime(''.join([elements[2], ' ', elements[3]]), datetime_format)
 
-# Evaluate parsed_metadata | Extract power-delay profile samples
+''' Evaluate parsed_metadata | Extract power-delay profile samples '''
+
 segment_done = False
-timestamp_ref = datetime.datetime.strptime(gps_events[0].timestamp, '%Y-%m-%d %H:%M:%S.%f')
+timestamp_ref = datetime.datetime.strptime(gps_events[0].timestamp, datetime_format)
+
 pdp_samples_file = ''.join([comm_dir, pdp_samples_file])
 with open(''.join([comm_dir, parsed_metadata_file])) as file:
     for line_num, line in enumerate(file):
         if line_num % 18 == 0:
             seq_number = int(re.search(r'\d+', line)[0])
         elif (line_num - 3) % 18 == 0:
-            # noinspection RegExpAnonymousGroup
             timestamp = timestamp_0 + datetime.timedelta(seconds=float(re.search(r'[+-]?\d+(\.\d+)?', line)[0]))
         elif (line_num - 11) % 18 == 0 and timestamp >= timestamp_ref:
             num_samples = int(re.search(r'\d+', line)[0])
             segment_done = True
+        else:
+            pass
 
         if segment_done:
             segment_done = False
-            rx_samples = np.fromfile(pdp_samples_file, offset=seq_number * num_samples,
-                                     count=num_samples, dtype=np.csingle)
-            if np.isnan(rx_samples).any() or np.abs(np.min(rx_samples)) > invalid_min_magnitude:
-                continue
-            pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp), num_samples=num_samples,
-                                           rx_samples=rx_samples, rx_power=compute_rx_power(rx_samples)))
+            raw_rx_samples = np.fromfile(pdp_samples_file,
+                                         offset=seq_number * num_samples, count=num_samples, dtype=np.csingle)
 
-# Match gps_event and pdp_segment timestamps
+            if np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > invalid_min_magnitude:
+                continue
+
+            num_samples, processed_rx_samples = process_rx_samples(raw_rx_samples)
+
+            pdp_segments.append(PDPSegment(seq_number=seq_number + 1,
+                                           timestamp=str(timestamp), num_samples=num_samples,
+                                           raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
+
+''' Match gps_event and pdp_segment timestamps '''
+
 for gps_event in gps_events:
     seq_number, timestamp = gps_event.seq_number, gps_event.timestamp
-    pdp_segment = min(pdp_segments, key=lambda x: abs(datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f') -
-                                                      datetime.datetime.strptime(x.timestamp, '%Y-%m-%d %H:%M:%S.%f')))
+    pdp_segment = min(pdp_segments, key=lambda x: abs(datetime.datetime.strptime(timestamp, datetime_format) -
+                                                      datetime.datetime.strptime(x.timestamp, datetime_format)))
+    tx_imu_trace = min(tx_imu_traces, key=lambda x: abs(datetime.datetime.strptime(timestamp, datetime_format) -
+                                                        datetime.datetime.strptime(x.timestamp, datetime_format)))
+    rx_imu_trace = min(rx_imu_traces, key=lambda x: abs(datetime.datetime.strptime(timestamp, datetime_format) -
+                                                        datetime.datetime.strptime(x.timestamp, datetime_format)))
 
-    if pdp_segment.rx_power == -np.inf:
+    tx_ant_gain = compute_antenna_gain(gps_event, tx_imu_trace)
+    rx_ant_gain = compute_antenna_gain(gps_event, rx_imu_trace, False)
+    rx_power = compute_rx_power(pdp_segment.num_samples, pdp_segment.processed_rx_samples)
+
+    if rx_power == -np.inf:
         continue
 
-    pods.append(Pod(seq_number=seq_number,
-                    timestamp=timestamp, gps_event=gps_event,
-                    pdp_segment=pdp_segment, elevation=elevation(gps_event),
-                    distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
+    pathloss = {0: pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power),
+                1: pathloss_3gpp_tr38901(gps_event), 2: pathloss_itur_m2135(gps_event)}
 
-# Visualization: Google Maps rendition of the received signal power levels along the specified route
-dataframe = pd.DataFrame(data=[[latitude(x.gps_event), longitude(x.gps_event), rx_power(x.pdp_segment)]
-                               for x in pods], columns=['latitude', 'longitude', 'rx-power'])
-palette = brewer[color_palette][color_palette_index]
-color_mapper = LinearColorMapper(palette=palette, low=dataframe['rx-power'].min(), high=dataframe['rx-power'].max())
-color_bar = ColorBar(color_mapper=color_mapper, width=color_bar_width, height=color_bar_height,
-                     major_label_text_font_size=color_bar_label_size, label_standoff=color_palette_index,
-                     orientation=color_bar_orientation)
-google_maps_options = GMapOptions(lat=map_central.latitude.component, lng=map_central.longitude.component,
+    pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
+                    gps_event=gps_event, pdp_segment=pdp_segment,
+                    rx_power=rx_power, tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace,
+                    tx_ant_gain=tx_ant_gain, rx_ant_gain=rx_ant_gain, elevation=elevation(gps_event),
+                    pathloss=pathloss, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
+
+"""
+CORE VISUALIZATIONS-I: Received power maps & Pathloss maps
+"""
+
+google_maps_options = GMapOptions(lat=latitude(map_central),
+                                  lng=longitude(map_central),
                                   map_type=map_type, zoom=map_zoom_level)
-figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
-figure.add_layout(color_bar)
-figure_rx_points = figure.circle('longitude', 'latitude', size=rx_pins_size, alpha=rx_pins_alpha,
-                                 color={'field': 'rx-power', 'transform': color_mapper},
-                                 source=ColumnDataSource(dataframe))
-export_png(figure, filename=''.join([output_dir, rx_pwr_png]), timeout=timeout)
+pl_kw, rx_kw, lat_kw, lon_kw = 'pathloss', 'rx-power', 'latitude', 'longitude'
 
-"""
-CORE OPERATIONS-IV: Path-loss maps
-"""
+rx_df = pd.DataFrame(data=[[latitude(x.gps_event),
+                            longitude(x.gps_event), rx_power(x)] for x in pods], columns=[lat_kw, lon_kw, rx_kw])
+pl_df = pd.DataFrame(data=[[latitude(x.gps_event),
+                            longitude(x.gps_event), pathloss(x)] for x in pods], columns=[lat_kw, lon_kw, pl_kw])
 
-"""
-CORE OPERATIONS-V: Path-loss/Path-gain v distance curves
-"""
+rx_color_mapper = LinearColorMapper(low=rx_df[rx_kw].min(), high=rx_df[rx_kw].max(),
+                                    palette=brewer[color_palette][color_palette_index])
+pl_color_mapper = LinearColorMapper(low=pl_df[pl_kw].min(), high=pl_df[pl_kw].max(),
+                                    palette=brewer[color_palette][color_palette_index])
+
+rx_color_bar = ColorBar(color_mapper=rx_color_mapper,
+                        width=color_bar_width, height=color_bar_height,
+                        major_label_text_font_size=color_bar_label_size,
+                        label_standoff=color_palette_index, orientation=color_bar_orientation)
+rx_figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
+
+pl_color_bar = ColorBar(color_mapper=pl_color_mapper,
+                        width=color_bar_width, height=color_bar_height,
+                        major_label_text_font_size=color_bar_label_size,
+                        label_standoff=color_palette_index, orientation=color_bar_orientation)
+pl_figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
+
+rx_figure.add_layout(rx_color_bar)
+pl_figure.add_layout(pl_color_bar)
+
+rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+                 color={'field': rx_kw, 'transform': rx_color_mapper}, source=ColumnDataSource(rx_df))
+pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+                 color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
+
+export_png(rx_figure, filename=''.join([output_dir, rx_pwr_png]), timeout=timeout)
+export_png(pl_figure, filename=''.join([output_dir, pathloss_png]), timeout=timeout)

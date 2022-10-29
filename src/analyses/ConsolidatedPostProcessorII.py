@@ -1,53 +1,44 @@
 """
-First, this script encapsulates the operations involved in estimating the propagation parameters associated with the
-various Multi-Path Components (MPCs) in our 28-GHz outdoor measurement campaign on the POWDER testbed; next, it details
-the visualizations of the RMS delay- & direction-spread characteristics obtained from this 28-GHz V2X channel modeling;
+This script encapsulates the operations involved in estimating the propagation parameters associated with the various
+Multi-Path Components (MPCs) in our 28-GHz outdoor measurement campaign on the POWDER testbed; next, it details the
+visualizations of the RMS delay- & direction-spread characteristics obtained from this 28-GHz V2X channel modeling;
 and finally, it incorporates spatial consistency analyses vis-à-vis distance, alignment, and velocity.
 
-The constituent algorithm is Space-Alternating Generalized Expectation-Maximization (SAGE), derived from the following
-reference paper:
+The constituent algorithm is Space-Alternating Generalized Expectation-Maximization (SAGE), derived from:
 
 @INPROCEEDINGS{SAGE,
+  title={A sliding-correlator-based SAGE algorithm for Mm-wave wideband channel parameter estimation},
   author={Yin, Xuefeng and He, Yongyu and Song, Zinuo and Kim, Myung-Don and Chung, Hyun Kyu},
   booktitle={The 8th European Conference on Antennas and Propagation (EuCAP 2014)},
-  title={A sliding-correlator-based SAGE algorithm for Mm-wave wideband channel parameter estimation},
-  year={2014},
-  pages={625-629},
-  doi={10.1109/EuCAP.2014.6901837}}.
+  year={2014}, pages={625-629}, doi={10.1109/EuCAP.2014.6901837}}.
 
-The plots resulting from this analysis script include RMS delay-spread CDF, RMS direction-spread CDF, and spatial
-decoherence characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity variations: the
-relative drop in the time-dilated cross-correlation peak magnitudes under distance, alignment, and velocity variations.
+The plots resulting from this script include RMS delay-spread CDF, RMS direction-spread CDF, and spatial decoherence
+characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity variations: the relative
+drop in the time-dilated cross-correlation peak magnitudes under distance, alignment, and velocity variations.
 
-Other Reference Papers:
+Reference Papers:
 
 @ARTICLE{Visualizations-I,
   author={Gustafson, Carl and Haneda, Katsuyuki and Wyne, Shurjeel and Tufvesson, Fredrik},
-  journal={IEEE Transactions on Antennas and Propagation},
   title={On mm-Wave Multipath Clustering and Channel Modeling},
-  year={2014},
-  volume={62},
-  number={3},
-  pages={1445-1455},
-  doi={10.1109/TAP.2013.2295836}}; and
+  journal={IEEE Transactions on Antennas and Propagation},
+  year={2014}, volume={62}, number={3}, pages={1445-1455},
+  doi={10.1109/TAP.2013.2295836}}
 
 @INPROCEEDINGS{Visualizations-II,
   author={Gustafson, Carl and Tufvesson, Fredrik and Wyne, Shurjeel and Haneda, Katsuyuki and Molisch, Andreas F.},
-  booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
   title={Directional Analysis of Measured 60 GHz Indoor Radio Channels Using SAGE},
-  year={2011},
-  volume={},
-  number={},
-  pages={1-5},
-  doi={10.1109/VETECS.2011.5956639}}.
+  booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
+  year={2011}, volume={}, number={}, pages={1-5},
+  doi={10.1109/VETECS.2011.5956639}}
 
-Author: Bharath Keshavamurthy <bkeshav1@asu.edu | bkeshava@purdue.edu>
-Organization: School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
-              School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
+Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
+Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
+              School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
+
 Copyright (c) 2022. All Rights Reserved.
 """
 
-# The imports
 import os
 import re
 import json
@@ -59,7 +50,7 @@ from enum import Enum
 from scipy import signal
 from geopy import distance
 from scipy import constants
-from typing import Dict, List
+from typing import Tuple, Dict
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
 
@@ -72,14 +63,6 @@ decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log1
 """
 INITIALIZATIONS-II: Enumerations & Dataclasses (Inputs)
 """
-
-
-@dataclass(order=True)
-class IMUTrace:
-    seq_number: int = 0
-    timestamp: str = str(datetime.datetime.utcnow())
-    yaw_angle: float = 0.0
-    pitch_angle: float = 0.0
 
 
 class Units(Enum):
@@ -159,6 +142,14 @@ class GPSEvent:
     total_length: int = 39
 
 
+@dataclass(order=True)
+class IMUTrace:
+    seq_number: int = 0
+    timestamp: str = str(datetime.datetime.utcnow())
+    yaw_angle: float = 0.0
+    pitch_angle: float = 0.0
+
+
 """
 CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
 """
@@ -173,8 +164,7 @@ delay_spread_png, direction_spread_png = 'delay_spread.png', 'direction_spread.p
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
-                        longitude=Member(component=-111.847939330),
-                        altitude_ellipsoid=Member(component=1459.1210))
+                        longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
@@ -220,7 +210,7 @@ class PDPSegment:
     processed_rx_samples: np.array = np.array([], dtype=np.csingle)
     correlation_peak: float = 0.0
     n_mpcs: int = max_mpcs
-    mpc_parameters: List[MPCParameters] = field(default_factory=lambda: [MPCParameters() for _ in range(max_mpcs)])
+    mpc_parameters: Tuple[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
 
 
 @dataclass(order=True)
@@ -244,20 +234,20 @@ CORE ROUTINES
 """
 
 
-def yaw(m: IMUTrace) -> float:
-    return m.yaw_angle
-
-
-def pitch(m: IMUTrace) -> float:
-    return m.pitch_angle
-
-
 def pack_dict_into_dataclass(dict_: Dict, dataclass_: dataclass) -> dataclass:
     loaded_dict = {}
     fields = {f.name: f.type for f in dataclasses.fields(dataclass_)}
     for k, v in dict_.items():
         loaded_dict[k] = (lambda: v, lambda: pack_dict_into_dataclass(v, Member))[fields[k] == Member]()
     return dataclass_(**loaded_dict)
+
+
+def yaw(m: IMUTrace) -> float:
+    return m.yaw_angle
+
+
+def pitch(m: IMUTrace) -> float:
+    return m.pitch_angle
 
 
 def latitude(y: GPSEvent) -> float:
@@ -283,7 +273,7 @@ def tx_rx_distance_3d(tx: GPSEvent, rx: GPSEvent) -> float:
     return np.sqrt(np.square(tx_rx_distance_2d(tx, rx)) + np.square(alt_tx - alt_rx))
 
 
-def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> List[float]:
+def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> Tuple:
     y1_lat, y1_lon, y1_alt = latitude(y1), longitude(y1), altitude(y1)
     y2_lat, y2_lon, y2_alt = latitude(y2), longitude(y2), altitude(y2)
 
@@ -307,7 +297,7 @@ def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> List[flo
         pitch_calc *= np.dot(pitch_calc,
                              (lambda: 5.0, lambda: -5.0)[pitch_calc < 0.0]()) / np.dot(pitch_calc, pitch_calc)
 
-    return [np.abs(yaw(m) - yaw_calc), np.abs(pitch(m) - pitch_calc)]
+    return np.abs(yaw(m) - yaw_calc), np.abs(pitch(m) - pitch_calc)
 
 
 def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) -> float:
@@ -401,11 +391,8 @@ def rms_direction_spread(pdp: PDPSegment, is_aod=True) -> float:
                                                     mu_omega)) * p_vec[i_mpc] for i_mpc in range(pdp.n_mpcs)]))
 
 
-def estimate_mpc_parameters(rx_samples: np.array) -> List[MPCParameters]:
-    """
-    SAGE Algorithm
-    """
-    return [MPCParameters()]
+def estimate_mpc_parameters(rx_samples: np.array) -> Tuple:
+    pass
 
 
 """
@@ -441,7 +428,6 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
         if line_num % 18 == 0:
             seq_number = int(re.search(r'\d+', line)[0])
         elif (line_num - 3) % 18 == 0:
-            # noinspection RegExpAnonymousGroup
             timestamp = timestamp_0 + datetime.timedelta(seconds=float(re.search(r'[+-]?\d+(\.\d+)?', line)[0]))
         elif (line_num - 11) % 18 == 0 and timestamp >= timestamp_ref:
             num_samples = int(re.search(r'\d+', line)[0])
@@ -452,20 +438,21 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
         if segment_done:
             segment_done = False
             raw_rx_samples = np.fromfile(pdp_samples_file,
-                                         offset=seq_number * num_samples,
-                                         count=num_samples, dtype=np.csingle)
+                                         offset=seq_number * num_samples, count=num_samples, dtype=np.csingle)
 
             if np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > min_threshold:
                 continue
 
             processed_rx_samples = process_rx_samples(raw_rx_samples)
             n_mpcs, mpc_parameters = estimate_mpc_parameters(processed_rx_samples)
+
             pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp),
                                            num_samples=num_samples, raw_rx_samples=raw_rx_samples,
                                            processed_rx_samples=processed_rx_samples, n_mpcs=n_mpcs,
                                            correlation_peak=-np.inf, mpc_parameters=mpc_parameters))
 
-# Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps
+''' Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps '''
+
 for rx_gps_event in rx_gps_events:
     seq_number, timestamp = rx_gps_event.seq_number, rx_gps_event.timestamp
 
