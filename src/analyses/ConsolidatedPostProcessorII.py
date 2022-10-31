@@ -42,6 +42,7 @@ Copyright (c) 2022. All Rights Reserved.
 import os
 import re
 import json
+import plotly
 import requests
 import datetime
 import dataclasses
@@ -57,6 +58,7 @@ import sk_dsp_comm.fir_design_helper as fir_d
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
+distns, alignments, velocities = [], [], []
 pi, c, rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = np.pi, constants.c, [], [], [], [], []
 decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
 
@@ -161,6 +163,7 @@ tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
 rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 sc_distance_png, sc_alignment_png = 'sc_distance.png', 'sc_alignment.png'
 delay_spread_png, direction_spread_png = 'delay_spread.png', 'direction_spread.png'
+plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
@@ -222,11 +225,11 @@ class Pod:
     tx_imu_trace: IMUTrace = IMUTrace()
     rx_imu_trace: IMUTrace = IMUTrace()
     pdp_segment: PDPSegment = PDPSegment()
-    tx_rx_distance_2d: float = 0.0
-    tx_rx_distance_3d: float = 0.0
-    tx_rx_alignment: float = 0.0
     tx_elevation: float = 0.0
     rx_elevation: float = 0.0
+    tx_rx_alignment: float = 0.0
+    tx_rx_distance_2d: float = 0.0
+    tx_rx_distance_3d: float = 0.0
 
 
 """
@@ -332,7 +335,7 @@ def elevation(y: GPSEvent) -> float:
     return abs(alt - requests.get(base_epqs_url.format(lat, lon)).json()[epqs_kw][eq_kw][e_kw])
 
 
-def process_rx_samples(x: np.array) -> np.array:
+def process_rx_samples(x: np.array) -> Tuple:
     fs = sample_rate
     t_mul, t_len = time_windowing_config.values()
     f_pass, f_stop, d_pass, d_stop = prefilter_config.values()
@@ -356,7 +359,12 @@ def process_rx_samples(x: np.array) -> np.array:
                      np.array(rel_range)).astype(dtype=int)]
     th_min, th_max = np.array([-1, 1]) * ne_mul * np.std(samps_) + np.mean(samps_)
     thresholder = np.vectorize(lambda s: 0 + 0j if (s > th_min) and (s < th_max) else s)
-    return thresholder(samps)
+    return n_samples, thresholder(samps)
+
+
+# Correlation peak in the processed rx_samples
+def correlation_peak(n: int, x: np.array) -> float:
+    return max(np.fft.fft(x) / n)
 
 
 # See Visualizations-I: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
@@ -391,7 +399,14 @@ def rms_direction_spread(pdp: PDPSegment, is_aod=True) -> float:
                                                     mu_omega)) * p_vec[i_mpc] for i_mpc in range(pdp.n_mpcs)]))
 
 
-def estimate_mpc_parameters(rx_samples: np.array) -> Tuple:
+# Relative drop in correlation peak between the two 'consecutive' PDPSegments (...Pods)
+#   Increasing Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity | corr_: previous | corr: current
+def relcorr_drop(pdp_: PDPSegment, pdp: PDPSegment) -> float:
+    corr_, corr = pdp_.correlation_peak, pdp.correlation_peak
+    return (corr - corr_) / corr_
+
+
+def estimate_mpc_parameters(x: np.array) -> Tuple:
     pass
 
 
@@ -443,13 +458,13 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
             if np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > min_threshold:
                 continue
 
-            processed_rx_samples = process_rx_samples(raw_rx_samples)
+            num_samples, processed_rx_samples = process_rx_samples(raw_rx_samples)
             n_mpcs, mpc_parameters = estimate_mpc_parameters(processed_rx_samples)
 
             pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp),
-                                           num_samples=num_samples, raw_rx_samples=raw_rx_samples,
-                                           processed_rx_samples=processed_rx_samples, n_mpcs=n_mpcs,
-                                           correlation_peak=-np.inf, mpc_parameters=mpc_parameters))
+                                           correlation_peak=correlation_peak(num_samples, processed_rx_samples),
+                                           num_samples=num_samples, raw_rx_samples=raw_rx_samples, n_mpcs=n_mpcs,
+                                           processed_rx_samples=processed_rx_samples, mpc_parameters=mpc_parameters))
 
 ''' Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps '''
 
@@ -471,3 +486,26 @@ for rx_gps_event in rx_gps_events:
                     tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
                     pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event),
                     tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, tx_imu_trace, rx_imu_trace)))
+
+"""
+CORE VISUALIZATIONS-I: Spatial decoherence analyses 
+"""
+
+pods_acc = sorted(pods, key=lambda pod: pod.tx_rx_alignment)
+pods_dist = sorted(pods, key=lambda pod: pod.tx_rx_distance_3d)
+
+tuples_vel = [(pods_dist[0], 0.0)]
+for i in range(len(pods_dist) - 1):
+    podd_, podd = pods_dist[i], pods_dist[i + 1]
+    tuples_vel.append((podd, tx_rx_relative_velocity(podd_.tx_gps_event, podd.tx_gps_event,
+                                                     podd_.rx_gps_event, podd.rx_gps_event)))
+
+pods_vel = sorted(tuples_vel, key=lambda tuple_vel: tuple_vel[1])
+
+for i in range(len(pods_dist) - 1):
+    poda_, poda = pods_acc[i], pods_acc[i + 1]
+    podv_, podv = pods_vel[i], pods_vel[i + 1]
+    podd_, podd = pods_dist[i], pods_dist[i + 1]
+    velocities.append({podv[1] - podv_[1]: relcorr_drop(podv_[0].pdp_segment, podv[0].pdp_segment)})
+    alignments.append({poda.tx_rx_alignment - poda_.tx_rx_alignment: relcorr_drop(poda_.pdp_segment, poda.pdp_segment)})
+    distns.append({podd.tx_rx_distance_3d - podd_.tx_rx_distance_3d: relcorr_drop(podd_.pdp_segment, podd.pdp_segment)})

@@ -40,12 +40,13 @@ from enum import Enum
 from pyproj import Proj
 from geopy import distance
 from scipy import constants
-from typing import Tuple, Dict
+import plotly.graph_objs as go
 from bokeh.plotting import gmap
 from bokeh.io import export_png
 from bokeh.palettes import brewer
 from collections import namedtuple
 from scipy import signal, integrate
+from typing import List, Tuple, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
@@ -54,6 +55,7 @@ from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMap
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
+distns, pls = [], []
 pi, c = np.pi, constants.speed_of_light
 deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
 linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
@@ -187,7 +189,7 @@ class Pod:
     rx_power: float = 0.0
     tx_ant_gain: float = 0.0
     rx_ant_gain: float = 0.0
-    pathloss: Dict = field(default_factory=lambda: {pl_model.value: 0.0 for pl_model in PathlossApproaches})
+    pathloss: List = field(default_factory=lambda: [0.0 for _ in PathlossApproaches])
 
 
 """
@@ -240,8 +242,10 @@ CORE ROUTINES
 def pack_dict_into_dataclass(dict_: Dict, dataclass_: dataclass) -> dataclass:
     loaded_dict = {}
     fields = {f.name: f.type for f in dataclasses.fields(dataclass_)}
+
     for k, v in dict_.items():
         loaded_dict[k] = (lambda: v, lambda: pack_dict_into_dataclass(v, Member))[fields[k] == Member]()
+
     return dataclass_(**loaded_dict)
 
 
@@ -335,7 +339,7 @@ def process_rx_samples(x: np.array) -> Tuple:
 
 def compute_rx_power(n: int, x: np.array) -> float:
     # PSD Evaluation: Received signal power computation (calibration or campaign)
-    fs, pwr_values = sample_rate, np.square(np.abs(np.fft.fft(x))) / n
+    fs, pwr_values = sample_rate, np.square(np.fft.fft(x)) / n
     freq_values = np.fft.fftfreq(n, (1 / fs))
     indices = np.argsort(freq_values)
 
@@ -383,6 +387,7 @@ def compute_antenna_gain(y: GPSEvent, m: IMUTrace, is_tx=True) -> float:
 
     az_amps0 = interp1d(az_angles, az_amps_norm)(azs0)
     el_amps0 = interp1d(el_angles, el_amps_norm)(els0)
+
     return decibel_1(((az_amps0 * abs(ys)) + (el_amps0 * abs(zs))) / (abs(ys) + abs(zs)))
 
 
@@ -555,8 +560,8 @@ for gps_event in gps_events:
     if rx_power == -np.inf:
         continue
 
-    pathloss = {0: pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power),
-                1: pathloss_3gpp_tr38901(gps_event), 2: pathloss_itur_m2135(gps_event)}
+    pathloss = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power),
+                pathloss_3gpp_tr38901(gps_event), pathloss_itur_m2135(gps_event)]
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     gps_event=gps_event, pdp_segment=pdp_segment,
@@ -564,8 +569,32 @@ for gps_event in gps_events:
                     tx_ant_gain=tx_ant_gain, rx_ant_gain=rx_ant_gain, elevation=elevation(gps_event),
                     pathloss=pathloss, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
 
+
 """
-CORE VISUALIZATIONS-I: Received power maps & Pathloss maps
+CORE VISUALIZATIONS-I: 3D Antenna Patterns
+"""
+
+amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
+az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
+el_vals = np.transpose(np.array([el_angles, np.zeros(el_angles.shape)]))
+
+min_amp_db = np.min(amp_db_vals)
+ramp_db_vals = amp_db_vals - min_amp_db
+
+# np.array deg2rad broadcast ops are faster here...
+z_vals = ramp_db_vals * np.sin(np.deg2rad(el_vals))
+x_vals = ramp_db_vals * np.cos(np.deg2rad(el_vals)) * np.sin(360.0 - np.deg2rad(az_vals))
+y_vals = ramp_db_vals * np.cos(np.deg2rad(el_vals)) * np.cos(360.0 - np.deg2rad(az_vals))
+
+ap_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_vals,
+                                                       surfacecolor=ramp_db_vals)],
+                                      layout=go.Layout(title='3D Antenna Radiation Pattern',
+                                                       xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
+                                                       yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
+print('SPAVE-28G | Consolidated Processing-I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap_url))
+
+"""
+CORE VISUALIZATIONS-II: Received power maps & Pathloss maps
 """
 
 google_maps_options = GMapOptions(lat=latitude(map_central),
@@ -605,3 +634,21 @@ pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
 
 export_png(rx_figure, filename=''.join([output_dir, rx_pwr_png]), timeout=timeout)
 export_png(pl_figure, filename=''.join([output_dir, pathloss_png]), timeout=timeout)
+
+"""
+CORE VISUALIZATIONS-III: Pathloss v Distance curves
+"""
+
+pld_traces, pld_layout = [], dict(title=r'Pathloss v Distance',
+                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title=r'Tx-Rx 3D Distance (in m)'))
+
+for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
+    pls.append(pl_pod.pathloss)
+    distns.append(pl_pod.distance_3d)
+
+y_vals = np.array(pls)
+x_vals = np.array(distns)
+[pld_traces.append(go.Scatter(x=x_vals, y=y_vals[:, app.value], mode='lines+markers')) for app in PathlossApproaches]
+
+pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout))
+print('SPAVE-28G | Consolidated Processing-I | Pathloss v Distance Plot: {}'.format(pld_url))
