@@ -201,8 +201,8 @@ comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp'
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
 tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
 rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-az_pat_3d_png, el_pat_3d_png = 'az-antenna-pattern-3d.png', 'el-antenna-pattern-3d.png'
-rx_pwr_png, pathloss_png = 'urban-campus-II-pathloss.png', 'urban-campus-II-rx-power.png'
+ant_pat_3d_png, pl_dist_png = 'antenna_pattern_3d.png', 'pathloss_distance.png'
+rx_pwr_png, pathloss_png = 'urban_campus_II_pathloss.png', 'urban_campus_II_rx_power.png'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
 cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration', 'u76_', '_samples.log'
@@ -639,8 +639,8 @@ export_png(pl_figure, filename=''.join([output_dir, pathloss_png]), timeout=time
 CORE VISUALIZATIONS-III: Pathloss v Distance curves
 """
 
-pld_traces, pld_layout = [], dict(title=r'Pathloss v Distance',
-                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title=r'Tx-Rx 3D Distance (in m)'))
+pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
+                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx 3D Distance (in m)'))
 
 for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
     pls.append(pl_pod.pathloss)
@@ -650,5 +650,5 @@ y_vals = np.array(pls)
 x_vals = np.array(distns)
 [pld_traces.append(go.Scatter(x=x_vals, y=y_vals[:, app.value], mode='lines+markers')) for app in PathlossApproaches]
 
-pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout))
+pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
 print('SPAVE-28G | Consolidated Processing-I | Pathloss v Distance Plot: {}'.format(pld_url))
