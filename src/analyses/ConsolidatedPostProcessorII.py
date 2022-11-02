@@ -157,24 +157,48 @@ class IMUTrace:
 CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
 """
 
+''' urban-campus-II route '''
+rms_delay_spread_png = 'uc_rms_delay_spread.png'
 comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
 rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
 tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
 rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-delay_spread_png, direction_spread_png = 'delay_spread.png', 'direction_spread.png'
-plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
-sc_distance_png, sc_alignment_png, sc_velocity_png = 'sc_distance.png', 'sc_alignment.png', 'sc_velocity.png'
-pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
+aod_rms_dir_spread_png, aoa_rms_dir_spread_png = 'uc_aod_rms_dir_spread.png', 'uc_aoa_rms_dir_spread.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_distance.png', 'uc_sc_alignment.png', 'uc_sc_velocity.png'
 
+''' urban-vegetation route '''
+# rms_delay_spread_png = 'uv_rms_delay_spread.png'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+# output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# aod_rms_dir_spread_png, aoa_rms_dir_spread_png = 'uv_aod_rms_dir_spread.png', 'uv_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uv_sc_distance.png', 'uv_sc_alignment.png', 'uv_sc_velocity.png'
+
+''' suburban-fraternities route '''
+# rms_delay_spread_png = 'sf_rms_delay_spread.png'
+# comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# aod_rms_dir_spread_png, aoa_rms_dir_spread_png = 'sf_aod_rms_dir_spread.png', 'sf_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
+
+''' Tx GPSEvent (Rooftop-mounted | William Browning Building) '''
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
+''' Generic configurations '''
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
 tx_fc, rx_fc_, pn_v0, pn_l, pn_m, max_mpcs = 400e6, 399.95e6, 5.0, 2047, 11, 30
+plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
+pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
@@ -193,9 +217,6 @@ class MPCParameters:
     aoa_elevation: float = 0.0
     doppler_shift: float = 0.0
     profile_point_power: float = 0.0
-    rms_delay_spread: float = 0.0
-    rms_tx_direction_spread: float = 0.0
-    rms_rx_direction_spread: float = 0.0
 
 
 @dataclass(order=True)
@@ -231,8 +252,9 @@ class Pod:
     tx_rx_alignment: float = 0.0
     tx_rx_distance_2d: float = 0.0
     tx_rx_distance_3d: float = 0.0
-    delay_spread: float = 0.0
-    direction_spread: float = 0.0
+    rms_delay_spread: float = 0.0
+    aod_rms_dir_spread: float = 0.0
+    aoa_rms_dir_spread: float = 0.0
 
 
 """
@@ -488,13 +510,15 @@ for rx_gps_event in rx_gps_events:
                                                         datetime.datetime.strptime(x.timestamp, datetime_format)))
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
+                    rms_delay_spread=rms_delay_spread(pdp_segment),
                     tx_gps_event=tx_gps_event, tx_imu_trace=tx_imu_trace,
                     rx_gps_event=rx_gps_event, rx_imu_trace=rx_imu_trace,
+                    aod_rms_dir_spread=rms_direction_spread(pdp_segment),
+                    aoa_rms_dir_spread=rms_direction_spread(pdp_segment, False),
                     tx_rx_distance_2d=tx_rx_distance_2d(tx_gps_event, rx_gps_event),
                     tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
                     tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, tx_imu_trace, rx_imu_trace),
-                    pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event),
-                    delay_spread=rms_delay_spread(pdp_segment), direction_spread=rms_direction_spread(pdp_segment)))
+                    pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event)))
 
 """
 CORE VISUALIZATIONS-I: Spatial decoherence analyses 
@@ -545,24 +569,35 @@ print('SPAVE-28G | Consolidated Processing-II | Spatial Consistency Analysis vis
 CORE VISUALIZATIONS-II: RMS delay spread and RMS direction spread
 """
 
-delay_spreads = np.array([pod.delay_spread for pod in pods])
-direction_spreads = np.array([pod.direction_spread for pod in pods])
+rms_delay_spreads = np.array([pod.rms_delay_spread for pod in pods])
+aod_rms_dir_spreads = np.array([pod.aod_rms_dir_spread for pod in pods])
+aoa_rms_dir_spreads = np.array([pod.aoa_rms_dir_spread for pod in pods])
 
-delay_spread_pdf = delay_spreads / np.sum(delay_spreads)
-direction_spread_pdf = direction_spreads / np.sum(direction_spreads)
+rms_delay_spread_pdf = rms_delay_spreads / np.sum(rms_delay_spreads)
+aod_rms_dir_spread_pdf = aod_rms_dir_spreads / np.sum(aod_rms_dir_spreads)
+aoa_rms_dir_spread_pdf = aoa_rms_dir_spreads / np.sum(aoa_rms_dir_spreads)
 
-ds_layout = dict(xaxis=dict(title='RMS Delay Spreads (x)'),
-                 title='RMS Delay Spread Cumulative Distribution Function',
-                 yaxis=dict(title=r'CDF Probability \mathbb{P}(S(\tau){\leq}x)'))
-ds_trace = go.Scatter(x=delay_spread_pdf, y=np.cumsum(delay_spread_pdf), mode='lines+markers')
+rms_ds_layout = dict(xaxis=dict(title='RMS Delay Spreads (x)'),
+                     title='RMS Delay Spread Cumulative Distribution Function',
+                     yaxis=dict(title=r'CDF Probability \mathbb{P}(S(\tau){\leq}x)'))
+rms_ds_trace = go.Scatter(x=rms_delay_spread_pdf, y=np.cumsum(rms_delay_spread_pdf), mode='lines+markers')
 
-dirs_layout = dict(xaxis=dict(title='RMS Direction Spreads (x)'),
-                   title='RMS Direction Spread Cumulative Distribution Function',
-                   yaxis=dict(title=r'CDF Probability \mathbb{P}(\sigma_{\Omega}{\leq}x)'))
-dirs_trace = go.Scatter(x=direction_spread_pdf, y=np.cumsum(direction_spread_pdf), mode='lines+markers')
+aod_rms_dirs_layout = dict(xaxis=dict(title='RMS AoD Direction Spreads (x)'),
+                           title='RMS AoD Direction Spread Cumulative Distribution Function',
+                           yaxis=dict(title=r'CDF Probability \mathbb{P}(\sigma_{\Omega}{\leq}x)'))
+aod_rms_dirs_trace = go.Scatter(x=aod_rms_dir_spread_pdf, y=np.cumsum(aod_rms_dir_spread_pdf), mode='lines+markers')
 
-ds_url = plotly.plotly.plot(dict(data=[ds_trace], layout=ds_layout), filename=delay_spread_png)
-dirs_url = plotly.plotly.plot(dict(data=[dirs_trace], layout=dirs_layout), filename=direction_spread_png)
+aoa_rms_dirs_layout = dict(xaxis=dict(title='RMS AoA Direction Spreads (x)'),
+                           title='RMS AoA Direction Spread Cumulative Distribution Function',
+                           yaxis=dict(title=r'CDF Probability \mathbb{P}(\sigma_{\Omega}{\leq}x)'))
+aoa_rms_dirs_trace = go.Scatter(x=aoa_rms_dir_spread_pdf, y=np.cumsum(aoa_rms_dir_spread_pdf), mode='lines+markers')
 
-print('SPAVE-28G | Consolidated Processing-II | RMS Delay Spread Cumulative Distribution Function: {}'.format(ds_url))
-print('SPAVE-28G | Consolidated Processing-II | RMS Dir Spread Cumulative Distribution Function: {}'.format(dirs_url))
+aod_rms_dirs_url = plotly.plotly.plot(dict(data=[aod_rms_dirs_trace],
+                                           layout=aod_rms_dirs_layout), filename=aod_rms_dir_spread_png)
+aoa_rms_dirs_url = plotly.plotly.plot(dict(data=[aoa_rms_dirs_trace],
+                                           layout=aoa_rms_dirs_layout), filename=aoa_rms_dir_spread_png)
+rms_ds_url = plotly.plotly.plot(dict(data=[rms_ds_trace], layout=rms_ds_layout), filename=rms_delay_spread_png)
+
+print('SPAVE-28G | Consolidated Processing-II | RMS Delay Spread CDF: {}'.format(rms_ds_url))
+print('SPAVE-28G | Consolidated Processing-II | RMS AoD Direction Spread CDF: {}'.format(aod_rms_dirs_url))
+print('SPAVE-28G | Consolidated Processing-II | RMS AoA Direction Spread CDF: {}'.format(aoa_rms_dirs_url))

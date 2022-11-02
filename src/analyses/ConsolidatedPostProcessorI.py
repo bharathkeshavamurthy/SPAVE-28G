@@ -195,17 +195,41 @@ class Pod:
 """
 CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenna pattern logs
 """
+
+''' urban-campus-II route '''
 ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
-gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps'
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp'
+gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
 tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
 rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-ant_pat_3d_png, pl_dist_png = 'antenna_pattern_3d.png', 'pathloss_distance.png'
 rx_pwr_png, pathloss_png = 'urban_campus_II_pathloss.png', 'urban_campus_II_rx_power.png'
+ant_pat_3d_png, pl_dist_png = 'antenna_pattern_3d.png', 'urban_campus_II_pathloss_distance.png'
+
+''' urban-vegetation route '''
+# ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+# output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# rx_pwr_png, pathloss_png = 'urban_vegetation_pathloss.png', 'urban_vegetation_rx_power.png'
+# ant_pat_3d_png, pl_dist_png = 'antenna_pattern_3d.png', 'urban_vegetation_pathloss_distance.png'
+
+''' suburban-fraternities route '''
+# ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
+# output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+# gps_dir = 'D:/SPAVE-28G/analyses/suburban_fraternities/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/suburban_fraternities/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban_fraternities/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban_fraternities/rx-realm/imu/'
+# rx_pwr_png, pathloss_png = 'suburban_fraternities_pathloss.png', 'suburban_fraternities_rx_power.png'
+# ant_pat_3d_png, pl_dist_png = 'antenna_pattern_3d.png', 'suburban_fraternities_pathloss_distance.png'
+
+''' Generic configurations '''
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
-cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration', 'u76_', '_samples.log'
+cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
 
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
