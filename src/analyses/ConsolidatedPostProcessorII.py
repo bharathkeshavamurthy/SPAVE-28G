@@ -45,22 +45,29 @@ import json
 import plotly
 import requests
 import datetime
+import scipy.io
 import dataclasses
 import numpy as np
 from enum import Enum
+from pyproj import Proj
 from scipy import signal
 from geopy import distance
 from scipy import constants
 from typing import Tuple, Dict
 import plotly.graph_objs as go
+from collections import namedtuple
+from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
 
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-distns, alignments, velocities = [], [], []
-pi, c, rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = np.pi, constants.c, [], [], [], [], []
+pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
+deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
+linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
+rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = [], [], [], [], []
+pattern = namedtuple('pattern', ['angles', 'amplitudes', 'amplitudes_db', 'angles_hpbw', 'powers_hpbw', 'hpbw'])
 decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
 
 """
@@ -159,6 +166,7 @@ CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
 
 ''' urban-campus-II route '''
 rms_delay_spread_png = 'uc_rms_delay_spread.png'
+ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
 comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
 rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
@@ -192,14 +200,15 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 ''' Generic configurations '''
+lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
-min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
-tx_fc, rx_fc_, pn_v0, pn_l, pn_m, max_mpcs = 400e6, 399.95e6, 5.0, 2047, 11, 30
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
+tx_fc, rx_fc, pn_v0, pn_l, pn_m, wlength, n_sigma, max_ant_gain = 400e6, 399.95e6, 0.5, 11, 2047, c / 28e9, 0.015, 22.0
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
+min_threshold, sample_rate, datetime_format, pn_reps, max_mpcs = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f', int(pn_m / pn_l), 100
 
 """
 INITIALIZATIONS-III: Enumerations & Dataclasses (Temps | Outputs)
@@ -211,8 +220,6 @@ class MPCParameters:
     path_number: int = 0
     attenuation: float = 0.0
     delay: float = 0.0
-    aod_azimuth: float = 0.0
-    aod_elevation: float = 0.0
     aoa_azimuth: float = 0.0
     aoa_elevation: float = 0.0
     doppler_shift: float = 0.0
@@ -234,8 +241,6 @@ class PDPSegment:
     raw_rx_samples: np.array = np.array([], dtype=np.csingle)
     processed_rx_samples: np.array = np.array([], dtype=np.csingle)
     correlation_peak: float = 0.0
-    n_mpcs: int = max_mpcs
-    mpc_parameters: Tuple[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
 
 
 @dataclass(order=True)
@@ -246,15 +251,16 @@ class Pod:
     rx_gps_event: GPSEvent = GPSEvent()
     tx_imu_trace: IMUTrace = IMUTrace()
     rx_imu_trace: IMUTrace = IMUTrace()
-    pdp_segment: PDPSegment = PDPSegment()
     tx_elevation: float = 0.0
     rx_elevation: float = 0.0
     tx_rx_alignment: float = 0.0
     tx_rx_distance_2d: float = 0.0
     tx_rx_distance_3d: float = 0.0
+    pdp_segment: PDPSegment = PDPSegment()
+    n_mpcs: int = max_mpcs
+    mpc_parameters: Tuple[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
     rms_delay_spread: float = 0.0
-    aod_rms_dir_spread: float = 0.0
-    aoa_rms_dir_spread: float = 0.0
+    rms_aoa_dir_spread: float = 0.0
 
 
 """
@@ -362,6 +368,14 @@ def elevation(y: GPSEvent) -> float:
     return abs(alt - requests.get(base_epqs_url.format(lat, lon)).json()[epqs_kw][eq_kw][e_kw])
 
 
+def cart2sph(x: float, y: float, z: float) -> Tuple:
+    return np.sqrt((x ** 2) + (y ** 2) + (z ** 2)), np.arctan2(z, np.sqrt((x ** 2) + (y ** 2))), np.arctan2(y, x)
+
+
+def sph2cart(r: float, phi: float, theta: float) -> Tuple:
+    return r * np.sin(theta) * np.cos(phi), r * np.sin(theta) * np.sin(phi), r * np.cos(theta)
+
+
 def process_rx_samples(x: np.array) -> Tuple:
     fs = sample_rate
     t_mul, t_len = time_windowing_config.values()
@@ -396,11 +410,10 @@ def correlation_peak(n: int, x: np.array) -> float:
 
 
 # See Visualizations-I: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
-def rms_delay_spread(pdp: PDPSegment) -> float:
+def rms_delay_spread(mpcs: Tuple[MPCParameters]) -> float:
     num, den = [], []
 
-    for i_mpc in range(pdp.n_mpcs):
-        mpc = pdp.mpc_parameters[i_mpc]
+    for mpc in mpcs:
         tau, p_tau = mpc.delay, mpc.profile_point_power
         num.append(np.square(tau) * p_tau)
         den.append(p_tau)
@@ -410,23 +423,20 @@ def rms_delay_spread(pdp: PDPSegment) -> float:
 
 
 # See Visualizations-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5956639]
-def rms_direction_spread(pdp: PDPSegment, is_aod=True) -> float:
+def rms_direction_spread(mpcs: Tuple[MPCParameters]) -> float:
     e_vecs, p_vec, mu_vec = [], [], []
 
-    for i_mpc in range(pdp.n_mpcs):
-        mpc = pdp.mpc_parameters[i_mpc]
+    for i_mpc in range(len(mpcs)):
+        mpc = mpcs[i_mpc]
         p = mpc.profile_point_power
-        if is_aod:
-            phi, theta = mpc.aod_azimuth, mpc.aod_elevation
-        else:
-            phi, theta = mpc.aoa_azimuth, mpc.aoa_elevation
+        phi, theta = mpc.aoa_azimuth, mpc.aoa_elevation
         e_vecs.append(np.array([np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]))
         mu_vec.append(p * e_vecs[i_mpc])
         p_vec.append(p)
 
     mu_omega = np.sum(mu_vec)
     return np.sqrt(np.sum([np.square(np.linalg.norm(e_vecs[i_mpc] -
-                                                    mu_omega)) * p_vec[i_mpc] for i_mpc in range(pdp.n_mpcs)]))
+                                                    mu_omega)) * p_vec[i_mpc] for i_mpc in range(len(mpcs))]))
 
 
 # Relative drop in correlation peak between the two 'consecutive' PDPSegments (...Pods)
@@ -436,13 +446,132 @@ def relcorr_drop(pdp_: PDPSegment, pdp: PDPSegment) -> float:
     return (corr - corr_) / corr_
 
 
-def estimate_mpc_parameters(x: np.array) -> Tuple:
-    pass
+# SAGE Algorithm
+# See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=753729]
+# Also see: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6901837]
+def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> Tuple:
+    f_c, _f_c = tx_fc, rx_fc
+    f_s, n_std = sample_rate, n_sigma
+    v_0, l_, k_ = pn_v0, pn_l, pn_reps
+    y_f = np.square(np.fft.fft(x)) / n
+    fs = np.argsort(np.fft.fftfreq(n, (1 / f_s)))
+    n_f = (n_std * np.random.randn(fs.shape[0], )).view(np.csingle)
+
+    # Parameter initialization
+    nus = np.array([0.0 for _ in range(max_mpcs)])
+    phis = np.array([0.0 for _ in range(max_mpcs)])
+    taus = np.array([0.0 for _ in range(max_mpcs)])
+    thetas = np.array([0.0 for _ in range(max_mpcs)])
+    alphas = np.array([complex(0.0, 0.0) for _ in range(max_mpcs)])
+
+    def flip(a: int) -> int:
+        return 1 if a == -1 else -1
+
+    def sinc(z: float) -> float:
+        return np.sin(pi * z) / (pi * z)
+
+    # Baseband signal component post-convolution in the frequency domain
+    def signal_component(tau_l: float, nu_l: float) -> Tuple:
+        f_shifts = []
+        sig_sum = complex(0.0, 0.0)
+        for k in range(k_):
+            for _k in range(k_):
+                f_shift = (((f_c * k) + (_f_c * _k)) / l_) + nu_l
+                c_theta = -((2.0 * pi * f_c * (k / l_) * tau_l) + (pi * ((k + _k) / l_)))
+
+                pn_sum = complex(0.0, 0.0)
+                for i_l in range(l_):
+                    a_i = 1
+                    for _i_l in range(l_):
+                        _a_i = 1
+                        _c_theta = -(pi * (((k * i_l) + (_k * _i_l)) / l_))
+                        pn_sum += ((2 * a_i) - 1) * ((2 * _a_i) - 1) * complex(np.cos(_c_theta), np.sin(_c_theta))
+                        flip(_a_i)
+                    flip(a_i)
+
+                f_shifts.append(f_shift)
+                sig_sum += pn_sum * sinc(k / l_) * sinc(_k / l_) * complex(np.cos(c_theta), np.sin(c_theta))
+
+        return f_shifts, np.square(v_0 / l_) * sig_sum
+
+    # Complex gaussian noise component post-convolution in the frequency domain
+    def noise_component() -> Tuple:
+        f_shifts = []
+        n_sum = complex(0.0, 0.0)
+        f_idxs = [_ for _ in range(fs.shape[0])]
+        for k in range(k_):
+            for _k in range(k_):
+                f_shift = ((f_c * k) + (_f_c * _k)) / l_
+                idx_f = min(f_idxs, key=lambda idx: abs(f_shift - fs[idx]))
+
+                pn_sum = complex(0.0, 0.0)
+                for i_l in range(l_):
+                    a_i = 1
+                    pn_sum += ((2 * a_i) - 1) * complex(np.cos(pi * ((_k * i) / l_)), np.sin(pi * ((_k * i) / l_)))
+                    flip(a_i)
+
+                f_shifts.append(f_shift)
+                n_sum += pn_sum * n_f[idx_f] * sinc(k / l_) * complex(np.cos(pi * (_k / l_)), np.sin(pi * (_k / l_)))
+
+        return f_shifts, (v_0 / l_) * n_sum
+
+    # See [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=753729]
+    # Angle-of-Arrival (AoA | azimuth & elevation) pattern at the Rx for signal (p) computation within SAGE
+    def compute_steering(phi_l: float, theta_l: float) -> complex:
+        az0, el0 = deg2rad(phi_l), deg2rad(theta_l)
+        tx_lat, tx_lon, tx_alt = latitude(tx), longitude(tx), altitude(tx)
+        rx_lat, rx_lon, rx_alt = latitude(rx), longitude(rx), altitude(rx)
+
+        tx_e, tx_n = lla_utm_proj(tx_lon, tx_lat)
+        rx_e, rx_n = lla_utm_proj(rx_lon, rx_lat)
+
+        x0, y0, z0, x, y, z = rx_n, -rx_e, rx_alt, tx_n, -tx_e, tx_alt
+
+        r1, az1, el1 = cart2sph(x - x0, y - y0, z - z0)
+
+        r21, r22, r23 = 0.0, 1.0, 0.0
+        r11, r12, r13 = sph2cart(0.0, 1.0, -el0)
+        r31, r32, r33 = sph2cart(0.0, 1.0, -el0 + (pi / 2.0))
+
+        x1, y1, z1 = sph2cart(r1, az1 - az0, el1)
+        f_arr = np.matmul(np.array([x1, y1, z1]), np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]]))
+
+        az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
+        xs, ys, zs = sph2cart(1.0, deg2rad(az), deg2rad(el))
+        azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
+        els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
+
+        az_amps_norm_db = az_amps_db - max(az_amps_db) + max_ant_gain
+        el_amps_norm_db = el_amps_db - max(el_amps_db) + max_ant_gain
+        az_amps_norm = np.array([linear_1(db) for db in az_amps_norm_db])
+        el_amps_norm = np.array([linear_1(db) for db in el_amps_norm_db])
+
+        az_amps0 = interp1d(az_angles, az_amps_norm)(azs0)
+        el_amps0 = interp1d(el_angles, el_amps_norm)(els0)
+
+        ld, pos_vec = wlength, np.array([xs, ys, zs])
+        f_aoa = ((az_amps0 * abs(ys)) + (el_amps0 * abs(zs))) / (abs(ys) + abs(zs))
+        e_vec = np.array([np.cos(phi_l) * np.sin(theta_l), np.sin(phi_l) * np.sin(theta_l), np.cos(theta_l)])
+
+        c_theta = 2.0 * pi * (1 / ld) * np.dot(e_vec, pos_vec)
+        return f_aoa * complex(np.cos(c_theta), np.sin(c_theta))
+
+    # Expectation of the log-likelihood component
+    def estep_component(l_idx: int, yf_s: np.array) -> np.array:
+        return yf_s - np.sum(np.array([compute_steering(phis[l_mpc], thetas[l_mpc]) *
+                                       alphas[l_mpc] * signal_component(taus[l_mpc], nus[l_mpc])[1]
+                                       for l_mpc in range(max_mpcs) if l_mpc != l_idx], dtype=np.csingle))
 
 
 """
 CORE OPERATIONS: Parsing the GPS, IMU, and PDP logs | SAGE estimation | Spatial consistency analysis setup
 """
+
+# Antenna Pattern
+log = scipy.io.loadmat(ant_log_file)
+az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
+az_angles, az_amps, az_amps_db = az_log.azs, az_log.amps, decibel_2(az_log.amps)
+el_angles, el_amps, el_amps_db = el_log.els, el_log.amps, decibel_2(el_log.amps)
 
 # Extract Rx gps_events
 for filename in os.listdir(rx_gps_dir):
@@ -489,12 +618,9 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
                 continue
 
             num_samples, processed_rx_samples = process_rx_samples(raw_rx_samples)
-            n_mpcs, mpc_parameters = estimate_mpc_parameters(processed_rx_samples)
-
-            pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp),
-                                           correlation_peak=correlation_peak(num_samples, processed_rx_samples),
-                                           num_samples=num_samples, raw_rx_samples=raw_rx_samples, n_mpcs=n_mpcs,
-                                           processed_rx_samples=processed_rx_samples, mpc_parameters=mpc_parameters))
+            pdp_segments.append(PDPSegment(seq_number=seq_number + 1, timestamp=str(timestamp), num_samples=num_samples,
+                                           raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples,
+                                           correlation_peak=correlation_peak(num_samples, processed_rx_samples)))
 
 ''' Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps '''
 
@@ -509,12 +635,14 @@ for rx_gps_event in rx_gps_events:
     rx_imu_trace = min(rx_imu_traces, key=lambda x: abs(datetime.datetime.strptime(timestamp, datetime_format) -
                                                         datetime.datetime.strptime(x.timestamp, datetime_format)))
 
+    mpc_parameters = estimate_mpc_parameters(tx_gps_event, rx_gps_event,
+                                             pdp_segment.num_samples, pdp_segment.processed_rx_samples)
+
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
-                    rms_delay_spread=rms_delay_spread(pdp_segment),
+                    rms_delay_spread=rms_delay_spread(mpc_parameters),
                     tx_gps_event=tx_gps_event, tx_imu_trace=tx_imu_trace,
                     rx_gps_event=rx_gps_event, rx_imu_trace=rx_imu_trace,
-                    aod_rms_dir_spread=rms_direction_spread(pdp_segment),
-                    aoa_rms_dir_spread=rms_direction_spread(pdp_segment, False),
+                    rms_aoa_dir_spread=rms_direction_spread(mpc_parameters),
                     tx_rx_distance_2d=tx_rx_distance_2d(tx_gps_event, rx_gps_event),
                     tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
                     tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, tx_imu_trace, rx_imu_trace),
@@ -570,34 +698,24 @@ CORE VISUALIZATIONS-II: RMS delay spread and RMS direction spread
 """
 
 rms_delay_spreads = np.array([pod.rms_delay_spread for pod in pods])
-aod_rms_dir_spreads = np.array([pod.aod_rms_dir_spread for pod in pods])
-aoa_rms_dir_spreads = np.array([pod.aoa_rms_dir_spread for pod in pods])
+rms_aoa_dir_spreads = np.array([pod.rms_aoa_dir_spread for pod in pods])
 
 rms_delay_spread_pdf = rms_delay_spreads / np.sum(rms_delay_spreads)
-aod_rms_dir_spread_pdf = aod_rms_dir_spreads / np.sum(aod_rms_dir_spreads)
-aoa_rms_dir_spread_pdf = aoa_rms_dir_spreads / np.sum(aoa_rms_dir_spreads)
+rms_aoa_dir_spread_pdf = rms_aoa_dir_spreads / np.sum(rms_aoa_dir_spreads)
 
 rms_ds_layout = dict(xaxis=dict(title='RMS Delay Spreads (x)'),
                      title='RMS Delay Spread Cumulative Distribution Function',
                      yaxis=dict(title=r'CDF Probability \mathbb{P}(S(\tau){\leq}x)'))
-rms_ds_trace = go.Scatter(x=rms_delay_spread_pdf, y=np.cumsum(rms_delay_spread_pdf), mode='lines+markers')
-
-aod_rms_dirs_layout = dict(xaxis=dict(title='RMS AoD Direction Spreads (x)'),
-                           title='RMS AoD Direction Spread Cumulative Distribution Function',
-                           yaxis=dict(title=r'CDF Probability \mathbb{P}(\sigma_{\Omega}{\leq}x)'))
-aod_rms_dirs_trace = go.Scatter(x=aod_rms_dir_spread_pdf, y=np.cumsum(aod_rms_dir_spread_pdf), mode='lines+markers')
-
-aoa_rms_dirs_layout = dict(xaxis=dict(title='RMS AoA Direction Spreads (x)'),
+rms_aoa_dirs_layout = dict(xaxis=dict(title='RMS AoA Direction Spreads (x)'),
                            title='RMS AoA Direction Spread Cumulative Distribution Function',
                            yaxis=dict(title=r'CDF Probability \mathbb{P}(\sigma_{\Omega}{\leq}x)'))
-aoa_rms_dirs_trace = go.Scatter(x=aoa_rms_dir_spread_pdf, y=np.cumsum(aoa_rms_dir_spread_pdf), mode='lines+markers')
 
-aod_rms_dirs_url = plotly.plotly.plot(dict(data=[aod_rms_dirs_trace],
-                                           layout=aod_rms_dirs_layout), filename=aod_rms_dir_spread_png)
-aoa_rms_dirs_url = plotly.plotly.plot(dict(data=[aoa_rms_dirs_trace],
-                                           layout=aoa_rms_dirs_layout), filename=aoa_rms_dir_spread_png)
+rms_ds_trace = go.Scatter(x=rms_delay_spread_pdf, y=np.cumsum(rms_delay_spread_pdf), mode='lines+markers')
+rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_pdf, y=np.cumsum(rms_aoa_dir_spread_pdf), mode='lines+markers')
+
+rms_aoa_dirs_url = plotly.plotly.plot(dict(data=[rms_aoa_dirs_trace],
+                                           layout=rms_aoa_dirs_layout), filename=aoa_rms_dir_spread_png)
 rms_ds_url = plotly.plotly.plot(dict(data=[rms_ds_trace], layout=rms_ds_layout), filename=rms_delay_spread_png)
 
 print('SPAVE-28G | Consolidated Processing-II | RMS Delay Spread CDF: {}'.format(rms_ds_url))
-print('SPAVE-28G | Consolidated Processing-II | RMS AoD Direction Spread CDF: {}'.format(aod_rms_dirs_url))
-print('SPAVE-28G | Consolidated Processing-II | RMS AoA Direction Spread CDF: {}'.format(aoa_rms_dirs_url))
+print('SPAVE-28G | Consolidated Processing-II | RMS AoA Direction Spread CDF: {}'.format(rms_aoa_dirs_url))

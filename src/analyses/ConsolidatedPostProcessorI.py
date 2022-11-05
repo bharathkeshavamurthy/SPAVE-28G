@@ -234,7 +234,7 @@ cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analys
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, dconv_gain = 28e9, 22.0, 5.0, -7.0, 13.4
+carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4
 h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 30.0, 15.39, 76.0, 2e6, 1e5
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
@@ -334,18 +334,18 @@ def hpbw(angles: np.array, amps: np.array, max_gain: float) -> Tuple:
 
 
 def process_rx_samples(x: np.array) -> Tuple:
-    fs = sample_rate
+    f_s = sample_rate
     t_mul, t_len = time_windowing_config.values()
     f_pass, f_stop, d_pass, d_stop = prefilter_config.values()
     ne_mul, min_peak_idx, n_min, n_max, rel_range, amp_threshold = noise_elimination_config.values()
 
     # Frequency Manipulation: Pre-filtering via a Low Pass Filter (LPF) [FIR filtering via SciPy-Scikit-Remez]
-    b = fir_d.fir_remez_lpf(fs=fs, f_pass=f_pass, f_stop=f_stop, d_pass=d_pass, d_stop=d_stop)
+    b = fir_d.fir_remez_lpf(fs=f_s, f_pass=f_pass, f_stop=f_stop, d_pass=d_pass, d_stop=d_stop)
     samps = signal.lfilter(b=b, a=1, x=x, axis=0)
 
     # Temporal Manipulation: Initial temporal truncation | Time-windowing
     samps = samps[t_len:] if samps.shape[0] > (4 * t_len) else samps
-    window_size, n_samples = int(fs * t_mul), samps.shape[0]
+    window_size, n_samples = int(f_s * t_mul), samps.shape[0]
     if n_samples > window_size:
         n_samples = window_size
         samps = samps[int(0.5 * n_samples) + (np.array([-1, 1]) * int(window_size / 2))]
@@ -363,8 +363,8 @@ def process_rx_samples(x: np.array) -> Tuple:
 
 def compute_rx_power(n: int, x: np.array) -> float:
     # PSD Evaluation: Received signal power computation (calibration or campaign)
-    fs, pwr_values = sample_rate, np.square(np.fft.fft(x)) / n
-    freq_values = np.fft.fftfreq(n, (1 / fs))
+    f_s, pwr_values = sample_rate, np.square(np.fft.fft(x)) / n
+    freq_values = np.fft.fftfreq(n, (1 / f_s))
     indices = np.argsort(freq_values)
 
     # Trapezoidal numerical integration to compute signal power at the Rx from the organized PSD data
@@ -423,6 +423,7 @@ def rx_ant_gain(y: Pod) -> float:
     return y.rx_ant_gain
 
 
+# SPAVE-28G | Project Odin | Compute pathlosses evaluated from the collected measurements
 def pathloss_spave28g_odin(t_gain: float, r_gain: float, rx_pwr: float) -> float:
     return tx_pwr + t_gain + r_gain + dconv_gain - rx_pwr
 
@@ -470,6 +471,7 @@ def pathloss_itur_m2135(y: GPSEvent) -> float:
     return max(pl_los, pl_nlos)
 
 
+# SPAVE-28G | Project Odin | Return pathlosses evaluated from the collected measurements
 def pathloss(y: Pod) -> float:
     return y.pathloss[0]
 
@@ -592,7 +594,6 @@ for gps_event in gps_events:
                     rx_power=rx_power, tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace,
                     tx_ant_gain=tx_ant_gain, rx_ant_gain=rx_ant_gain, elevation=elevation(gps_event),
                     pathloss=pathloss, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
-
 
 """
 CORE VISUALIZATIONS-I: 3D Antenna Patterns
