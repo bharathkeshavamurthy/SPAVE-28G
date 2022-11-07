@@ -46,8 +46,10 @@ import plotly
 import requests
 import datetime
 import scipy.io
+import functools
 import dataclasses
 import numpy as np
+import cvxpy as cp
 from enum import Enum
 from pyproj import Proj
 from scipy import signal
@@ -202,6 +204,8 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 ''' Generic configurations '''
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': 200000}
+solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e6), 1e-6, 1e-6, True
+delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 1e-3, 1e-6, 1e-3, 1e-3
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
@@ -218,12 +222,12 @@ INITIALIZATIONS-III: Enumerations & Dataclasses (Temps | Outputs)
 @dataclass(order=True)
 class MPCParameters:
     path_number: int = 0
-    attenuation: float = 0.0
     delay: float = 0.0
     aoa_azimuth: float = 0.0
     aoa_elevation: float = 0.0
     doppler_shift: float = 0.0
     profile_point_power: float = 0.0
+    attenuation: float = complex(0.0, 0.0)
 
 
 @dataclass(order=True)
@@ -426,17 +430,17 @@ def rms_delay_spread(mpcs: Tuple[MPCParameters]) -> float:
 def rms_direction_spread(mpcs: Tuple[MPCParameters]) -> float:
     e_vecs, p_vec, mu_vec = [], [], []
 
-    for i_mpc in range(len(mpcs)):
-        mpc = mpcs[i_mpc]
+    for _l_mpc in range(len(mpcs)):
+        mpc = mpcs[_l_mpc]
         p = mpc.profile_point_power
         phi, theta = mpc.aoa_azimuth, mpc.aoa_elevation
         e_vecs.append(np.array([np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)]))
-        mu_vec.append(p * e_vecs[i_mpc])
+        mu_vec.append(p * e_vecs[_l_mpc])
         p_vec.append(p)
 
     mu_omega = np.sum(mu_vec)
-    return np.sqrt(np.sum([np.square(np.linalg.norm(e_vecs[i_mpc] -
-                                                    mu_omega)) * p_vec[i_mpc] for i_mpc in range(len(mpcs))]))
+    return np.sqrt(np.sum([np.square(np.linalg.norm(e_vecs[_l_mpc] -
+                                                    mu_omega)) * p_vec[_l_mpc] for _l_mpc in range(len(mpcs))]))
 
 
 # Relative drop in correlation peak between the two 'consecutive' PDPSegments (...Pods)
@@ -457,12 +461,17 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
     fs = np.argsort(np.fft.fftfreq(n, (1 / f_s)))
     n_f = (n_std * np.random.randn(fs.shape[0], )).view(np.csingle)
 
-    # Parameter initialization
-    nus = np.array([0.0 for _ in range(max_mpcs)])
-    phis = np.array([0.0 for _ in range(max_mpcs)])
-    taus = np.array([0.0 for _ in range(max_mpcs)])
-    thetas = np.array([0.0 for _ in range(max_mpcs)])
-    alphas = np.array([complex(0.0, 0.0) for _ in range(max_mpcs)])
+    nus = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    phis = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    taus = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    thetas = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    alphas = np.zeros(shape=(max_mpcs,), dtype=np.csingle)
+
+    '''
+    TODO: Bring in an object-oriented programming methodology here wherein we have a configurable set of MPCParameters, 
+          possibly defined by enumerations, and each enum member has a class definition with its relevant routines such 
+          as convergence_check, getters/setters, L1/L2 norms, etc. This allows for easy encapsulation across the script.
+    '''
 
     def flip(a: int) -> int:
         return 1 if a == -1 else -1
@@ -525,9 +534,9 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         tx_e, tx_n = lla_utm_proj(tx_lon, tx_lat)
         rx_e, rx_n = lla_utm_proj(rx_lon, rx_lat)
 
-        x0, y0, z0, x, y, z = rx_n, -rx_e, rx_alt, tx_n, -tx_e, tx_alt
+        x0, y0, z0, x_, y_, z_ = rx_n, -rx_e, rx_alt, tx_n, -tx_e, tx_alt
 
-        r1, az1, el1 = cart2sph(x - x0, y - y0, z - z0)
+        r1, az1, el1 = cart2sph(x_ - x0, y_ - y0, z_ - z0)
 
         r21, r22, r23 = 0.0, 1.0, 0.0
         r11, r12, r13 = sph2cart(0.0, 1.0, -el0)
@@ -556,11 +565,112 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         c_theta = 2.0 * pi * (1 / ld) * np.dot(e_vec, pos_vec)
         return f_aoa * complex(np.cos(c_theta), np.sin(c_theta))
 
+    def profile_point_power(l_idx: int) -> float:
+        steering_l = compute_steering(phis_[l_idx], thetas_[l_idx])
+        tau_l, nu_l, alpha_l = taus_[l_idx], nus_[l_idx], alphas_[l_idx]
+        return np.square(np.abs(alpha_l * steering_l * signal_component(tau_l, nu_l)))
+
     # Expectation of the log-likelihood component
-    def estep_component(l_idx: int, yf_s: np.array) -> np.array:
-        return yf_s - np.sum(np.array([compute_steering(phis[l_mpc], thetas[l_mpc]) *
-                                       alphas[l_mpc] * signal_component(taus[l_mpc], nus[l_mpc])[1]
-                                       for l_mpc in range(max_mpcs) if l_mpc != l_idx], dtype=np.csingle))
+    def estep(l_idx: int, yf_s: np.array) -> np.array:
+        return yf_s - np.sum(np.array([compute_steering(phis[_l_mpc], thetas[_l_mpc]) *
+                                       alphas[_l_mpc] * signal_component(taus[_l_mpc], nus[_l_mpc])[1]
+                                       for _l_mpc in range(max_mpcs) if _l_mpc != l_idx], dtype=np.csingle))
+
+    # Maximization step for the MPC delay & Doppler shift
+    def tau_nu_mstep(l_idx: int) -> Tuple:
+        tau_var, nu_var = cp.Variable(value=0.0), cp.Variable(value=0.0)
+
+        estep_comps = estep(l_idx, y_f)
+        sig_comps = np.array([signal_component(tau_var.value, nu_var.value) for _ in fs], dtype=np.csingle)
+        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
+
+        numerator = cp.square(cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix, estep_comps])))
+        denominator = cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix]))
+        objective = numerator / denominator
+
+        problem = cp.Problem(objective=objective,
+                             constraints=[0.0 <= tau_var <= 10e-3, 0.0 <= nu_var <= 1e3])
+        problem.solve(solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
+
+        return tau_var.value, nu_var.value
+
+    # Maximization step for the MPC complex attenuation
+    def alpha_mstep(l_idx: int, tau_l: float, nu_l: float, phi_l: float, theta_l: float) -> complex:
+        estep_comps = estep(l_idx, y_f)
+        steering_comp = compute_steering(phi_l, theta_l)
+        sig_comps = steering_comp * np.array([signal_component(tau_l, nu_l) for _ in fs], dtype=np.csingle)
+        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
+
+        numerator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, estep_comps])
+        denominator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix])
+
+        return numerator / denominator
+
+    # Maximization step for the MPC AoA azimuth and AoA elevation
+    def phi_theta_mstep(l_idx: int, tau_l: float, nu_l: float, alpha_l: complex) -> complex:
+        phi_var, theta_var = cp.Variable(value=0.0), cp.Variable(value=0.0)
+
+        estep_comps = estep(l_idx, y_f)
+        steering_comp = compute_steering(phi_var.value, theta_var.value)
+        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
+        sig_comps = steering_comp * alpha_l * np.array([signal_component(tau_l, nu_l) for _ in fs], dtype=np.csingle)
+
+        numerator = cp.square(cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix, estep_comps])))
+        denominator = cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix]))
+        objective = numerator / denominator
+
+        problem = cp.Problem(objective=objective,
+                             constraints=[-pi <= phi_var <= pi, -(pi / 2.0) <= theta_var <= (pi / 2.0)])
+        problem.solve(solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
+
+        return phi_var.value, theta_var.value
+
+    # Convergence check
+    def is_converged(l_idx) -> bool:
+        check = lambda param_i_1, param_i, tol: np.abs(param_i - param_i_1) > tol
+        tau_tol, nu_tol, alpha_tol, phi_tol, theta_tol = delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol
+
+        if first_iter and \
+                check(nus[l_idx], nus_[l_idx], nu_tol) and \
+                check(taus[l_idx], taus_[l_idx], tau_tol) and \
+                check(alphas[l_idx], alphas_[l_idx], alpha_tol) and \
+                check(phis[l_idx], phis_[l_idx], phi_tol) and check(thetas[l_idx], thetas_[l_idx], theta_tol):
+            return False
+
+        return True
+
+    first_iter = True
+    nus_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    phis_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    taus_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    thetas_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
+    alphas_ = np.zeros(shape=(max_mpcs,), dtype=np.csingle)
+    nu_, tau_, phi_, theta_, alpha_ = nus_[0], taus_[0], phis_[0], thetas_[0], alphas_[0]
+
+    for l_mpc in range(max_mpcs):
+
+        nus[l_mpc] = nu_
+        taus[l_mpc] = tau_
+        phis[l_mpc] = phi_
+        thetas[l_mpc] = theta_
+        alphas[l_mpc] = alpha_
+
+        while not is_converged(l_mpc):
+            tau_, nu_ = tau_nu_mstep(l_mpc)
+            taus_[l_mpc] = tau_
+            nus_[l_mpc] = nu_
+
+            phi_, theta_ = phi_theta_mstep(l_mpc, tau_, nu_, alphas[l_mpc])
+            thetas_[l_mpc] = theta_
+            phis_[l_mpc] = phi_
+
+            alpha_ = alpha_mstep(l_mpc, tau_, nu_, phi_, theta_)
+            alphas_[l_mpc] = alpha_
+
+    return (MPCParameters(path_number=l_mpc, delay=taus_[l_mpc],
+                          doppler_shift=nus_[l_mpc], attenuation=alphas_[l_mpc],
+                          aoa_azimuth=phis_[l_mpc], aoa_elevation=thetas_[l_mpc],
+                          profile_point_power=profile_point_power(l_mpc)) for l_mpc in range(max_mpcs))
 
 
 """
