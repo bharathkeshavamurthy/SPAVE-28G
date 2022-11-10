@@ -228,8 +228,8 @@ CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filter
 carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4
 h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 21.3, 15.4, 76.0, 2e6, 1e5
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
-                            'max_num_samples': 500000, 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
-datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 0.5, 'truncation_length': 200000}
+                            'max_num_samples': int(5e5), 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
+datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 0.5, 'truncation_length': int(2e5)}
 meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
