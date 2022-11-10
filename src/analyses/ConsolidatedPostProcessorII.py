@@ -55,8 +55,8 @@ from pyproj import Proj
 from scipy import signal
 from geopy import distance
 from scipy import constants
-from typing import Tuple, Dict
 import plotly.graph_objs as go
+from typing import Tuple, List, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
@@ -469,14 +469,16 @@ def relcorr_drop(pdp_: PDPSegment, pdp: PDPSegment) -> float:
 # SAGE Algorithm: MPC parameters computation
 # See: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=753729]
 # Also see: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6901837]
-def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> Tuple:
+def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> List:
     f_c, _f_c = tx_fc, rx_fc
     f_s, n_std = sample_rate, n_sigma
     v_0, l_, k_ = pn_v0, pn_l, pn_reps
-    y_f = np.square(np.fft.fft(x)) / n
+
+    y_f = np.fft.fft(x) / n
     fs = np.argsort(np.fft.fftfreq(n, (1 / f_s)))
     n_f = (n_std * np.random.randn(fs.shape[0], )).view(np.csingle)
 
+    # Previous parameter estimates ...$[i-1]$
     nus = np.zeros(shape=(max_mpcs,), dtype=np.float64)
     phis = np.zeros(shape=(max_mpcs,), dtype=np.float64)
     taus = np.zeros(shape=(max_mpcs,), dtype=np.float64)
@@ -489,13 +491,16 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
           as convergence_check, getters/setters, L1/L2 norms, etc. This allows for easy encapsulation across the script.
     '''
 
+    # Flip components in the rectangular chips of the PN-sequence $u(f)$
     def flip(a: int) -> int:
+        assert a == 1 or a == -1
         return 1 if a == -1 else -1
 
+    # Sinc function
     def sinc(z: float) -> float:
         return np.sin(pi * z) / (pi * z)
 
-    # Baseband signal component post-convolution in the frequency domain
+    # Baseband signal component post-convolution in the frequency domain $p(f; \tau_{l}, \nu_{l})$
     def signal_component(tau_l: float, nu_l: float) -> Tuple:
         f_shifts = []
         sig_sum = complex(0.0, 0.0)
@@ -519,7 +524,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
         return f_shifts, np.square(v_0 / l_) * sig_sum
 
-    # Complex gaussian noise component post-convolution in the frequency domain
+    # Complex gaussian noise component post-convolution in the frequency domain $n'(f)$
     def noise_component() -> Tuple:
         f_shifts = []
         n_sum = complex(0.0, 0.0)
@@ -532,11 +537,11 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
                 pn_sum = complex(0.0, 0.0)
                 for i_l in range(l_):
                     a_i = 1
-                    pn_sum += ((2 * a_i) - 1) * complex(np.cos(pi * ((_k * i) / l_)), np.sin(pi * ((_k * i) / l_)))
+                    pn_sum += ((2 * a_i) - 1) * complex(np.cos(-pi * ((_k * i) / l_)), np.sin(-pi * ((_k * i) / l_)))
                     flip(a_i)
 
                 f_shifts.append(f_shift)
-                n_sum += pn_sum * n_f[idx_f] * sinc(k / l_) * complex(np.cos(pi * (_k / l_)), np.sin(pi * (_k / l_)))
+                n_sum += pn_sum * n_f[idx_f] * sinc(k / l_) * complex(np.cos(-pi * (_k / l_)), np.sin(-pi * (_k / l_)))
 
         return f_shifts, (v_0 / l_) * n_sum
 
@@ -568,8 +573,8 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
         az_amps_norm_db = az_amps_db - max(az_amps_db) + max_ant_gain
         el_amps_norm_db = el_amps_db - max(el_amps_db) + max_ant_gain
-        az_amps_norm = np.array([linear_1(db) for db in az_amps_norm_db])
-        el_amps_norm = np.array([linear_1(db) for db in el_amps_norm_db])
+        az_amps_norm = np.array([linear_2(db) for db in az_amps_norm_db])
+        el_amps_norm = np.array([linear_2(db) for db in el_amps_norm_db])
 
         az_amps0 = interp1d(az_angles, az_amps_norm)(azs0)
         el_amps0 = interp1d(el_angles, el_amps_norm)(els0)
@@ -581,44 +586,47 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         c_theta = 2.0 * pi * (1 / ld) * np.dot(e_vec, pos_vec)
         return f_aoa * complex(np.cos(c_theta), np.sin(c_theta))
 
+    # Find the profile point power associated with the MPCParameters index
     def profile_point_power(l_idx: int) -> float:
         steering_l = compute_steering(phis_[l_idx], thetas_[l_idx])
         tau_l, nu_l, alpha_l = taus_[l_idx], nus_[l_idx], alphas_[l_idx]
-        return np.square(np.abs(alpha_l * steering_l * signal_component(tau_l, nu_l)))
+        return np.square(np.abs(alpha_l * steering_l * signal_component(tau_l, nu_l)[1]))
 
-    # Expectation of the log-likelihood component
+    # Expectation of the log-likelihood component: Use $[i-1]$ estimates, i.e., phis, thetas, alphas, taus, nus
     def estep(l_idx: int, yf_s: np.array) -> np.array:
         return yf_s - np.sum(np.array([compute_steering(phis[_l_mpc], thetas[_l_mpc]) *
                                        alphas[_l_mpc] * signal_component(taus[_l_mpc], nus[_l_mpc])[1]
                                        for _l_mpc in range(max_mpcs) if _l_mpc != l_idx], dtype=np.csingle))
 
-    # Maximization step for the MPC delay & Doppler shift
+    # Maximization step for the MPC delay & Doppler shift $\argmax_{\tau,\nu}\{\eta_(\tau,\nu)\}
     def tau_nu_mstep(l_idx: int) -> Tuple:
         tau_var, nu_var = cp.Variable(value=0.0), cp.Variable(value=0.0)
 
         estep_comps = estep(l_idx, y_f)
-        sig_comps = np.array([signal_component(tau_var.value, nu_var.value) for _ in fs], dtype=np.csingle)
+        sig_comp = signal_component(tau_var.value, nu_var.value)[1]
+        sig_comps = np.array([sig_comp for _ in fs], dtype=np.csingle)
         w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
-        numerator = cp.square(cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix, estep_comps])))
-        denominator = cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix]))
+        numerator = cp.square(cp.abs(sig_comps.conj().T @ w_matrix @ estep_comps))
+        denominator = cp.abs(sig_comps.conj().T @ w_matrix @ sig_comps)
         objective = numerator / denominator
 
         problem = cp.Problem(objective=objective,
-                             constraints=[0.0 <= tau_var <= 10e-3, 0.0 <= nu_var <= 1e3])
-        problem.solve(solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
+                             constraints=[0.0 <= tau_var <= 1e-5, 0.0 <= nu_var <= 1e3])
+        problem.solve(solver=solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
 
         return tau_var.value, nu_var.value
 
     # Maximization step for the MPC complex attenuation
     def alpha_mstep(l_idx: int, tau_l: float, nu_l: float, phi_l: float, theta_l: float) -> complex:
         estep_comps = estep(l_idx, y_f)
+        sig_comp = signal_component(tau_l, nu_l)[1]
         steering_comp = compute_steering(phi_l, theta_l)
-        sig_comps = steering_comp * np.array([signal_component(tau_l, nu_l) for _ in fs], dtype=np.csingle)
+        sig_comps = steering_comp * np.array([sig_comp for _ in fs], dtype=np.csingle)
         w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
         numerator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, estep_comps])
-        denominator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix])
+        denominator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, sig_comps])
 
         return numerator / denominator
 
@@ -627,17 +635,18 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         phi_var, theta_var = cp.Variable(value=0.0), cp.Variable(value=0.0)
 
         estep_comps = estep(l_idx, y_f)
+        sig_comp = signal_component(tau_l, nu_l)[1]
         steering_comp = compute_steering(phi_var.value, theta_var.value)
         w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
-        sig_comps = steering_comp * alpha_l * np.array([signal_component(tau_l, nu_l) for _ in fs], dtype=np.csingle)
 
-        numerator = cp.square(cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix, estep_comps])))
-        denominator = cp.abs(functools.reduce(cp.matmul, [sig_comps.conj().T, w_matrix]))
+        sig_comps = steering_comp * alpha_l * np.array([sig_comp for _ in fs], dtype=np.csingle)
+        numerator = cp.square(cp.abs(sig_comps.conj().T @ w_matrix @ estep_comps))
+        denominator = cp.abs(sig_comps.conj().T @ w_matrix @ sig_comps)
         objective = numerator / denominator
 
         problem = cp.Problem(objective=objective,
                              constraints=[-pi <= phi_var <= pi, -(pi / 2.0) <= theta_var <= (pi / 2.0)])
-        problem.solve(solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
+        problem.solve(solver=solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
 
         return phi_var.value, theta_var.value
 
@@ -646,16 +655,16 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         check = lambda param_i_1, param_i, tol: np.abs(param_i - param_i_1) > tol
         tau_tol, nu_tol, alpha_tol, phi_tol, theta_tol = delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol
 
-        if first_iter and \
-                check(nus[l_idx], nus_[l_idx], nu_tol) and \
-                check(taus[l_idx], taus_[l_idx], tau_tol) and \
-                check(alphas[l_idx], alphas_[l_idx], alpha_tol) and \
-                check(phis[l_idx], phis_[l_idx], phi_tol) and check(thetas[l_idx], thetas_[l_idx], theta_tol):
+        if first_iter or \
+                check(nus[l_idx], nus_[l_idx], nu_tol) or \
+                check(taus[l_idx], taus_[l_idx], tau_tol) or \
+                check(alphas[l_idx], alphas_[l_idx], alpha_tol) or \
+                check(phis[l_idx], phis_[l_idx], phi_tol) or check(thetas[l_idx], thetas_[l_idx], theta_tol):
             return False
 
         return True
 
-    first_iter = True
+    # Current parameter estimates ...$[i]$
     nus_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
     phis_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
     taus_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
@@ -663,15 +672,16 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
     alphas_ = np.zeros(shape=(max_mpcs,), dtype=np.csingle)
     nu_, tau_, phi_, theta_, alpha_ = nus_[0], taus_[0], phis_[0], thetas_[0], alphas_[0]
 
+    # SAGE wrapper
+    first_iter = True
     for l_mpc in range(max_mpcs):
-
-        nus[l_mpc] = nu_
-        taus[l_mpc] = tau_
-        phis[l_mpc] = phi_
-        thetas[l_mpc] = theta_
-        alphas[l_mpc] = alpha_
-
         while not is_converged(l_mpc):
+            nus[l_mpc] = nu_
+            taus[l_mpc] = tau_
+            phis[l_mpc] = phi_
+            thetas[l_mpc] = theta_
+            alphas[l_mpc] = alpha_
+
             tau_, nu_ = tau_nu_mstep(l_mpc)
             taus_[l_mpc] = tau_
             nus_[l_mpc] = nu_
@@ -683,10 +693,10 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
             alpha_ = alpha_mstep(l_mpc, tau_, nu_, phi_, theta_)
             alphas_[l_mpc] = alpha_
 
-    return (MPCParameters(path_number=l_mpc, delay=taus_[l_mpc],
+    return [MPCParameters(path_number=l_mpc, delay=taus_[l_mpc],
                           doppler_shift=nus_[l_mpc], attenuation=alphas_[l_mpc],
                           aoa_azimuth=phis_[l_mpc], aoa_elevation=thetas_[l_mpc],
-                          profile_point_power=profile_point_power(l_mpc)) for l_mpc in range(max_mpcs))
+                          profile_point_power=profile_point_power(l_mpc)) for l_mpc in range(max_mpcs)]
 
 
 """
