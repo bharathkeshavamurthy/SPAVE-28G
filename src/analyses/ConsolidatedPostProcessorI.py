@@ -49,6 +49,7 @@ from typing import List, Tuple, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
+from concurrent.futures import ThreadPoolExecutor
 from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper
 
 """
@@ -202,10 +203,10 @@ CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenn
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 
 ''' urban-campus-II route '''
-gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+tx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-vegetation route '''
@@ -216,8 +217,8 @@ pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.pn
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
-output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
-ant_log_file, ant_pat_3d_png = 'D:/SPAVE-28G/analyses/antenna_pattern.mat', 'antenna_pattern_3d.png'
+output_dir = 'C:/Users/bkeshav1/Workspaces/SPAVE-28G/test/analyses/'
+ant_log_file, ant_pat_3d_png = 'E:/SPAVE-28G/analyses/antenna_pattern.mat', 'antenna_pattern_3d.png'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
 cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
@@ -264,6 +265,12 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)
+
+
+# Parse the provided file and store it in the given collection
+def parse(d: List, dc: dataclass, fn: str) -> None:
+    with open(fn) as f:
+        d.append(ddc_transform(json.load(f), dc))
 
 
 # Yaw angle getter (deg)
@@ -396,6 +403,7 @@ def compute_antenna_gain(y: GPSEvent, m: IMUTrace, is_tx=True) -> float:
 
     az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
     xs, ys, zs = sph2cart(1.0, deg2rad(az), deg2rad(el))
+    az_amps_db, el_amps_db = decibel_2(az_amps), decibel_2(el_amps)
     azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
     els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
 
@@ -477,6 +485,9 @@ def pathloss(y: Pod) -> float:
 CORE OPERATIONS-I: Calibration
 """
 
+'''
+We do not need this calibration analysis for the IEEE ICC 2023 paper. We might need this for the IEEE TAP paper.
+
 # Evaluate parsed_metadata | Extract power-delay profile samples | Compute received power in this calibration paradigm
 for att_val in att_indices:
     cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', att_val, cali_samples_file_right])
@@ -493,6 +504,7 @@ for att_val in att_indices:
 meas_pwrs_ = np.arange(start=0.0, stop=-80.0, step=-2.0)
 calc_pwrs_ = interp1d(meas_pwrs, calc_pwrs)(meas_pwrs_)
 cali_fit = lambda cpwr: meas_pwrs_[min([_ for _ in range(len(calc_pwrs_))], key=lambda x: abs(cpwr - calc_pwrs_[x]))]
+'''
 
 """
 CORE OPERATIONS-II: Antenna patterns
@@ -500,27 +512,28 @@ CORE OPERATIONS-II: Antenna patterns
 
 log = scipy.io.loadmat(ant_log_file)
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
-az_angles, az_amps, az_amps_db = az_log.azs, az_log.amps, decibel_2(az_log.amps)
-el_angles, el_amps, el_amps_db = el_log.els, el_log.amps, decibel_2(el_log.amps)
+az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
+el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
 
 """
 CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 """
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
-for filename in os.listdir(gps_dir):
-    with open(''.join([gps_dir, filename])) as file:
-        gps_events.append(ddc_transform(json.load(file), GPSEvent))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(gps_dir):
+        parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
 # Extract Tx imu_traces
-for filename in os.listdir(tx_imu_dir):
-    with open(''.join([tx_imu_dir, filename])) as file:
-        tx_imu_traces.append(ddc_transform(json.load(file), IMUTrace))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(tx_imu_dir):
+        print('Parsing: {}'.format(filename))
+        parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-for filename in os.listdir(rx_imu_dir):
-    with open(''.join([rx_imu_dir, filename])) as file:
-        rx_imu_traces.append(ddc_transform(json.load(file), IMUTrace))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(rx_imu_dir):
+        parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
 # Extract timestamp_0 (start_timestamp)
 with open(''.join([comm_dir, start_timestamp_file])) as file:
@@ -559,7 +572,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
                                            timestamp=str(timestamp), num_samples=num_samples,
                                            raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
 
-''' Match gps_event and pdp_segment timestamps '''
+''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms'''
 
 for gps_event in gps_events:
     seq_number, timestamp = gps_event.seq_number, gps_event.timestamp
@@ -590,6 +603,9 @@ for gps_event in gps_events:
 CORE VISUALIZATIONS-I: 3D Antenna Patterns
 """
 
+'''
+We do not need this visualization for the IEEE ICC 2023 paper. We might need it for the IEEE TAP paper.
+
 amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
 az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
 el_vals = np.transpose(np.array([el_angles, np.zeros(el_angles.shape)]))
@@ -607,6 +623,7 @@ ap_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_v
                                                        xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
                                                        yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
 print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap_url))
+'''
 
 """
 CORE VISUALIZATIONS-II: Received power maps & Pathloss maps

@@ -60,6 +60,7 @@ from typing import Tuple, List, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
+from concurrent.futures import ThreadPoolExecutor
 
 """
 INITIALIZATIONS-I: Collections & Utilities
@@ -165,10 +166,10 @@ CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
 """
 
 ''' urban-campus-II route '''
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+tx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
 sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_distance.png', 'uc_sc_alignment.png', 'uc_sc_velocity.png'
 
@@ -194,8 +195,8 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 
 ''' Generic configurations '''
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
-output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
+output_dir = 'C:/Users/bkeshav1/Workspaces/SPAVE-28G/test/analyses/'
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': int(2e5)}
 solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e3), 1e-3, 1e-3, True
 delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-3, 1e-2, 1e-3, 0.1, 0.1
@@ -255,7 +256,7 @@ class Pod:
     tx_rx_distance_3d: float = 0.0  # m
     pdp_segment: PDPSegment = PDPSegment()
     n_mpcs: int = max_mpcs
-    mpc_parameters: Tuple[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
+    mpc_parameters: List[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
     rms_delay_spread: float = 0.0
     rms_aoa_dir_spread: float = 0.0
 
@@ -273,6 +274,12 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)
+
+
+# Parse the provided file and store it in the given collection
+def parse(d: List, dc: dataclass, fn: str) -> None:
+    with open(fn) as f:
+        d.append(ddc_transform(json.load(f), dc))
 
 
 # Yaw angle getter (deg)
@@ -426,7 +433,7 @@ def correlation_peak(n: int, x: np.array) -> float:
 
 # RMS delay spread computation (std)
 # See Visualizations-I: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=6691924]
-def rms_delay_spread(mpcs: Tuple[MPCParameters]) -> float:
+def rms_delay_spread(mpcs: List[MPCParameters]) -> float:
     num1, num2, den = [], [], []
 
     for mpc in mpcs:
@@ -442,7 +449,7 @@ def rms_delay_spread(mpcs: Tuple[MPCParameters]) -> float:
 
 # RMS direction spread computation (std)
 # See Visualizations-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5956639]
-def rms_direction_spread(mpcs: Tuple[MPCParameters]) -> float:
+def rms_direction_spread(mpcs: List[MPCParameters]) -> float:
     e_vecs, p_vec, mu_vec = [], [], []
 
     for _l_mpc in range(len(mpcs)):
@@ -568,6 +575,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
         az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
         xs, ys, zs = sph2cart(1.0, deg2rad(az), deg2rad(el))
+        az_amps_db, el_amps_db = decibel_2(az_amps), decibel_2(el_amps)
         azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
         els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
 
@@ -611,6 +619,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         denominator = cp.abs(sig_comps.conj().T @ w_matrix @ sig_comps)
         objective = numerator / denominator
 
+        # noinspection PyTypeChecker
         problem = cp.Problem(objective=objective,
                              constraints=[0.0 <= tau_var <= 1e-5, 0.0 <= nu_var <= 1e3])
         problem.solve(solver=solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
@@ -631,7 +640,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         return numerator / denominator
 
     # Maximization step for the MPC AoA azimuth and AoA elevation
-    def phi_theta_mstep(l_idx: int, tau_l: float, nu_l: float, alpha_l: complex) -> complex:
+    def phi_theta_mstep(l_idx: int, tau_l: float, nu_l: float, alpha_l: complex) -> Tuple:
         phi_var, theta_var = cp.Variable(value=0.0), cp.Variable(value=0.0)
 
         estep_comps = estep(l_idx, y_f)
@@ -644,6 +653,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         denominator = cp.abs(sig_comps.conj().T @ w_matrix @ sig_comps)
         objective = numerator / denominator
 
+        # noinspection PyTypeChecker
         problem = cp.Problem(objective=objective,
                              constraints=[-pi <= phi_var <= pi, -(pi / 2.0) <= theta_var <= (pi / 2.0)])
         problem.solve(solver=solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
@@ -703,26 +713,26 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 CORE OPERATIONS: Parsing the GPS, IMU, and PDP logs | SAGE estimation | Spatial consistency analyses
 """
 
-# Antenna Pattern
+# Antenna pattern
 log = scipy.io.loadmat(ant_log_file)
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
-az_angles, az_amps, az_amps_db = az_log.azs, az_log.amps, decibel_2(az_log.amps)
-el_angles, el_amps, el_amps_db = el_log.els, el_log.amps, decibel_2(el_log.amps)
+az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
+el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
 
 # Extract Rx gps_events
-for filename in os.listdir(rx_gps_dir):
-    with open(''.join([rx_gps_dir, filename])) as file:
-        rx_gps_events.append(ddc_transform(json.load(file), GPSEvent))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(rx_gps_dir):
+        parse(rx_gps_events, GPSEvent, ''.join([rx_gps_dir, filename]))
 
 # Extract Tx imu_traces
-for filename in os.listdir(tx_imu_dir):
-    with open(''.join([tx_imu_dir, filename])) as file:
-        tx_imu_traces.append(ddc_transform(json.load(file), IMUTrace))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(tx_imu_dir):
+        parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-for filename in os.listdir(rx_imu_dir):
-    with open(''.join([rx_imu_dir, filename])) as file:
-        rx_imu_traces.append(ddc_transform(json.load(file), IMUTrace))
+with ThreadPoolExecutor(max_workers=256) as executor:
+    for filename in os.listdir(rx_imu_dir):
+        parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
 # Extract timestamp_0 (start_timestamp)
 with open(''.join([comm_dir, start_timestamp_file])) as file:
@@ -759,7 +769,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
                                            raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples,
                                            correlation_peak=correlation_peak(num_samples, processed_rx_samples)))
 
-''' Match gps_event, Tx/Rx imu_trace, and pdp_segment timestamps '''
+''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms'''
 
 for rx_gps_event in rx_gps_events:
     seq_number, timestamp = rx_gps_event.seq_number, rx_gps_event.timestamp
