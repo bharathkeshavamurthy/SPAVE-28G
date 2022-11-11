@@ -457,11 +457,11 @@ def pathloss_itur_m2135(y: GPSEvent) -> float:
     h, w, h_ue, h_bs, f_c = h_avg, w_avg, elevation(y), elevation(tx), carrier_freq
     d_bp, d_2d, d_3d = 2 * pi * h_ue * h_bs * (f_c / c), distance_2d(y), distance_3d(y)
 
-    if 10.0 <= d_2d <= d_bp:
+    if 10.0 < d_2d < d_bp:
         pl_los = (np.log10(d_3d) * min(0.03 * (h ** 1.72), 10.0)) + \
                  (20.0 * np.log10(40.0 * pi * d_3d * (f_c / 3e9))) + \
                  (0.002 * np.log10(h) * d_3d) - min(0.044 * (h ** 1.72), 14.77)
-    elif d_bp <= d_2d <= 10e3:
+    elif d_bp < d_2d < 10e3:
         pl_los = (np.log10(d_3d) * min(0.03 * (h ** 1.72), 10.0)) + \
                  (20.0 * np.log10(40.0 * pi * d_3d * (f_c / 3e9))) + \
                  (0.002 * np.log10(h) * d_3d) - min(0.044 * (h ** 1.72), 14.77) + (40.0 * np.log10(d_3d / d_bp))
@@ -520,17 +520,17 @@ CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 """
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(gps_dir):
         parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
 # Extract Tx imu_traces
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(tx_imu_dir):
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(rx_imu_dir):
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 

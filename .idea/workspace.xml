@@ -6,6 +6,7 @@
       <change beforePath="$PROJECT_DIR$/related/Stormbreaker" beforeDir="false" afterPath="$PROJECT_DIR$/related/Stormbreaker" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/Talos" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +25,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/PostProcessorIII.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -116,8 +117,33 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
-          <line>543</line>
-          <option name="timeStamp" value="10" />
+          <line>382</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
+          <line>362</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
+          <line>333</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
+          <line>437</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
+          <line>456</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py</url>
+          <line>579</line>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

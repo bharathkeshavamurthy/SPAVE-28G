@@ -720,17 +720,17 @@ az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][
 el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
 
 # Extract Rx gps_events
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(rx_gps_dir):
         parse(rx_gps_events, GPSEvent, ''.join([rx_gps_dir, filename]))
 
 # Extract Tx imu_traces
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(tx_imu_dir):
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-with ThreadPoolExecutor(max_workers=256) as executor:
+with ThreadPoolExecutor(max_workers=1024) as executor:
     for filename in os.listdir(rx_imu_dir):
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
