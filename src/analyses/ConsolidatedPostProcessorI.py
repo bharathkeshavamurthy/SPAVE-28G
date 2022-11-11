@@ -527,7 +527,6 @@ with ThreadPoolExecutor(max_workers=256) as executor:
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=256) as executor:
     for filename in os.listdir(tx_imu_dir):
-        print('Parsing: {}'.format(filename))
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
@@ -604,7 +603,7 @@ CORE VISUALIZATIONS-I: 3D Antenna Patterns
 """
 
 '''
-We do not need this visualization for the IEEE ICC 2023 paper. We might need it for the IEEE TAP paper.
+We do not need this antenna pattern visualization for the IEEE ICC 2023 paper. We might need it for the IEEE TAP paper.
 
 amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
 az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
