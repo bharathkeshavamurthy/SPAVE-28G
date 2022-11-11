@@ -721,17 +721,20 @@ el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][
 
 # Extract Rx gps_events
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(rx_gps_dir):
+    for i in range(len(os.listdir(rx_gps_dir))):
+        filename = 'gps_event_{}.json'.format(i)
         parse(rx_gps_events, GPSEvent, ''.join([rx_gps_dir, filename]))
 
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(tx_imu_dir):
+    for i in range(1, len(os.listdir(tx_imu_dir)), 10):
+        filename = 'imu_trace_{}.json'.format(i)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(rx_imu_dir):
+    for i in range(len(os.listdir(rx_imu_dir))):
+        filename = 'imu_trace_{}.json'.format(i)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
 # Extract timestamp_0 (start_timestamp)

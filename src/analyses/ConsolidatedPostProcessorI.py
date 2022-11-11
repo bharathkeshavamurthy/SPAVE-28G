@@ -203,10 +203,10 @@ CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenn
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 
 ''' urban-campus-II route '''
-gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-tx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-vegetation route '''
@@ -217,8 +217,8 @@ pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.pn
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
-output_dir = 'C:/Users/bkeshav1/Workspaces/SPAVE-28G/test/analyses/'
-ant_log_file, ant_pat_3d_png = 'E:/SPAVE-28G/analyses/antenna_pattern.mat', 'antenna_pattern_3d.png'
+output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
+ant_log_file, ant_pat_3d_png = 'D:/SPAVE-28G/analyses/antenna_pattern.mat', 'antenna_pattern_3d.png'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
 cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
@@ -521,17 +521,20 @@ CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(gps_dir):
+    for i in range(len(os.listdir(gps_dir))):
+        filename = 'gps_event_{}.json'.format(i)
         parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(tx_imu_dir):
+    for i in range(1, len(os.listdir(tx_imu_dir)), 10):
+        filename = 'imu_trace_{}.json'.format(i)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for filename in os.listdir(rx_imu_dir):
+    for i in range(len(os.listdir(rx_imu_dir))):
+        filename = 'imu_trace_{}.json'.format(i)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
 # Extract timestamp_0 (start_timestamp)
