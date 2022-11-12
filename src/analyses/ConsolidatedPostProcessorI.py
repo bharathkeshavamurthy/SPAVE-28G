@@ -1,5 +1,5 @@
 """
-This script encapsulates the operations involved in visualizing the antenna patterns (elevation & azimuth) and Rx power
+This script encapsulates the operations involved in visualizing the antenna patterns (later: in IEEE TAP) and Rx power
 maps of our mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently,
 this script generates the pathloss maps of the routes traversed during this measurement campaign, along with plots
 of pathloss versus distance which will help us with next-generation mmWave V2V/V2I network design. Also, we
@@ -244,8 +244,8 @@ prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripp
 """
 CONFIGURATIONS-III: Bokeh & Plotly visualization options | Antenna patterns | Rx power maps | Pathloss maps
 """
-sg_wsize, sg_poly_order = 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
+max_workers, fjump, sg_wsize, sg_poly_order = 1024, 10, 53, 3
 color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn', 11
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'red', 50, 1.0
@@ -526,19 +526,19 @@ CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 """
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
-with ThreadPoolExecutor(max_workers=1024) as executor:
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(1, len(os.listdir(gps_dir))):
         filename = 'gps_event_{}.json'.format(i)
         parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
 # Extract Tx imu_traces
-with ThreadPoolExecutor(max_workers=1024) as executor:
-    for i in range(1, len(os.listdir(tx_imu_dir)), 10):
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    for i in range(1, len(os.listdir(tx_imu_dir)), fjump):
         filename = 'imu_trace_{}.json'.format(i)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-with ThreadPoolExecutor(max_workers=1024) as executor:
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(1, len(os.listdir(rx_imu_dir))):
         filename = 'imu_trace_{}.json'.format(i)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))

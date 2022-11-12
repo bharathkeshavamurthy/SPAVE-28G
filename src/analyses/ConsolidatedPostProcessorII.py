@@ -2,19 +2,19 @@
 This script encapsulates the operations involved in estimating the propagation parameters associated with the various
 Multi-Path Components (MPCs) in our 28 GHz outdoor measurement campaign on the POWDER testbed; next, it details the
 visualizations of the RMS delay- & direction-spread characteristics obtained from this 28 GHz V2X channel modeling;
-and finally, it incorporates spatial consistency analyses vis-à-vis distance, alignment, and velocity.
+and finally, it includes spatial decoherence analyses w.r.t distance, alignment, and velocity (later: in IEEE TAP).
 
 The constituent algorithm is Space-Alternating Generalized Expectation-Maximization (SAGE), derived from:
 
 @INPROCEEDINGS{SAGE,
-  title={A sliding-correlator-based SAGE algorithm for Mm-wave wideband channel parameter estimation},
+  title={A sliding-correlator-based SAGE algorithm for mmWave wideband channel parameter estimation},
   author={Yin, Xuefeng and He, Yongyu and Song, Zinuo and Kim, Myung-Don and Chung, Hyun Kyu},
   booktitle={The 8th European Conference on Antennas and Propagation (EuCAP 2014)},
   year={2014}, pages={625-629}, doi={10.1109/EuCAP.2014.6901837}}.
 
-The plots resulting from this script include RMS delay-spread CDF, RMS direction-spread CDF, and spatial decoherence
-characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity variations: the relative
-drop in the time-dilated cross-correlation peak magnitudes under distance, alignment, and velocity variations.
+The plots output from this script include RMS delay-spread CDF, AoA RMS direction-spread CDF, and spatial decoherence
+characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity (later: in IEEE TAP)
+variations -- namely, evaluating the spatial autocorrelation coefficient value (corr coefficient equation).
 
 Reference Papers:
 
@@ -64,7 +64,8 @@ from concurrent.futures import ThreadPoolExecutor
 """
 INITIALIZATIONS-I: Collections & Utilities
 """
-pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
+# velocities = []
+pi, c, distns, alignments = np.pi, constants.c, [], []
 deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
 linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
 rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = [], [], [], [], []
@@ -165,28 +166,31 @@ CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
 """
 
 ''' urban-campus-II route '''
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
-sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_distance.png', 'uc_sc_alignment.png', 'uc_sc_velocity.png'
+# sc_velocity_png = 'uc_sc_velocity.png'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+# sc_distance_png, sc_alignment_png = 'uc_sc_distance.png', 'uc_sc_alignment.png'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
 
 ''' urban-vegetation route '''
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-# rms_delay_spread_png, aoa_rms_dir_spread_png = 'uv_rms_delay_spread.png', 'uv_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uv_sc_distance.png', 'uv_sc_alignment.png', 'uv_sc_velocity.png'
+# sc_velocity_png = 'uv_sc_velocity.png'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+sc_distance_png, sc_alignment_png = 'uv_sc_distance.png', 'uv_sc_alignment.png'
+rms_delay_spread_png, aoa_rms_dir_spread_png = 'uv_rms_delay_spread.png', 'uv_aoa_rms_dir_spread.png'
 
 ''' suburban-fraternities route '''
+# sc_velocity_png = 'sf_sc_velocity.png'
 # comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
 # rx_gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
 # rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# sc_distance_png, sc_alignment_png = 'sf_sc_distance.png', 'sf_sc_alignment.png'
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
 ''' Tx GPSEvent (Rooftop-mounted | William Browning Building) '''
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
@@ -195,6 +199,7 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 ''' Generic configurations '''
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
+max_workers, fjump, sg_wsize, sg_poly_order = 1024, 10, 53, 3
 output_dir = 'C:/Users/bkeshav1/Workspaces/SPAVE-28G/test/analyses/'
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': int(2e5)}
 solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e3), 1e-3, 1e-3, True
@@ -353,8 +358,11 @@ def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> Tuple:
 def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) -> float:
     m_tx_yaw_, m_tx_pitch_ = d_alignment(tx, rx, m_tx)
     m_rx_yaw_, m_rx_pitch_ = d_alignment(rx, tx, m_rx, False)
-    return 0.5 * (abs(180.0 - m_tx_yaw_ - m_rx_yaw_) + abs(180.0 - m_tx_pitch_ - m_rx_pitch_))
+    return max(abs(180.0 - m_tx_yaw_ - m_rx_yaw_), abs(180.0 - m_tx_pitch_ - m_rx_pitch_))
 
+
+'''
+We do not need this routine for the IEEE ICC paper. We will need it for the IEEE TAP paper.
 
 # Tx-Rx relative velocity (ms-1)
 def tx_rx_relative_velocity(tx_i: GPSEvent, tx_j: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> float:
@@ -374,6 +382,7 @@ def tx_rx_relative_velocity(tx_i: GPSEvent, tx_j: GPSEvent, rx_i: GPSEvent, rx_j
         return abs(tx_v - rx_v)
     else:
         return abs(tx_v + rx_v)
+'''
 
 
 # USGS EPQS: Tx/Rx elevation (m)
@@ -463,11 +472,21 @@ def rms_direction_spread(mpcs: List[MPCParameters]) -> float:
                                                     mu_omega)) * p_vec[_l_mpc] for _l_mpc in range(len(mpcs))]))
 
 
-# Relative drop in correlation peak between the two 'consecutive' PDPSegments (...Pods)
-# Increasing Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity | corr: previous | corr_: current
-def relcorr_drop(pdp: PDPSegment, pdp_: PDPSegment) -> float:
-    corr, corr_ = pdp.correlation_peak, pdp_.correlation_peak
-    return (corr_ - corr) / corr
+# Spatial autocorrelation coefficient computation
+# See [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7996408]
+# Increasing Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity (TAP) | corr: prev | corr_: curr
+def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
+    n, n_ = pdp.num_samples, pdp_.num_samples
+    samps, samps_ = pdp.processed_rx_samples, pdp_.processed_rx_samples
+
+    s, s_ = np.abs(np.fft.fft(samps)) / n, np.abs(np.fft.fft(samps_)) / n_
+    a, a_ = np.mean(s), np.mean(s_)
+    ln = min(n, n_)
+
+    num = np.mean((s - a)[:ln] * (s_ - a_)[:ln])
+    den = np.sqrt(np.mean(np.square(s - a)) * np.mean(np.square(s_ - a_)))
+
+    return num / den if den != 0.0 else np.nan
 
 
 # SAGE Algorithm: MPC parameters computation
@@ -717,19 +736,19 @@ az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][
 el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
 
 # Extract Rx gps_events
-with ThreadPoolExecutor(max_workers=1024) as executor:
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(1, len(os.listdir(rx_gps_dir))):
         filename = 'gps_event_{}.json'.format(i)
         parse(rx_gps_events, GPSEvent, ''.join([rx_gps_dir, filename]))
 
 # Extract Tx imu_traces
-with ThreadPoolExecutor(max_workers=1024) as executor:
-    for i in range(1, len(os.listdir(tx_imu_dir)), 10):
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    for i in range(1, len(os.listdir(tx_imu_dir)), fjump):
         filename = 'imu_trace_{}.json'.format(i)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
-with ThreadPoolExecutor(max_workers=1024) as executor:
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(1, len(os.listdir(rx_imu_dir))):
         filename = 'imu_trace_{}.json'.format(i)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
@@ -808,7 +827,7 @@ CORE VISUALIZATIONS-I: Spatial decoherence analyses
 """
 
 pods_acc = sorted(pods, key=lambda pod: pod.tx_rx_alignment)
-pods_dist = sorted(pods, key=lambda pod: pod.tx_rx_distance_3d)
+pods_dist = sorted(pods, key=lambda pod: pod.tx_rx_distance_2d)
 
 '''
 We do not need velocity analysis for the IEEE ICC paper. We will need it for the IEEE TAP paper.
@@ -826,24 +845,31 @@ for i in range(len(pods_dist) - 1):
     poda, poda_ = pods_acc[i], pods_acc[i + 1]
     podd, podd_ = pods_dist[i], pods_dist[i + 1]
     # podv, podv_ = pods_vel[i], pods_vel[i + 1]
-    # velocities.append((podv_[1] - podv[1], relcorr_drop(podv[0].pdp_segment, podv_[0].pdp_segment)))
-    alignments.append((poda_.tx_rx_alignment - poda.tx_rx_alignment, relcorr_drop(poda.pdp_segment, poda_.pdp_segment)))
-    distns.append((podd_.tx_rx_distance_3d - podd.tx_rx_distance_3d, relcorr_drop(podd.pdp_segment, podd_.pdp_segment)))
+    # velocities.append((abs(podv_[1] - podv[1]), sc_coeff(podv[0].pdp_segment, podv_[0].pdp_segment)))
+    alignments.append((abs(poda_.tx_rx_alignment - poda.tx_rx_alignment), s_coeff(poda.pdp_segment, poda_.pdp_segment)))
+    distns.append((abs(podd_.tx_rx_distance_2d - podd.tx_rx_distance_2d), s_coeff(podd.pdp_segment, podd_.pdp_segment)))
 
-scd_layout = dict(xaxis=dict(title='Tx-Rx 3D Distance (in m)'),
+trace_distns = sorted(distns, key=lambda distn: distn[0])
+trace_alignments = sorted(alignments, key=lambda alignment: alignment[0])
+# trace_velocities = sorted(velocities, key=lambda velocity: velocity[0])
+
+scd_layout = dict(xaxis=dict(title='Tx-Rx Separation (in m)'),
                   title='Spatial Consistency Analysis vis-à-vis Distance',
-                  yaxis=dict(title='Relative Drop in Correlation Peak Magnitude'))
-scd_trace = go.Scatter(x=[distn[0] for distn in distns], y=[distn[1] for distn in distns], mode='lines+markers')
+                  yaxis=dict(title='Spatial Autocorrelation Coefficient'))
+scd_trace = go.Scatter(x=[t_d[0] for t_d in trace_distns], mode='lines+markers',
+                       y=signal.savgol_filter([t_d[1] for t_d in trace_distns], sg_wsize, sg_poly_order))
 
-sca_layout = dict(title='Spatial Consistency Analysis vis-à-vis Alignment',
-                  xaxis=dict(title='Tx-Rx Relative Alignment Accuracy (in deg)'),
-                  yaxis=dict(title='Relative Drop in Correlation Peak Magnitude'))
-sca_trace = go.Scatter(x=[align[0] for align in alignments], y=[align[1] for align in alignments], mode='lines+markers')
+sca_layout = dict(yaxis=dict(title='Spatial Autocorrelation Coefficient'),
+                  title='Spatial Consistency Analysis vis-à-vis Alignment',
+                  xaxis=dict(title='Tx-Rx Relative Alignment Accuracy (in deg)'))
+sca_trace = go.Scatter(x=[t_a[0] for t_a in trace_alignments], mode='lines+markers',
+                       y=signal.savgol_filter([t_a[1] for t_a in trace_alignments], sg_wsize, sg_poly_order))
 
 # scv_layout = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
 #                   title='Spatial Consistency Analysis vis-à-vis Velocity',
-#                   yaxis=dict(title='Relative Drop in Correlation Peak Magnitude'))
-# scv_trace = go.Scatter(x=[vel[0] for vel in velocities], y=[veloc[1] for veloc in velocities], mode='lines+markers')
+#                   yaxis=dict(title='Spatial Autocorrelation Coefficient'))
+# scv_trace = go.Scatter(x=[vel[0] for vel in velocities], mode='lines+markers',
+#                        y=signal.savgol_filter([veloc[1] for veloc in velocities], sg_wsize, sg_poly_order))
 
 scd_url = plotly.plotly.plot(dict(data=[scd_trace], layout=scd_layout), filename=sc_distance_png)
 sca_url = plotly.plotly.plot(dict(data=[sca_trace], layout=sca_layout), filename=sc_alignment_png)
