@@ -686,9 +686,9 @@ CORE VISUALIZATIONS-III: Pathloss v Distance curves
 pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
                                   yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx Separation (in m)'))
 
-for pl_pod in sorted(pods, key=lambda pod: pod.distance_2d):
+for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
     pls.append(pl_pod.pathloss)
-    distns.append(pl_pod.distance_2d)
+    distns.append(pl_pod.distance_3d)
 
 y_vals = np.array(pls)
 x_vals = np.array(distns)
