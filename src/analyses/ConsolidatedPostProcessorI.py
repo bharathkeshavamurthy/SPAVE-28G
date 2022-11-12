@@ -39,16 +39,15 @@ import pandas as pd
 from enum import Enum
 from pyproj import Proj
 from geopy import distance
-from scipy import constants
 import plotly.graph_objs as go
 from bokeh.plotting import gmap
 from bokeh.io import export_png
 from bokeh.palettes import brewer
-from scipy import signal, integrate
 from typing import List, Tuple, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
+from scipy import signal, constants, integrate
 from concurrent.futures import ThreadPoolExecutor
 from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper
 
@@ -200,21 +199,27 @@ CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenn
 # comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
 # rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-campus-II route '''
-gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-campus-II'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
+# pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-vegetation route '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-# pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
+gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
+map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
+pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
@@ -226,25 +231,26 @@ cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analys
 """
 CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4
+
 h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 21.3, 15.4, 76.0, 2e6, 1e5
+carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, uconv_gain, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4, 13.4
+meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
+
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': int(5e5), 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
 datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 0.5, 'truncation_length': int(2e5)}
-meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
 CONFIGURATIONS-III: Bokeh & Plotly visualization options | Antenna patterns | Rx power maps | Pathloss maps
 """
+sg_wsize, sg_poly_order = 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn', 11
-plotly.tools.set_credentials_file(username='bkeshav1', api_key='CLTFaBmP0KN7xw1fUheu')
-map_width, map_height, map_zoom_level, map_title = 5500.0, 2800.0, 20, 'urban-campus-II'
+plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'red', 50, 1.0
-google_maps_api_key, map_type, timeout = 'AIzaSyDzb5CB4L9l42MyvSmzvaSZ3bnRINIjpUk', 'hybrid', 300
+google_maps_api_key, map_type, timeout = 'AIzaSyCPQf7_AOibzWngePs4-4oBkAW76uuQ7Ps', 'hybrid', 3000
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
-map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 
 """
 CONFIGURATIONS-IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT
@@ -363,7 +369,7 @@ def compute_rx_power(n: int, x: np.array) -> float:
     fs = sample_rate
 
     # PSD Evaluation: Received signal power computation (calibration or campaign)
-    pwr_values = np.square(np.fft.fft(x)) / n
+    pwr_values = np.square(np.abs(np.fft.fft(x))) / n
     freq_values = np.fft.fftfreq(n, (1 / fs))
     indices = np.argsort(freq_values)
 
@@ -403,19 +409,19 @@ def compute_antenna_gain(y: GPSEvent, m: IMUTrace, is_tx=True) -> float:
 
     az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
     xs, ys, zs = sph2cart(1.0, deg2rad(az), deg2rad(el))
-    az_amps_db, el_amps_db = decibel_2(az_amps), decibel_2(el_amps)
+    az_amps_db, el_amps_db = decibel_1(az_amps), decibel_1(el_amps)
     azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
     els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
 
     az_amps_norm_db = az_amps_db - max(az_amps_db) + max_ant_gain
     el_amps_norm_db = el_amps_db - max(el_amps_db) + max_ant_gain
-    az_amps_norm = np.array([linear_2(db) for db in az_amps_norm_db])
-    el_amps_norm = np.array([linear_2(db) for db in el_amps_norm_db])
+    az_amps_norm = np.array([linear_1(db) for db in az_amps_norm_db])
+    el_amps_norm = np.array([linear_1(db) for db in el_amps_norm_db])
 
     az_amps0 = interp1d(az_angles, az_amps_norm)(azs0)
     el_amps0 = interp1d(el_angles, el_amps_norm)(els0)
 
-    return decibel_2(((az_amps0 * abs(ys)) + (el_amps0 * abs(zs))) / (abs(ys) + abs(zs)))
+    return decibel_1(((az_amps0 * abs(ys)) + (el_amps0 * abs(zs))) / (abs(ys) + abs(zs)))
 
 
 # Tx antenna gain getter (dB)
@@ -430,11 +436,12 @@ def rx_ant_gain(y: Pod) -> float:
 
 # SPAVE-28G/Odin: Compute pathlosses evaluated from the collected measurements (dB)
 def pathloss_spave28g_odin(t_gain: float, r_gain: float, rx_pwr: float) -> float:
-    return tx_pwr + t_gain + r_gain + dconv_gain - rx_pwr
+    return tx_pwr + t_gain + uconv_gain + r_gain + dconv_gain - rx_pwr
 
 
 # See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
 def pathloss_3gpp_tr38901(y: GPSEvent) -> float:
+    pl_los, pl_nlos = 0.0, 0.0
     h_ue, h_bs = elevation(y), elevation(tx)
     f_c, h_ue_, h_bs_ = carrier_freq / 1e9, h_ue - 1.0, h_bs - 1.0
     d_bp_, d_2d, d_3d = 4 * h_ue_ * h_bs_ * f_c * (1e9 / c), distance_2d(y), distance_3d(y)
@@ -444,16 +451,16 @@ def pathloss_3gpp_tr38901(y: GPSEvent) -> float:
     elif d_bp_ <= d_2d <= 5e3:
         pl_los = 28.0 + (40.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (9.0 * np.log10(np.square(d_bp_) +
                                                                                            np.square(h_ue - h_bs)))
-    else:
-        raise NotImplementedError("The 3GPP TR39.901 UMa model does not address this use case.")
 
-    pl_nlos = 13.54 + (39.08 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (0.6 * (h_ue - 1.5))
+    if 10.0 < d_2d < 5e3:
+        pl_nlos = 13.54 + (39.08 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (0.6 * (h_ue - 1.5))
 
-    return max(pl_los, pl_nlos)
+    return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
 
 
 # See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
 def pathloss_itur_m2135(y: GPSEvent) -> float:
+    pl_los, pl_nlos = 0.0, 0.0
     h, w, h_ue, h_bs, f_c = h_avg, w_avg, elevation(y), elevation(tx), carrier_freq
     d_bp, d_2d, d_3d = 2 * pi * h_ue * h_bs * (f_c / c), distance_2d(y), distance_3d(y)
 
@@ -465,15 +472,14 @@ def pathloss_itur_m2135(y: GPSEvent) -> float:
         pl_los = (np.log10(d_3d) * min(0.03 * (h ** 1.72), 10.0)) + \
                  (20.0 * np.log10(40.0 * pi * d_3d * (f_c / 3e9))) + \
                  (0.002 * np.log10(h) * d_3d) - min(0.044 * (h ** 1.72), 14.77) + (40.0 * np.log10(d_3d / d_bp))
-    else:
-        raise NotImplementedError("The ITU-R M.2135 UMa model does not address this use case.")
 
-    pl_nlos = 161.04 - (7.1 * np.log10(w)) + (7.5 * np.log10(h)) - \
-        ((24.37 - (3.7 * np.square(h / h_bs))) * np.log10(h_bs)) + \
-        ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
-        (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
+    if 10.0 < d_2d < 5e3:
+        pl_nlos = 161.04 - (7.1 * np.log10(w)) + (7.5 * np.log10(h)) - \
+                  ((24.37 - (3.7 * np.square(h / h_bs))) * np.log10(h_bs)) + \
+                  ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
+                  (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
 
-    return max(pl_los, pl_nlos)
+    return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
 
 
 # SPAVE-28G/Odin: Pathloss getter (dB)
@@ -521,7 +527,7 @@ CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for i in range(len(os.listdir(gps_dir))):
+    for i in range(1, len(os.listdir(gps_dir))):
         filename = 'gps_event_{}.json'.format(i)
         parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
@@ -533,7 +539,7 @@ with ThreadPoolExecutor(max_workers=1024) as executor:
 
 # Extract Rx imu_traces
 with ThreadPoolExecutor(max_workers=1024) as executor:
-    for i in range(len(os.listdir(rx_imu_dir))):
+    for i in range(1, len(os.listdir(rx_imu_dir))):
         filename = 'imu_trace_{}.json'.format(i)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
@@ -587,19 +593,19 @@ for gps_event in gps_events:
 
     tx_ant_gain = compute_antenna_gain(gps_event, tx_imu_trace)
     rx_ant_gain = compute_antenna_gain(gps_event, rx_imu_trace, False)
-    rx_power = compute_rx_power(pdp_segment.num_samples, pdp_segment.processed_rx_samples)
+    rx_power_val = compute_rx_power(pdp_segment.num_samples, pdp_segment.processed_rx_samples)
 
-    if rx_power == -np.inf:
+    if rx_power_val == -np.inf:
         continue
 
-    pathloss = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power),
-                pathloss_3gpp_tr38901(gps_event), pathloss_itur_m2135(gps_event)]
+    pathlosses = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power_val),
+                  pathloss_3gpp_tr38901(gps_event), pathloss_itur_m2135(gps_event)]
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     gps_event=gps_event, pdp_segment=pdp_segment,
-                    rx_power=rx_power, tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace,
+                    rx_power=rx_power_val, tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace,
                     tx_ant_gain=tx_ant_gain, rx_ant_gain=rx_ant_gain, elevation=elevation(gps_event),
-                    pathloss=pathloss, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
+                    pathloss=pathlosses, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
 
 """
 CORE VISUALIZATIONS-I: 3D Antenna Patterns
@@ -678,15 +684,17 @@ CORE VISUALIZATIONS-III: Pathloss v Distance curves
 """
 
 pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
-                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx 3D Distance (in m)'))
+                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx Separation (in m)'))
 
-for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
+for pl_pod in sorted(pods, key=lambda pod: pod.distance_2d):
     pls.append(pl_pod.pathloss)
-    distns.append(pl_pod.distance_3d)
+    distns.append(pl_pod.distance_2d)
 
 y_vals = np.array(pls)
 x_vals = np.array(distns)
-[pld_traces.append(go.Scatter(x=x_vals, y=y_vals[:, app.value], mode='lines+markers')) for app in PathlossApproaches]
+[pld_traces.append(go.Scatter(x=x_vals, mode='lines+markers',
+                              y=signal.savgol_filter(y_vals[:, app.value],
+                                                     sg_wsize, sg_poly_order))) for app in PathlossApproaches]
 
 pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
 print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}'.format(pld_url))
