@@ -688,7 +688,7 @@ pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
 
 for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
     pls.append(pl_pod.pathloss)
-    distns.append(pl_pod.distance_3d)
+    distns.append(np.log10(pl_pod.distance_3d))
 
 y_vals = np.array(pls)
 x_vals = np.array(distns)

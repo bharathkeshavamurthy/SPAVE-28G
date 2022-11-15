@@ -56,7 +56,7 @@
       <recent name="C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ConsolidatedPostProcessorII">
+  <component name="RunManager" selected="Python.ConsolidatedPostProcessorI">
     <configuration name="ConsolidatedPostProcessorI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="SPAVE-28G" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -101,8 +101,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ConsolidatedPostProcessorII" />
         <item itemvalue="Python.ConsolidatedPostProcessorI" />
+        <item itemvalue="Python.ConsolidatedPostProcessorII" />
       </list>
     </recent_temporary>
   </component>
