@@ -195,13 +195,13 @@ CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenn
 """
 
 ''' suburban-fraternities route '''
-# gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
-# pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
-# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
+pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
+map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-campus-II route '''
 # gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
@@ -213,13 +213,13 @@ CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenn
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-vegetation route '''
-gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
-map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
-pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
+# pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
 output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
@@ -409,7 +409,6 @@ def compute_antenna_gain(y: GPSEvent, m: IMUTrace, is_tx=True) -> float:
 
     az, el = rad2deg(f_arr[0]), rad2deg(f_arr[2])
     xs, ys, zs = sph2cart(1.0, deg2rad(az), deg2rad(el))
-    az_amps_db, el_amps_db = decibel_1(az_amps), decibel_1(el_amps)
     azs0 = np.mod(rad2deg(np.arctan2(np.sign(ys) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
     els0 = np.mod(rad2deg(np.arctan2(np.sign(zs) * np.sqrt(1 - np.square(xs)), xs)), 360.0)
 
@@ -491,9 +490,6 @@ def pathloss(y: Pod) -> float:
 CORE OPERATIONS-I: Calibration
 """
 
-'''
-We do not need this calibration analysis for the IEEE ICC 2023 paper. We might need this for the IEEE TAP paper.
-
 # Evaluate parsed_metadata | Extract power-delay profile samples | Compute received power in this calibration paradigm
 for att_val in att_indices:
     cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', att_val, cali_samples_file_right])
@@ -510,7 +506,6 @@ for att_val in att_indices:
 meas_pwrs_ = np.arange(start=0.0, stop=-80.0, step=-2.0)
 calc_pwrs_ = interp1d(meas_pwrs, calc_pwrs)(meas_pwrs_)
 cali_fit = lambda cpwr: meas_pwrs_[min([_ for _ in range(len(calc_pwrs_))], key=lambda x: abs(cpwr - calc_pwrs_[x]))]
-'''
 
 """
 CORE OPERATIONS-II: Antenna patterns
@@ -520,6 +515,8 @@ log = scipy.io.loadmat(ant_log_file)
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
 az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
 el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
+
+az_amps_db, el_amps_db = decibel_1(az_amps), decibel_1(el_amps)
 
 """
 CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
@@ -611,9 +608,6 @@ for gps_event in gps_events:
 CORE VISUALIZATIONS-I: 3D Antenna Patterns
 """
 
-'''
-We do not need this antenna pattern visualization for the IEEE ICC 2023 paper. We might need it for the IEEE TAP paper.
-
 amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
 az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
 el_vals = np.transpose(np.array([el_angles, np.zeros(el_angles.shape)]))
@@ -631,7 +625,6 @@ ap_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_v
                                                        xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
                                                        yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
 print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap_url))
-'''
 
 """
 CORE VISUALIZATIONS-II: Received power maps & Pathloss maps
