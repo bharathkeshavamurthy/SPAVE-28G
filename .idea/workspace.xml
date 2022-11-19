@@ -5,12 +5,19 @@
       <change beforePath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023.zip" beforeDir="false" afterPath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023/figs/sc_distance_annotated.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023/figs/sc_distance_annotated.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/doc/publications/IEEE_ICC_2023/main.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/RENEWLab" beforeDir="false" afterPath="$PROJECT_DIR$/related/RENEWLab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/Stormbreaker" beforeDir="false" afterPath="$PROJECT_DIR$/related/Stormbreaker" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/Talos" beforeDir="false" afterPath="$PROJECT_DIR$/related/Talos" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,6 +51,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses" />
@@ -131,7 +143,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>

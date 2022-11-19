@@ -191,7 +191,8 @@ class Pod:
 
 
 """
-CONFIGURATIONS-I: Input & Output Dirs | GPS logs | Power delay profiles | Antenna pattern logs | Calibration logs
+CONFIGURATIONS-I: A few route-specific Bokeh & Plotly visualization options
+                  Input & Output Dirs | GPS & IMU logs | Power delay profiles | Antenna pattern logs | Calibration logs
 """
 
 ''' suburban-fraternities route '''
@@ -242,18 +243,19 @@ datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
-CONFIGURATIONS-III: Bokeh & Plotly visualization options | Antenna patterns | Rx power maps | Pathloss maps
+CONFIGURATIONS-III: Additional Bokeh & Plotly visualization options
 """
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 max_workers, fjump, sg_wsize, sg_poly_order = 1024, 10, 53, 3
 color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn', 11
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'red', 50, 1.0
-google_maps_api_key, map_type, timeout = 'AIzaSyCPQf7_AOibzWngePs4-4oBkAW76uuQ7Ps', 'hybrid', 3000
+# For security reasons, our Google Maps API key isn't listed here. Create an API key for your use.
+google_maps_api_key, map_type, timeout = '<insert_your_google_maps_API_key_here>', 'hybrid', 3000
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
 
 """
-CONFIGURATIONS-IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT
+CONFIGURATIONS-IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT.
 """
 tx = GPSEvent(latitude=Member(component=40.766173670),
               longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
@@ -273,7 +275,7 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
     return dc(**d_l)
 
 
-# Parse the provided file and store it in the given collection
+# Parse the provided file as a dataclass instance and store it in the given collection
 def parse(d: List, dc: dataclass, fn: str) -> None:
     with open(fn) as f:
         d.append(ddc_transform(json.load(f), dc))
@@ -376,7 +378,7 @@ def compute_rx_power(n: int, x: np.array) -> float:
     # Trapezoidal numerical integration to compute signal power at the Rx from the organized PSD data
     computed_rx_power = integrate.trapz(y=pwr_values[indices], x=freq_values[indices])
 
-    return (decibel_1(computed_rx_power) - rx_usrp_gain) if (computed_rx_power != 0.0) else -np.inf
+    return cali_fit(decibel_1(computed_rx_power) - rx_usrp_gain) if (computed_rx_power != 0.0) else -np.inf
 
 
 # Rx power getter (dB)
@@ -524,20 +526,20 @@ CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
 
 # Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-    for i in range(1, len(os.listdir(gps_dir))):
-        filename = 'gps_event_{}.json'.format(i)
+    for i in range(len(os.listdir(gps_dir))):
+        filename = 'gps_event_{}.json'.format(i + 1)
         parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
 
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-    for i in range(1, len(os.listdir(tx_imu_dir)), fjump):
-        filename = 'imu_trace_{}.json'.format(i)
+    for i in range(len(os.listdir(tx_imu_dir))):
+        filename = 'imu_trace_{}.json'.format(i + 1)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
 # Extract Rx imu_traces
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-    for i in range(1, len(os.listdir(rx_imu_dir))):
-        filename = 'imu_trace_{}.json'.format(i)
+    for i in range(len(os.listdir(rx_imu_dir))):
+        filename = 'imu_trace_{}.json'.format(i + 1)
         parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
 
 # Extract timestamp_0 (start_timestamp)
@@ -577,7 +579,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
                                            timestamp=str(timestamp), num_samples=num_samples,
                                            raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
 
-''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms'''
+''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms '''
 
 for gps_event in gps_events:
     seq_number, timestamp = gps_event.seq_number, gps_event.timestamp
@@ -600,9 +602,9 @@ for gps_event in gps_events:
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     gps_event=gps_event, pdp_segment=pdp_segment,
-                    rx_power=rx_power_val, tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace,
+                    tx_imu_trace=tx_imu_trace, rx_imu_trace=rx_imu_trace, rx_power=rx_power_val,
                     tx_ant_gain=tx_ant_gain, rx_ant_gain=rx_ant_gain, elevation=elevation(gps_event),
-                    pathloss=pathlosses, distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event)))
+                    distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event), pathloss=pathlosses))
 
 """
 CORE VISUALIZATIONS-I: 3D Antenna Patterns
@@ -677,7 +679,7 @@ CORE VISUALIZATIONS-III: Pathloss v Distance curves
 """
 
 pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
-                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx Separation (in m)'))
+                                  yaxis=dict(title='Pathloss (in dB)'), xaxis=dict(title='Tx-Rx Distance (in m)'))
 
 for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
     pls.append(pl_pod.pathloss)
