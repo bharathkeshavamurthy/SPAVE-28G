@@ -123,7 +123,7 @@ class GPSEvent:
     longitude: Member = Member()  # components: deg
     altitude_ellipsoid: Member = Member()  # components: m
     altitude_msl: Member = Member()  # components: m
-    speed: Member = Member()  # components: m/s
+    speed: Member = Member()  # components: ms-1
     heading: Member = Member()
     horizontal_acc: Member = Member()  # components: ms-2
     vertical_acc: Member = Member()  # components: ms-2

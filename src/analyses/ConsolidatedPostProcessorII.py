@@ -126,7 +126,7 @@ class GPSEvent:
     longitude: Member = Member()  # components: deg
     altitude_ellipsoid: Member = Member()  # components: m
     altitude_msl: Member = Member()  # components: m
-    speed: Member = Member()  # components: m/s
+    speed: Member = Member()  # components: ms-1
     heading: Member = Member()
     horizontal_acc: Member = Member()  # components: ms-2
     vertical_acc: Member = Member()  # components: ms-2
@@ -492,7 +492,7 @@ def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
     return np.clip(num / den, -1.0, 1.0) if den != 0.0 else np.nan
 
 
-# Empiricial Cumulative Distribution Function
+# Empirical Cumulative Distribution Function
 def ecdf(x: np.array) -> Tuple:
     x_, ct = np.unique(x, return_counts=True)
     cum_sum = np.cumsum(x_)
@@ -579,7 +579,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         return f_shifts, (v_0 / l_) * n_sum
 
     # See [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=753729]
-    # Angle-of-Arrival (AoA | azimuth & elevation) pattern at the Rx for signal (p) computation within SAGE
+    # Computing the steering vector [Angle-of-Arrival (AoA | azimuth & elevation)] at the Rx within SAGE
     def compute_steering(phi_l: float, theta_l: float) -> complex:
         az0, el0 = deg2rad(phi_l), deg2rad(theta_l)
         tx_lat, tx_lon, tx_alt = latitude(tx), longitude(tx), altitude(tx)
