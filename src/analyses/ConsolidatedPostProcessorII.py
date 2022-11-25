@@ -161,7 +161,7 @@ class IMUTrace:
 
 
 """
-CONFIGURATIONS: Input & Output Dirs | GPS logs | Power delay profiles
+CONFIGURATIONS: Input & Output Dirs | GPS & IMU logs | Power delay profiles
 """
 
 ''' urban-campus-II route '''
@@ -193,14 +193,14 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 ''' Generic configurations '''
+max_workers, sg_wsize, sg_poly_order = 1024, 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 ant_log_file = 'D:/SPAVE-28G/analyses/antenna_pattern.mat'
-max_workers, fjump, sg_wsize, sg_poly_order = 1024, 1000, 53, 3
-output_dir = 'C:/Users/bkeshav1/Workspaces/SPAVE-28G/test/analyses/'
+output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
 time_windowing_config = {'multiplier': 0.5, 'truncation_length': int(2e5)}
-d_max, d_step, a_max, a_step, v_max, v_step = 100.0, 0.1, 2.2, 0.005, 25.0, 0.1
-solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e3), 1e-3, 1e-3, True
-delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1.0, 1.0, 0.1, 1.0, 1.0
+d_max, d_step, a_max, a_step, v_max, v_step = 350.0, 0.1, 5.0, 0.005, 25.0, 0.1
+solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e6), 1e-6, 1e-6, True
+delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 1.0, 0.1, 0.1, 0.1
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
 noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
                             'max_num_samples': int(5e5), 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
@@ -452,7 +452,7 @@ def rms_delay_spread(mpcs: List[MPCParameters]) -> float:
 
     num1_sum, num2_sum, den_sum = np.sum(num1), np.sum(num2), np.sum(den)
 
-    return np.sqrt((num1_sum / den_sum) - np.square((num2_sum / den_sum)))
+    return np.sqrt((num1_sum / den_sum) - np.square(num2_sum / den_sum))
 
 
 # RMS direction spread computation (std)
@@ -476,7 +476,7 @@ def rms_direction_spread(mpcs: List[MPCParameters]) -> float:
 
 # Spatial autocorrelation coefficient computation
 # See [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7996408]
-# Increasing Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity (TAP) | corr: peak | corr_: curr
+# Increasing Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity (TAP) | corr: prev | corr_: curr
 def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
     n, n_ = pdp.num_samples, pdp_.num_samples
     samps, samps_ = pdp.processed_rx_samples, pdp_.processed_rx_samples
@@ -490,6 +490,13 @@ def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
     den = np.sqrt(np.mean(np.square(s_mod)) * np.mean(np.square(s_mod_)))
 
     return np.clip(num / den, -1.0, 1.0) if den != 0.0 else np.nan
+
+
+# Empiricial Cumulative Distribution Function
+def ecdf(x: np.array) -> Tuple:
+    x_, ct = np.unique(x, return_counts=True)
+    cum_sum = np.cumsum(x_)
+    return x_, cum_sum / cum_sum[-1]
 
 
 # SAGE Algorithm: MPC parameters computation
@@ -632,7 +639,6 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         estep_comps = estep(l_idx, y_f)
         sig_comp = signal_component(tau_var.value, nu_var.value)[1]
         sig_comps = np.array([sig_comp for _ in fs], dtype=np.csingle)
-        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
         numerator = cp.square(cp.abs(sig_comps.conj().T @ w_matrix @ estep_comps))
         denominator = cp.abs(sig_comps.conj().T @ w_matrix @ sig_comps)
@@ -640,7 +646,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
         # noinspection PyTypeChecker
         problem = cp.Problem(objective=objective,
-                             constraints=[0.0 <= tau_var <= 1e-5, 0.0 <= nu_var <= 1e3])
+                             constraints=[1e-9 <= tau_var <= 1e-6, 0.0 <= nu_var <= 1e3])
         problem.solve(solver=solver, max_iters=max_iters, eps_abs=eps_abs, eps_rel=eps_rel, verbose=verbose)
 
         return tau_var.value, nu_var.value
@@ -651,7 +657,6 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         sig_comp = signal_component(tau_l, nu_l)[1]
         steering_comp = compute_steering(phi_l, theta_l)
         sig_comps = steering_comp * np.array([sig_comp for _ in fs], dtype=np.csingle)
-        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
         numerator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, estep_comps])
         denominator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, sig_comps])
@@ -665,7 +670,6 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         estep_comps = estep(l_idx, y_f)
         sig_comp = signal_component(tau_l, nu_l)[1]
         steering_comp = compute_steering(phi_var.value, theta_var.value)
-        w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
         sig_comps = steering_comp * alpha_l * np.array([sig_comp for _ in fs], dtype=np.csingle)
         numerator = cp.square(cp.abs(sig_comps.conj().T @ w_matrix @ estep_comps))
@@ -681,7 +685,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
     # Convergence check
     def is_converged(l_idx) -> bool:
-        check = lambda param_i_1, param_i, tol: np.abs(param_i - param_i_1) > tol
+        check = lambda param, param_, tol: np.abs(param - param_) > tol
         tau_tol, nu_tol, alpha_tol, phi_tol, theta_tol = delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol
 
         if first_iter or \
@@ -700,11 +704,15 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
     thetas_ = np.zeros(shape=(max_mpcs,), dtype=np.float64)
     alphas_ = np.zeros(shape=(max_mpcs,), dtype=np.csingle)
     nu_, tau_, phi_, theta_, alpha_ = nus_[0], taus_[0], phis_[0], thetas_[0], alphas_[0]
+    w_matrix = np.linalg.inv(np.diag(np.full(fs.shape[0], np.mean(np.square(np.abs(noise_component()[1]))))))
 
     # SAGE wrapper
-    first_iter = True
     for l_mpc in range(max_mpcs):
+        first_iter = True
+
         while not is_converged(l_mpc):
+            first_iter = False
+
             nus[l_mpc] = nu_
             taus[l_mpc] = tau_
             phis[l_mpc] = phi_
@@ -746,7 +754,7 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
 
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-    for i in range(1, len(os.listdir(tx_imu_dir)), fjump):
+    for i in range(1, len(os.listdir(tx_imu_dir))):
         filename = 'imu_trace_{}.json'.format(i)
         parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
 
@@ -794,7 +802,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
 
 ''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms'''
 
-for seqnum in range(1, len(rx_gps_events), 10):
+for seqnum in range(1, len(rx_gps_events)):
     rx_gps_event = rx_gps_events[seqnum]
     seq_number, timestamp = rx_gps_event.seq_number, rx_gps_event.timestamp
 
@@ -840,7 +848,7 @@ for vn in np.arange(start=0.0, stop=v_max, step=v_step):
                                                                 pod.rx_gps_event, pods[i_].rx_gps_event)))
     velocities.append((vn, s_coeff(pod.pdp_segment, pods[i_].pdp_segment)))
 
-scd_layout = dict(xaxis=dict(title='Tx-Rx Separation (in m)'),
+scd_layout = dict(xaxis=dict(title='Tx-Rx Distance (in m)'),
                   title='Spatial Consistency Analysis vis-à-vis Distance',
                   yaxis=dict(title='Spatial Autocorrelation Coefficient'))
 scd_trace = go.Scatter(x=[distn[0] for distn in distns], mode='lines+markers',
@@ -872,8 +880,8 @@ CORE VISUALIZATIONS-II: RMS delay spread and RMS direction spread
 rms_delay_spreads = np.array([pod.rms_delay_spread for pod in pods])
 rms_aoa_dir_spreads = np.array([pod.rms_aoa_dir_spread for pod in pods])
 
-rms_delay_spread_pdf = rms_delay_spreads / np.sum(rms_delay_spreads)
-rms_aoa_dir_spread_pdf = rms_aoa_dir_spreads / np.sum(rms_aoa_dir_spreads)
+rms_delay_spread_x, rms_delay_spread_ecdf = ecdf(rms_delay_spreads)
+rms_aoa_dir_spread_x, rms_aoa_dir_spread_ecdf = ecdf(rms_aoa_dir_spreads)
 
 rms_ds_layout = dict(yaxis=dict(title='CDF Probability'),
                      xaxis=dict(title='RMS Delay Spreads (x) in ns'),
@@ -882,8 +890,8 @@ rms_aoa_dirs_layout = dict(yaxis=dict(title='CDF Probability'),
                            xaxis=dict(title='RMS AoA Direction Spreads (x) in deg'),
                            title='RMS AoA Direction Spread Cumulative Distribution Function')
 
-rms_ds_trace = go.Scatter(x=rms_delay_spreads, y=np.cumsum(rms_delay_spread_pdf), mode='lines+markers')
-rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spreads, y=np.cumsum(rms_aoa_dir_spread_pdf), mode='lines+markers')
+rms_ds_trace = go.Scatter(x=rms_delay_spread_x, y=rms_delay_spread_ecdf, mode='lines+markers')
+rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_x, y=rms_aoa_dir_spread_ecdf, mode='lines+markers')
 
 rms_aoa_dirs_url = plotly.plotly.plot(dict(data=[rms_aoa_dirs_trace],
                                            layout=rms_aoa_dirs_layout), filename=aoa_rms_dir_spread_png)
