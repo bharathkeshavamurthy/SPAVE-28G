@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />

@@ -169,8 +169,8 @@ class PDPSegment:
     header_length: int = 171
     num_samples: int = int(1e6)
     num_bytes: int = num_samples * item_size
-    raw_rx_samples: np.array = np.array([], dtype=np.csingle)
-    processed_rx_samples: np.array = np.array([], dtype=np.csingle)
+    raw_rx_samples: np.array = np.array([], dtype=np.csingle)  # complex I/Q-64
+    processed_rx_samples: np.array = np.array([], dtype=np.csingle)  # complex I/Q-64
 
 
 @dataclass(order=True)
@@ -243,7 +243,7 @@ datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
-CONFIGURATIONS-III: Additional Bokeh & Plotly visualization options
+CONFIGURATIONS-III: LLA-to-UTM converter | Additional Bokeh & Plotly visualization options
 """
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 max_workers, fjump, sg_wsize, sg_poly_order = 1024, 10, 53, 3
