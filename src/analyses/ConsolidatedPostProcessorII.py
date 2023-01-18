@@ -783,6 +783,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
         if line_num % 18 == 0:
             seq_number = int(re.search(r'\d+', line)[0])
         elif (line_num - 3) % 18 == 0:
+            # noinspection RegExpAnonymousGroup
             timestamp = timestamp_0 + datetime.timedelta(seconds=float(re.search(r'[+-]?\d+(\.\d+)?', line)[0]))
         elif (line_num - 11) % 18 == 0 and timestamp >= timestamp_ref:
             num_samples = int(re.search(r'\d+', line)[0])
