@@ -496,11 +496,18 @@ def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
     return np.clip(num / den, -1.0, 1.0) if den != 0.0 else np.nan
 
 
-# Empirical Cumulative Distribution Function
+# Empirical Cumulative Distribution Function (variant-I)
 def ecdf(x: np.array) -> Tuple:
-    x_, ct = np.unique(x, return_counts=True)
-    cum_sum = np.cumsum(x_)
+    x_, cts = np.unique(x, return_counts=True)
+
+    cum_sum = np.cumsum(cts)
     return x_, cum_sum / cum_sum[-1]
+
+
+# Empirical Cumulative Distribution Function (variant-II)
+def ecdf_(x: np.array) -> Tuple:
+    n = x.shape[0]
+    return sorted(x), np.arange(1, n + 1) / float(n)
 
 
 # SAGE Algorithm: MPC parameters computation

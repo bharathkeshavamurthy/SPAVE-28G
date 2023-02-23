@@ -3,7 +3,7 @@ This script encapsulates the operations involved in visualizing the antenna patt
 maps of our mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently,
 this script generates the pathloss maps of the routes traversed during this measurement campaign, along with plots
 of pathloss versus distance which will help us with next-generation mmWave V2V/V2I network design. Also, we
-conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor large-scale pathloss approaches.
+conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor UMi/UMa pathloss approaches.
 
 Reference Papers:
 
@@ -440,27 +440,28 @@ def pathloss_spave28g_odin(t_gain: float, r_gain: float, rx_pwr: float) -> float
     return tx_pwr + t_gain + uconv_gain + r_gain + dconv_gain - rx_pwr
 
 
-# See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
-def pathloss_3gpp_tr38901(y: GPSEvent) -> float:
+# See PL-Models-II: 3GPP TR38.901 UMa | [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
+def pathloss_uma_3gpp_tr38901(y: GPSEvent) -> float:
     pl_los, pl_nlos = 0.0, 0.0
-    h_ue, h_bs = elevation(y), elevation(tx)
-    f_c, h_ue_, h_bs_ = carrier_freq / 1e9, h_ue - 1.0, h_bs - 1.0
-    d_bp_, d_2d, d_3d = 4 * h_ue_ * h_bs_ * f_c * (1e9 / c), distance_2d(y), distance_3d(y)
+    h_ue, h_bs, f_c = elevation(y), elevation(tx), carrier_freq
 
-    if 10.0 <= d_2d <= d_bp_:
-        pl_los = 28.0 + (22.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c))
-    elif d_bp_ <= d_2d <= 5e3:
-        pl_los = 28.0 + (40.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (9.0 * np.log10(np.square(d_bp_) +
-                                                                                           np.square(h_ue - h_bs)))
+    f_c_, h_ue_, h_bs_ = f_c / 1e9, h_ue - 1.0, h_bs - 1.0
+    d_bp, d_2d, d_3d = 4 * h_ue_ * h_bs_ * f_c_ * (1e9 / c), distance_2d(y), distance_3d(y)
+
+    if 10.0 <= d_2d <= d_bp:
+        pl_los = 28.0 + (22.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c_))
+    elif d_bp <= d_2d <= 5e3:
+        pl_los = 28.0 + (40.0 * np.log10(d_3d)) + (20.0 * np.log10(f_c_)) - (9.0 * np.log10(np.square(d_bp) +
+                                                                                            np.square(h_ue - h_bs)))
 
     if 10.0 < d_2d < 5e3:
-        pl_nlos = 13.54 + (39.08 * np.log10(d_3d)) + (20.0 * np.log10(f_c)) - (0.6 * (h_ue - 1.5))
+        pl_nlos = 13.54 + (39.08 * np.log10(d_3d)) + (20.0 * np.log10(f_c_)) - (0.6 * (h_ue - 1.5))
 
     return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
 
 
-# See PL-Models-II: [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
-def pathloss_itur_m2135(y: GPSEvent) -> float:
+# See PL-Models-II: ITU-R M.2135 UMa | [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
+def pathloss_uma_itur_m2135(y: GPSEvent) -> float:
     pl_los, pl_nlos = 0.0, 0.0
     h, w, h_ue, h_bs, f_c = h_avg, w_avg, elevation(y), elevation(tx), carrier_freq
     d_bp, d_2d, d_3d = 2 * pi * h_ue * h_bs * (f_c / c), distance_2d(y), distance_3d(y)
@@ -480,6 +481,39 @@ def pathloss_itur_m2135(y: GPSEvent) -> float:
                   ((43.42 - (3.1 * np.log10(h_bs))) * (np.log10(d_3d) - 3.0)) + \
                   (20.0 * np.log10(f_c / 1e9)) - ((3.2 * np.square(np.log10(11.75 * h_ue))) - 4.97)
 
+    return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
+
+
+# See PL-Models-II: METIS Street-Canyon UMi | [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
+def pathloss_umi_metis(y: GPSEvent) -> float:
+    pl_los, pl_nlos = 0.0, 0.0
+    h_ue, h_bs, f_c = elevation(y), elevation(tx), carrier_freq
+    h_ue_, h_bs_, f_c_, d_2d, d_3d = h_ue - 1.0, h_bs - 1.0, f_c / 1e9, distance_2d(y), distance_3d(y)
+
+    pl_0 = -1.38 * np.log10(f_c_) + 3.34
+    d_bp = 0.87 * np.exp(-np.log10(f_c_) / 0.65) * ((4.0 * h_ue_ * h_bs_) / (c / f_c))
+
+    pl_1 = (22.0 * np.log10(d_3d)) + 28.0 + (20.0 * np.log10(f_c_)) + pl_0
+    pl_1_func = lambda _d: (22.0 * np.log10(_d)) + 28.0 + (20.0 * np.log10(f_c_)) + pl_0
+    pl_2 = (40.0 * np.log10(d_3d)) + 7.8 - (18.0 * np.log10(h_bs * h_ue)) + (2.0 * np.log10(f_c_)) + pl_1_func(d_bp)
+
+    if 10.0 < d_2d < 5e3:
+        if 10.0 < d_3d <= d_bp:
+            pl_los = pl_1
+        elif d_bp < d_3d <= 5e2:
+            pl_los = pl_2
+
+    if 10.0 < d_2d < 2e3:
+        pl_nlos = (36.7 * np.log10(d_3d)) + 23.15 + (26.0 * np.log10(f_c_)) - (0.3 * h_ue)
+
+    return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
+
+
+# See PL-Models-II: mmMAGIC Street-Canyon UMi | [https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7999294] (dB)
+def pathloss_umi_mm_magic(y: GPSEvent) -> float:
+    f_c_, d_3d = carrier_freq / 1e9, distance_3d(y)
+    pl_los = (19.2 * np.log10(d_3d)) + 32.9 + (20.8 * np.log10(f_c_))
+    pl_nlos = (45.0 * np.log10(d_3d)) + 31.0 + (20.0 * np.log10(f_c_))
     return max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan
 
 
@@ -558,6 +592,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
         if line_num % 18 == 0:
             seq_number = int(re.search(r'\d+', line)[0])
         elif (line_num - 3) % 18 == 0:
+            # noinspection RegExpAnonymousGroup
             timestamp = timestamp_0 + datetime.timedelta(seconds=float(re.search(r'[+-]?\d+(\.\d+)?', line)[0]))
         elif (line_num - 11) % 18 == 0 and timestamp >= timestamp_ref:
             num_samples = int(re.search(r'\d+', line)[0])
@@ -598,7 +633,7 @@ for gps_event in gps_events:
         continue
 
     pathlosses = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power_val),
-                  pathloss_3gpp_tr38901(gps_event), pathloss_itur_m2135(gps_event)]
+                  pathloss_uma_3gpp_tr38901(gps_event), pathloss_uma_itur_m2135(gps_event)]
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     gps_event=gps_event, pdp_segment=pdp_segment,
