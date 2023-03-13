@@ -1,9 +1,10 @@
 """
-This script encapsulates the operations involved in visualizing the antenna patterns (later: in IEEE TAP) and Rx power
-maps of our mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently,
-this script generates the pathloss maps of the routes traversed during this measurement campaign, along with plots
-of pathloss versus distance which will help us with next-generation mmWave V2V/V2I network design. Also, we
-conduct comparisons against the ITU-R M.2135 and the 3GPP TR38.901 outdoor UMi/UMa pathloss approaches.
+This script encapsulates the operations involved in visualizing the antenna patterns and the Rx power maps of our
+mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently, this
+script  generates the pathloss maps of the routes traversed during this measurement campaign, along with the
+plots of pathloss versus distance which will help us with next-generation mmWave V2V/V2I network design.
+Also, we evaluate these empirical pathloss values against the ITU-R M.2135, 3GPP TR38.901, mmMAGIC,
+and METIS outdoor urban micro-cellular (UMi) and/or urban macro-cellular (UMa) pathloss standards.
 
 Reference Papers:
 
@@ -23,7 +24,7 @@ Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
 Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
               School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
 
-Copyright (c) 2022. All Rights Reserved.
+Copyright (c) 2023. All Rights Reserved.
 """
 
 import os
@@ -70,6 +71,8 @@ class PathlossApproaches(Enum):
     SPAVE28G_ODIN = 0
     TR38901_3GPP = 1
     M2135_ITUR = 2
+    MM_MAGIC = 3
+    METIS = 4
 
 
 class Units(Enum):
@@ -195,16 +198,16 @@ CONFIGURATIONS-I: A few route-specific Bokeh & Plotly visualization options
                   Input & Output Dirs | GPS & IMU logs | Power delay profiles | Antenna pattern logs | Calibration logs
 """
 
-''' suburban-fraternities route '''
-gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
-pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
+''' urban-campus-I route (semi-autonomous) (1400 E St) '''
+gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
+pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
 map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
-''' urban-campus-II route '''
+''' urban-campus-II route (fully-autonomous) (President's Circle) '''
 # gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
 # comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
@@ -213,7 +216,43 @@ map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longit
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
-''' urban-vegetation route '''
+''' urban-campus-III route (fully-autonomous) (100 S St) '''
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-campus-III'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
+# pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
+
+''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-garage'
+# pwr_png, pl_png, pl_dist_png = 'urban_garage_pwr.png', 'urban_garage_pl.png', 'urban_garage_pl_dist.png'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+
+''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
+# gps_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-stadium'
+# pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+
+''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
+# gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
+# pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+
+''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
 # comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'

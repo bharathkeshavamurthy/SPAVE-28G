@@ -1,10 +1,17 @@
 """
 This script encapsulates the operations involved in estimating the propagation parameters associated with the various
-Multi-Path Components (MPCs) in our 28 GHz outdoor measurement campaign on the POWDER testbed; next, it details the
-visualizations of the RMS delay- & direction-spread characteristics obtained from this 28 GHz V2X channel modeling;
-and finally, it includes spatial decoherence analyses w.r.t distance, alignment, and velocity (later: in IEEE TAP).
+Multi-Path Components (MPCs) in our 28 GHz outdoor measurement campaign on the POWDER testbed. Next, it details the
+visualizations of the RMS delay- & direction-spread characteristics obtained from this 28 GHz V2X channel modeling.
+Furthermore, it includes spatial decoherence analyses w.r.t Tx-Rx distance, alignment, and relative velocity.
 
-The constituent algorithm is Space-Alternating Generalized Expectation-Maximization (SAGE), derived from:
+Additionally, as a part of our evaluations, we incorporate visualizations of the Power Delay Doppler Profiles (PDDPs),
+the Power Delay Angular Profiles (PDAPs), the normalized Doppler spectrum, the impact of dynamic blockages on the
+measured pathloss, the cluster-decay characteristics, and fitted models to the empirical shadow fading results.
+
+Lastly, we analyze these results for the Saleh-Valenzuela (SV), Quasi-Directional (QD), and Device-to-Device (D2D)
+channel models to empirically validate the correctness of such widely-used mmWave channel models.
+
+Reference Papers:
 
 @INPROCEEDINGS{SAGE,
   title={A sliding-correlator-based SAGE algorithm for mmWave wideband channel parameter estimation},
@@ -12,20 +19,47 @@ The constituent algorithm is Space-Alternating Generalized Expectation-Maximizat
   booktitle={The 8th European Conference on Antennas and Propagation (EuCAP 2014)},
   year={2014}, pages={625-629}, doi={10.1109/EuCAP.2014.6901837}}.
 
-The plots output from this script include RMS delay-spread CDF, AoA RMS direction-spread CDF, and spatial decoherence
-characteristics under Tx-Rx distance, Tx-Rx alignment accuracy, and Tx-Rx relative velocity (later: in IEEE TAP)
-variations -- namely, evaluating the spatial autocorrelation coefficient value (corr coefficient equation).
+@ARTICLE{Spatial-Consistency-I,
+  title={Statistical channel impulse response models for factory and open plan building radio system design},
+  author={Rappaport, T.S. and Seidel, S.Y. and Takamizawa, K.},
+  journal={IEEE Transactions on Communications},
+  pages={794-807}, doi={10.1109/26.87142},
+  year={1991}, volume={39}, number={5}}.
 
-Reference Papers:
+@INPROCEEDINGS{MacCartneySpatialStatistics,
+  author={Sun, Shu and Yan, Hangsong and MacCartney, George R. and Rappaport, Theodore S.},
+  title={Millimeter wave small-scale spatial statistics in an urban microcell scenario},
+  booktitle={2017 IEEE Int. Conf. on Commun. (ICC)},
+  doi={10.1109/ICC.2017.7996408},
+  pages={1-7}, year={2017}}.
 
-@ARTICLE{Visualizations-I,
+@INPROCEEDINGS{PDDPs,
+  title={28-GHz High-Speed Train Measurements and Propagation Characteristics Analysis},
+  booktitle={2020 14th European Conference on Antennas and Propagation (EuCAP)},
+  author={Park, Jae-Joon and Lee, Juyul and Kim, Kyung-Won and Kim, Myung-Don},
+  year={2020}, pages={1-5}, doi={10.23919/EuCAP48036.2020.9135221}}.
+
+@ARTICLE{PDAPs,
+  title={Measurement-Based 5G mmWave Propagation Characterization in Vegetated Suburban Macrocell Environments},
+  author={Zhang, Peize and Yang, Bensheng and Yi, Cheng and Wang, Haiming and You, Xiaohu},
+  journal={IEEE Transactions on Antennas and Propagation},
+  year={2020}, volume={68}, number={7}, pages={5556-5567},
+  doi={10.1109/TAP.2020.2975365}}.
+
+@INPROCEEDINGS{Dynamic-Blockages,
+  author={Haneda, Katsuyuki and Zhang, Jianhua and Tan, Lei and Liu, Guangyi and Zheng, Yi and Asplund, et al.},
+  title={5G 3GPP-Like Channel Models for Outdoor Urban Microcellular and Macrocellular Environments},
+  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)},
+  year={2016}, pages={1-7}, doi={10.1109/VTCSpring.2016.7503971}}.
+
+@ARTICLE{Channel-Models-I,
   author={Gustafson, Carl and Haneda, Katsuyuki and Wyne, Shurjeel and Tufvesson, Fredrik},
   title={On mm-Wave Multipath Clustering and Channel Modeling},
   journal={IEEE Transactions on Antennas and Propagation},
   year={2014}, volume={62}, number={3}, pages={1445-1455},
   doi={10.1109/TAP.2013.2295836}}
 
-@INPROCEEDINGS{Visualizations-II,
+@INPROCEEDINGS{Channel-Models-II,
   author={Gustafson, Carl and Tufvesson, Fredrik and Wyne, Shurjeel and Haneda, Katsuyuki and Molisch, Andreas F.},
   title={Directional Analysis of Measured 60 GHz Indoor Radio Channels Using SAGE},
   booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
@@ -36,7 +70,7 @@ Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
 Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
               School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
 
-Copyright (c) 2022. All Rights Reserved.
+Copyright (c) 2023. All Rights Reserved.
 """
 
 import os
@@ -165,23 +199,55 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
                 Input & Output Dirs | GPS & IMU logs | Power delay profiles
 """
 
-''' suburban-fraternities route '''
-comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-rx_gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
-sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
+''' urban-campus-I route (semi-autonomous) (1400 E St) '''
+comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/'
+rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
-''' urban-campus-II route '''
+''' urban-campus-II route (fully-autonomous) (President's Circle) '''
 # comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 # rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
 # rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_distance.png', 'uc_sc_alignment.png', 'uc_sc_velocity.png'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'ucc_rms_delay_spread.png', 'ucc_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
 
-''' urban-vegetation route '''
+''' urban-campus-III route (fully-autonomous) (100 S St) '''
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'uccc_rms_delay_spread.png', 'uccc_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
+
+''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'ug_rms_delay_spread.png', 'ug_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'ug_sc_distance.png', 'ug_sc_alignment.png', 'ug_sc_velocity.png'
+
+''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
+# comm_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'us_rms_delay_spread.png', 'us_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'us_sc_distance.png', 'us_sc_alignment.png', 'us_sc_velocity.png'
+
+''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
+# comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# rx_gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
+# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
+
+''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
 # rx_gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'

@@ -16,6 +16,16 @@
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/3gpp_tr38901_pl.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/itu_m2135_pl.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/suburban_fraternities_pl.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/suburban_fraternities_sca.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/suburban_fraternities_scd.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/urban_campus_pl.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/urban_campus_sca.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/urban_campus_scd.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/urban_vegetation_pl.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/urban_vegetation_scd.xlsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
