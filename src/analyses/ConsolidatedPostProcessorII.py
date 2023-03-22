@@ -1,14 +1,13 @@
 """
 This script encapsulates the operations involved in estimating the propagation parameters associated with the various
-Multi-Path Components (MPCs) in our 28 GHz outdoor measurement campaign on the POWDER testbed. Next, it details the
+Multi-Path Components (MPCs) in our 28 GHz outdoor measurement campaign on the POWDER testbed. It also describes the
 visualizations of the RMS delay- & direction-spread characteristics obtained from this 28 GHz V2X channel modeling.
 Furthermore, it includes spatial decoherence analyses w.r.t Tx-Rx distance, alignment, and relative velocity.
 
 Additionally, as a part of our evaluations, we incorporate visualizations of the Power Delay Doppler Profiles (PDDPs),
-the Power Delay Angular Profiles (PDAPs), the normalized Doppler spectrum, the impact of dynamic blockages on the
-measured pathloss, the cluster-decay characteristics, and fitted models to the empirical shadow fading results.
+the Power Delay Angular Profiles (PDAPs), the normalized Doppler spectrum, and the cluster-decay characteristics.
 
-Lastly, we analyze these results for the Saleh-Valenzuela (SV), Quasi-Directional (QD), and Device-to-Device (D2D)
+Lastly, we analyze these results for the Saleh-Valenzuela (SV), Quasi-Deterministic (QD), and Device-to-Device (D2D)
 channel models to empirically validate the correctness of such widely-used mmWave channel models.
 
 Reference Papers:
@@ -26,7 +25,7 @@ Reference Papers:
   pages={794-807}, doi={10.1109/26.87142},
   year={1991}, volume={39}, number={5}}.
 
-@INPROCEEDINGS{MacCartneySpatialStatistics,
+@INPROCEEDINGS{Spatial-Consistency-II,
   author={Sun, Shu and Yan, Hangsong and MacCartney, George R. and Rappaport, Theodore S.},
   title={Millimeter wave small-scale spatial statistics in an urban microcell scenario},
   booktitle={2017 IEEE Int. Conf. on Commun. (ICC)},
@@ -46,12 +45,6 @@ Reference Papers:
   year={2020}, volume={68}, number={7}, pages={5556-5567},
   doi={10.1109/TAP.2020.2975365}}.
 
-@INPROCEEDINGS{Dynamic-Blockages,
-  author={Haneda, Katsuyuki and Zhang, Jianhua and Tan, Lei and Liu, Guangyi and Zheng, Yi and Asplund, et al.},
-  title={5G 3GPP-Like Channel Models for Outdoor Urban Microcellular and Macrocellular Environments},
-  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)},
-  year={2016}, pages={1-7}, doi={10.1109/VTCSpring.2016.7503971}}.
-
 @ARTICLE{Channel-Models-I,
   author={Gustafson, Carl and Haneda, Katsuyuki and Wyne, Shurjeel and Tufvesson, Fredrik},
   title={On mm-Wave Multipath Clustering and Channel Modeling},
@@ -65,6 +58,13 @@ Reference Papers:
   booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
   year={2011}, volume={}, number={}, pages={1-5},
   doi={10.1109/VETECS.2011.5956639}}
+
+@INPROCEEDINGS{Channel-Models-III,
+  author={Lecci, Mattia and Polese, Michele and Lai, Chiehping and Wang, Jian and Gentile, Camillo and Golmie, et al.},
+  title={Quasi-Deterministic Channel Model for mmWaves: Mathematical Formalization and Validation},
+  booktitle={GLOBECOM 2020 - 2020 IEEE Global Communications Conference},
+  year={2020}, pages={1-6}, doi={10.1109/GLOBECOM42002.2020.9322374}}
+
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
 Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN

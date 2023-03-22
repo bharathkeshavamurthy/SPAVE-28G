@@ -6,6 +6,10 @@ plots of pathloss versus distance which will help us with next-generation mmWave
 Also, we evaluate these empirical pathloss values against the ITU-R M.2135, 3GPP TR38.901, mmMAGIC,
 and METIS outdoor urban micro-cellular (UMi) and/or urban macro-cellular (UMa) pathloss standards.
 
+Lastly, as a part of this script, we evaluate the impact of blockages (moving/parked vehicles, pedestrians, trees) on
+the pathloss behavior of 28 GHz signals in V2I/V2V settings, in addition to analytical studies of fitted models to
+the empirical shadow fading results obtained from our measurements along various vehicular routes onsite.
+
 Reference Papers:
 
 @INPROCEEDINGS{PL-Models-I,
@@ -19,6 +23,18 @@ Reference Papers:
   title={Overview of mmWave Communications for 5G Wireless Networks—With a Focus on Propagation Models},
   year={2017}, volume={65}, number={12}, pages={6213-6230}, doi={10.1109/TAP.2017.2734243},
   journal={IEEE Transactions on Antennas and Propagation}}
+
+@INPROCEEDINGS{Dynamic-Blockages,
+  author={Haneda, Katsuyuki and Zhang, Jianhua and Tan, Lei and Liu, Guangyi and Zheng, Yi and Asplund, et al.},
+  title={5G 3GPP-Like Channel Models for Outdoor Urban Microcellular and Macrocellular Environments},
+  booktitle={2016 IEEE 83rd Vehicular Technology Conference (VTC Spring)},
+  year={2016}, pages={1-7}, doi={10.1109/VTCSpring.2016.7503971}}.
+
+@INPROCEEDINGS{Shadowing,
+  title={28-GHz High-Speed Train Measurements and Propagation Characteristics Analysis},
+  booktitle={2020 14th European Conference on Antennas and Propagation (EuCAP)},
+  author={Park, Jae-Joon and Lee, Juyul and Kim, Kyung-Won and Kim, Myung-Don},
+  year={2020}, pages={1-5}, doi={10.23919/EuCAP48036.2020.9135221}}.
 
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
 Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
@@ -239,7 +255,7 @@ map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longit
 # comm_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
 # tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/'
 # rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-stadium'
+# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-stadium'
 # pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
@@ -290,7 +306,7 @@ color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn
 plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'red', 50, 1.0
 # For security reasons, our Google Maps API key isn't listed here. Create an API key for your use.
-google_maps_api_key, map_type, timeout = '<insert_your_google_maps_API_key_here>', 'hybrid', 3000
+google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 3000
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
 
 """
@@ -681,8 +697,14 @@ for gps_event in gps_events:
                     distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event), pathloss=pathlosses))
 
 """
-CORE VISUALIZATIONS-I: 3D Antenna Patterns
+CORE VISUALIZATIONS-I: 2D and 3D Antenna Patterns
 """
+
+ap2daz_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=az_amps_db, theta=az_angles, mode='lines+markers')]))
+ap2del_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=el_amps_db, theta=el_angles, mode='lines+markers')]))
+
+print('SPAVE-28G | Consolidated Processing I | 2D WR-28 Azimuth Antenna Radiation Pattern Fig: {}'.format(ap2daz_url))
+print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Elevation Antenna Radiation Pattern Fig: {}'.format(ap2del_url))
 
 amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
 az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
@@ -695,12 +717,12 @@ z_vals = rel_amp_db_vals * np.sin(np.deg2rad(el_vals))
 x_vals = rel_amp_db_vals * np.cos(np.deg2rad(el_vals)) * np.sin(np.deg2rad(360.0 - az_vals))
 y_vals = rel_amp_db_vals * np.cos(np.deg2rad(el_vals)) * np.cos(np.deg2rad(360.0 - az_vals))
 
-ap_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_vals,
-                                                       surfacecolor=rel_amp_db_vals)],
-                                      layout=go.Layout(title='3D Antenna Radiation Pattern',
-                                                       xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
-                                                       yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
-print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap_url))
+ap3d_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_vals,
+                                                         surfacecolor=rel_amp_db_vals)],
+                                        layout=go.Layout(title='3D Antenna Radiation Pattern',
+                                                         xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
+                                                         yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
+print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap3d_url))
 
 """
 CORE VISUALIZATIONS-II: Received power maps & Pathloss maps
@@ -767,3 +789,11 @@ x_vals = np.array(distns)
 
 pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
 print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}'.format(pld_url))
+
+"""
+CORE VISUALIZATIONS-IV: Dynamic Blockages (Pathloss v Time)
+"""
+
+"""
+CORE VISUALIZATIONS-V: Empirical Shadow Fading Studies
+"""

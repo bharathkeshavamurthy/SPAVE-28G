@@ -14,6 +14,8 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
