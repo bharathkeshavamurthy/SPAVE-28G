@@ -1,0 +1,15 @@
+cd  
+C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite
+dir /AD  
+ Volume in drive C is Local Disk
+ Volume Serial Number is 08E8-E981
+
+ Directory of C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite
+
+04/09/2023  23:04    <DIR>          .
+04/09/2023  23:04    <DIR>          ..
+04/09/2023  23:04    <DIR>          UoU_SLC
+               0 File(s)              0 bytes
+               3 Dir(s)  10,303,045,632 bytes free
+mkdir "C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\uou_slc"  
+del "C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\SPAVE-28G.txpts.001.tmp"  

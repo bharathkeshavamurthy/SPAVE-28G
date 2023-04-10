@@ -1,0 +1,302 @@
+ This file contains diagnostic information on the items listed below.
+ Search for each keyword to go to the relevant sections of the file.
+ Some categories may appear in more than one place in the file.
+
+
+ 1. Version
+ 2. Warning
+ 3. Error
+ 4. Files
+ 5. Receiver Sets
+ 6. Transmitter Sets
+ 7. Antennas
+ 8. Waveforms
+ 9. Materials
+ 10. Geometry
+ 11. Propagation Model
+ 12. Calculation Progress
+ 13. Study Areas
+ 14. Allocation
+ 15. Timings
+ 16. Output Filter
+
+ ==================== VERSION ====================
+
+ calcprop version 3.3.5.6                         
+
+ ===================== FILES =====================
+
+  setup path =  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\
+  project path =  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\SPAVE-28G
+  project name =  SPAVE-28G
+  project file =  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\SPAVE-28G.setup
+  diag path =  diag\
+  diag+project path =  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\diag\SPAVE-28G
+  param rank suffix =   
+  param rank chars =   
+
+ ================== ALLOCATION ==================
+
+   Allocating Study Area Data
+   Allocation Successful (23)
+
+ ================== ALLOCATION ==================
+
+   Allocating Waveform Data
+   Allocation Successful (21)
+
+ ================== ALLOCATION ==================
+
+   Allocating Filter Data
+   Allocation Successful (19)
+
+ ================== ALLOCATION ==================
+
+   Allocating Feature Data
+   Allocation Successful (12)
+
+ ================== ALLOCATION ==================
+
+   Allocating Far Zone Data
+   Allocation Successful (20)
+
+ ================== ALLOCATION ==================
+
+   Allocating Antenna Data
+   Allocation Successful (10)
+
+ ===================== FILES =====================
+
+  Make directory
+  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\uou_slc
+
+  The directory
+  C:\Users\kesha\Workspaces\SPAVE-28G\src\analyses\insite\uou_slc
+  has been created
+
+ ================== ALLOCATION ==================
+
+   Allocating Receiver Set Data
+   Allocation Successful (13)
+
+ ================== ALLOCATION ==================
+
+   Allocating Transmitter Data
+   Allocation Successful (14)
+
+ ================== STUDY AREAS ==================
+
+ Study Area:   1
+ Maximum Width (m):   6803.72
+
+ ================== ALLOCATION ==================
+
+   Allocating Transmitter Properties Data
+   Allocation Successful (7)
+
+ ================== ALLOCATION ==================
+
+   Allocating Receiver Properties Data
+   Allocation Successful (5)
+
+ ================== ALLOCATION ==================
+
+   Allocating Transmitter-Receiver Pair Data
+   Allocation Successful (8)
+
+ ================== ALLOCATION ==================
+
+   Allocating 3D Geometry Data
+   Allocation Successful (11)
+
+================ TRANSMITTER SETS =================
+
+Transmitter Set Number:     1
+Type: Points                 
+Name: tx_browning
+Status: active    
+Number of Points:       1
+First Active:       1
+Last Active:       1
+Spacing (m):    10.0000
+Local Origin : X =      0.000, Y =      0.000
+Fit to Terrain: Yes
+Rotation (Deg.):    0.000
+Antenna: tx_horn
+Antenna Rotation Parameters (Deg.):
+    About X :    0.000
+    About Y :    0.000
+    About Z :    0.000
+Surface Mounted : No 
+Waveform: sinusoid
+Velocity (m/s):     0.0000
+
+================ RECEIVER SETS =================
+
+Receiver Set Number:     1
+Type: Route                  
+Name: rx_presidents_circle
+Status: active    
+Number of Points:     113
+Spacing (m):     5.0000
+Local Origin : X =      0.000, Y =      0.000
+Fit to Terrain: Yes
+Rotation (Deg.):    0.000
+Antenna: rx_horn
+Antenna Rotation Parameters (Deg.):
+    About X :    0.000
+    About Y :    0.000
+    About Z :    0.000
+Surface Mounted : No 
+Waveform: sinusoid
+Auto Set Collection Radius: Yes
+Use Bounding Box: No 
+Velocity (m/s):     0.0000
+Generate P2P Output: No 
+
+ ================== ANTENNAS ====================
+ 
+ Antenna Number =           1
+ Status = In use    
+ Name = tx_horn                                                                 
+ Type = Pyramidal Horn                                                          
+ Polarization = Vertical  
+ Waveform = sinusoid                                                                
+ Frequency (MHz):  28000.00
+ Gain (dBi) =   22.000
+ Autogain Setting: Off
+ Loss (dB) =    0.000
+ VSWR =    1.00
+ Receiver Threshold (dBm) =   -250.0000    
+ 
+ Antenna Number =           2
+ Status = In use    
+ Name = rx_horn                                                                 
+ Type = Pyramidal Horn                                                          
+ Polarization = Vertical  
+ Waveform = sinusoid                                                                
+ Frequency (MHz):  28000.00
+ Gain (dBi) =   18.296
+ Autogain Setting: On
+ Loss (dB) =    0.000
+ VSWR =    1.00
+ Receiver Threshold (dBm) =   -250.0000    
+
+ ================== WAVEFORMS ====================
+ 
+ Waveform Number:            1
+ Status: In use        
+ Name: sinusoid
+ Wave Type: Non-Dispersive
+ Pulse Shape = Sinusoid                                
+ Pulse Width (s) =   1.0000000E-06
+ Carrier Frequency (MHz) =    28000.00    
+ Bandwidth (MHz) =    800.0000    
+ Frequency_max (MHz) =    28400.00    
+ Frequency_min (MHz) =    27600.00    
+ Frequency_inc (MHz) =    5.000000    
+ Energy in Bandwidth =   0.0000 %
+ Energy Between Truncation Points =   0.0000 %
+ File Name:  none
+
+ Tx Waveform:   1
+ Status: In use        
+     Rx Waveform :  1,   Receiver Filter Loss (dB) =    0.00
+
+ ================= RECEIVER SETS =================
+
+
+Receiver Set Number:     1
+Type: Route                  
+Name: rx_presidents_circle
+Status: active    
+Number of Points:     113
+Auto Set Collection Radius: Yes
+Collection Radius:    14.8434
+Use Bounding Box: No 
+
+ ================== ALLOCATION ==================
+
+   Allocating 3D Geometry Data
+
+ ================= DEALLOCATION =================
+
+   Deallocating 3D Geometry Data
+   Deallocation Successful (11)
+   Allocation Successful (11)
+
+ ================== 3D GEOMETRY ==================
+
+ NStrctGroup3D=           3
+ NSTRCT3D=        5176
+ NSUB3D=        5325
+ NFACE3D=      137074
+ MAX_VERTICES=           8
+ MAX_FACES_ON_SUB=       15080
+ MAX_SUBS=           6
+ MAX_SUPER=           1
+ MAX_STRUCTURE=        5174
+ NumPartition=          75
+ Number of city faces=      121988
+ Number of terrain faces=       15080
+ Number of foliage faces=           0
+ Number of floor plan and object faces=           0
+ Number of outer boundary faces=           6
+
+ ================== 3D GEOMETRY ==================
+
+  Number of Faces = 137074
+  Number of Active Faces = 137074
+  Number of Substructures =   5325
+  Number of Active Substructures =   5325
+
+ ================== ALLOCATION ==================
+
+   Allocating Material Data
+
+ ================= DEALLOCATION =================
+
+   Deallocating Materials Data
+   Deallocation Successful (15)
+   Allocation Successful (15)
+
+ ================== MATERIALS ====================
+
+Material Number:   1
+Name: itu concrete 5 ghz
+Type: One Layer
+Associated with feature: 2     
+Permittivity =    5.31000
+Conductivity =     0.120000
+Roughness (m) =   0.000
+Total Thickness (m) =    0.300
+
+Material Number:   2
+Name: itu wet earth 5 ghz
+Type: Dielectric Halfspace
+Associated with feature: 1     
+Permittivity =   15.75917
+Conductivity =     1.215000
+Roughness (m) =   0.000
+Total Thickness (m) =    0.000
+
+   Constructing 3-D Edges
+       10 Percent Completed    0h  0m  0s
+       20 Percent Completed    0h  0m  0s
+       30 Percent Completed    0h  0m  0s
+       40 Percent Completed    0h  0m  0s
+       50 Percent Completed    0h  0m  0s
+       60 Percent Completed    0h  0m  0s
+       70 Percent Completed    0h  0m  0s
+       80 Percent Completed    0h  0m  0s
+       90 Percent Completed    0h  0m  0s
+      100 Percent Completed    0h  0m 15s
+
+ ================== 3D GEOMETRY ==================
+
+  Number of Edges = 186880
+
+ ================== ALLOCATION ==================
+
+   Allocating Edge Data NUMEDGES=      186880
+   Allocation Successful (18)

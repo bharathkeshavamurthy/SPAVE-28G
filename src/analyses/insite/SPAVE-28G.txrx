@@ -1,0 +1,102 @@
+begin_<points> Tx_Browning
+project_id 2
+active
+vertical_line no
+pattern_shown no
+cube_size 2.50000
+CVxLength 10.00000
+CVyLength 10.00000
+CVzLength 10.00000
+AutoPatternScale
+ShowDescription yes
+CVsVisible no
+CVsLocation -1
+PatternOption TransmitterAntennaOption
+CVsThickness 3
+begin_<location> 
+begin_<reference> 
+cartesian
+longitude 0.000000000000000
+latitude 0.000000000000000
+visible no
+terrain
+end_<reference>
+nVertices 1
+-942.388813381768387 327.160978549604181 2.000000000000000
+end_<location>
+pattern_show_arrow no
+pattern_show_as_sphere no
+generate_p2p yes
+use_apg_acceleration yes
+is_transmitter yes
+is_receiver no
+begin_<transmitter> 
+begin_<pattern> 
+antenna 0
+waveform 0
+alignmentMode spherical 0.00000 90.00000 0.00000
+rotation_x_calc 0.00000
+rotation_y_calc -0.00000
+rotation_z_calc -0.00000
+end_<pattern>
+power 23.00000
+end_<transmitter>
+powerDistribution Uniform 10.00000 10.00000 inactive nosampling 10
+end_<points>
+begin_<route> Rx_Presidents_Circle
+project_id 3
+active
+vertical_line no
+pattern_shown no
+CVxLength 10.00000
+CVyLength 10.00000
+CVzLength 10.00000
+AutoPatternScale
+ShowDescription yes
+CVsVisible no
+CVsLocation -1
+PatternOption ReceiverAntennaOption
+CVsThickness 3
+begin_<location> 
+begin_<reference> 
+cartesian
+longitude 0.000000000000000
+latitude 0.000000000000000
+visible no
+terrain
+end_<reference>
+spacing 5.00000
+nVertices 13
+-1119.626948589164385 235.923949757214103 2.000000000000000
+-1167.150190987465749 230.482033805221022 2.000000000000000
+-1221.180896217269947 227.916576263746720 2.000000000000000
+-1275.211601447074145 225.351118722272417 2.000000000000000
+-1322.282116020209514 210.374371935849240 2.000000000000000
+-1320.773023269656505 178.591602487749356 2.000000000000000
+-1277.946332402194457 148.770653512541628 2.000000000000000
+-1220.737350394166469 151.487020321161481 2.000000000000000
+-1166.706645164362271 154.052477862635783 2.000000000000000
+-1112.675939934558073 156.617935404110057 2.000000000000000
+-1085.429632406041719 186.580611311709902 2.000000000000000
+-1086.787815881539473 215.185103814999536 2.000000000000000
+-1119.626948589164385 235.923949757214103 2.000000000000000
+end_<location>
+pattern_show_arrow no
+pattern_show_as_sphere no
+generate_p2p no
+use_apg_acceleration yes
+is_transmitter no
+is_receiver yes
+begin_<receiver> 
+begin_<pattern> 
+antenna 1
+waveform 0
+alignmentMode spherical 0.00000 90.00000 0.00000
+rotation_x_calc 0.00000
+rotation_y_calc -0.00000
+rotation_z_calc -0.00000
+end_<pattern>
+NoiseFigure 3.00000
+end_<receiver>
+powerDistribution Uniform 10.00000 10.00000 inactive nosampling 10
+end_<route>
