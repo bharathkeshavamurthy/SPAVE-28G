@@ -1,0 +1,172 @@
+\documentclass[10pt,twocolumn]{IEEEtran}
+\makeatletter
+\def\subsubsection{\@startsection{subsubsection}
+                                 {3}
+                                 {\z@}
+                                 {0ex plus 0.1ex minus 0.1ex}
+                                 {0ex}
+                             {\normalfont\normalsize\bfseries}}
+\makeatother
+\usepackage[T1]{fontenc}
+\usepackage{subfigure}
+\usepackage{ulem}
+\usepackage{amsmath,enumitem}
+\allowdisplaybreaks
+\usepackage{hhline}
+\usepackage{graphicx}
+\usepackage{yfonts,color}
+\usepackage{soul,xcolor}
+\usepackage{verbatim}
+\usepackage{flushend}
+\usepackage{amsmath}
+\allowdisplaybreaks
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{float}
+\usepackage{bm}
+\usepackage{url}
+\usepackage{array}
+\usepackage{cite}
+\usepackage{tikz}
+\usepackage{framed}
+\usepackage{balance}
+\usepackage{epsfig,epstopdf}
+\usepackage{booktabs}
+\usepackage{courier}
+\usepackage{subfigure}
+\usepackage{pseudocode}
+\usepackage{enumerate}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[binary-units]{siunitx}
+\sisetup{detect-all,range-phrase=--,range-units=single}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{assumption}{Assumption}
+\newtheorem{remark}{Remark}
+\renewcommand{\algorithmicrequire}{\textbf{Initialization:}}  
+\renewcommand{\algorithmicensure}{\textbf{Output:}}  
+\newcommand{\rom}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+\usepackage{color}
+\usepackage{soul,xcolor}
+\newcommand{\sst}[1]{\st{#1}}
+\newcommand{\nm}[1]{{\color{blue}\bf{[NM: #1]}}}
+\newcommand{\bk}[1]{{\color{magenta}{[BK: #1]}}}
+\newcommand{\nmmath}[1]{{\color{blue}\text{\bf{[NM: #1]}}}}
+\newcommand{\gs}[1]{{\color{orange}\bf{[GS: #1]}}}
+\newcommand{\remove}[1]{{\color{magenta}{\bf REMOVE: [#1]}}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\usepackage{cancel}
+
+% Line spread.
+\usepackage{setspace}
+% Space before the footnotes.
+\setlength{\skip\footins}{3mm}
+% Some acronyms.
+\usepackage{glossaries}
+\newacronym{tx}{Tx}{transmitter}
+\newacronym{rx}{Rx}{receiver}
+
+\newcommand\mst[2][red]{\setbox0=\hbox{$#2$}\rlap{\raisebox{.45\ht0}{\textcolor{#1}{\rule{\wd0}{2pt}}}}#2}
+\newcommand{\add}[1]{{\color{red}{#1}}}
+\newcommand{\ull}[1]{\textbf{\color{red}\ul{#1}}}
+\normalem
+\title{A Robotic Antenna Alignment and Tracking System for Millimeter Wave Propagation Modeling}
+\author{\vspace{-1mm}Bharath Keshavamurthy\IEEEauthorrefmark{1}, Yaguang Zhang\IEEEauthorrefmark{2}, Christopher R. Anderson\IEEEauthorrefmark{3},\\Nicol\`{o} Michelusi\IEEEauthorrefmark{1}, James V. Krogmeier\IEEEauthorrefmark{2}, David J. Love\IEEEauthorrefmark{2}
+\thanks{Part of this research has been funded by NSF under grant CNS-1642982.}
+\thanks{\IEEEauthorrefmark{1}Electrical, Computer and Energy Engineering, Arizona State University.}
+\thanks{\IEEEauthorrefmark{2}Electrical and Computer Engineering, Purdue University.}
+\thanks{\IEEEauthorrefmark{3}Electrical Engineering, United States Naval Academy.}
+\vspace{-12mm}}
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+\setulcolor{red}
+\setul{red}{2pt}
+\setstcolor{red}
+
+% Shrink the paper.
+\newcommand{\linespreadexceptabstractandindex}{\setstretch{0.98}} % 0.975
+\newcommand{\linespreadforabstractandindex}{\setstretch{0.991}}
+
+\newcommand{\extraspacebeforesec}{-4mm}
+\newcommand{\extraspacebeforesubsubsec}{0.2mm}
+
+\linespreadexceptabstractandindex
+
+\begin{abstract}
+\linespreadforabstractandindex
+In this paper, we discuss the design of a sliding-correlator channel sounder for \SI{28}{\giga\hertz} propagation modeling on the NSF POWDER testbed in Salt Lake City, UT. Beam-alignment is mechanically achieved via a fully autonomous robotic antenna tracking platform, designed using commercial off-the-shelf components. Equipped with an Apache Zookeeper/Kafka managed fault-tolerant publish-subscribe framework, we demonstrate tracking response times of \SI{27.8}{\milli\second}, in addition to superior scalability over state-of-the-art mechanical beam-steering systems. Enhanced with real-time kinematic correction streams, our geo-positioning subsystem achieves a 3D accuracy of \SI{17}{\centi\meter}, while our principal axes positioning subsystem achieves an average accuracy of \SI{1.1}{\degree} across yaw and pitch movements. Finally, by facilitating remote orchestration (via managed containers), uninhibited rotation (via encapsulation), and real-time positioning visualization (via Dash/MapBox), we exhibit a proven prototype well-suited for V2X measurements.
+\end{abstract}
+
+% Reset counters for glossaries.
+\glsresetall
+
+\vspace{\extraspacebeforesec}
+\section{Introduction}\label{I}
+With the widespread deployment of 5G networks by wireless carriers, primarily leveraging the mid-band spectrum, these service providers have shifted their spectrum procurement focus to the millimeter-wave bands (mmWave: \SIrange{30}{300}{\giga\hertz})~\cite{WSJ:Verizon}, with the long-term vision of providing a significant enhancement in user experience vis-\`{a}-vis data rates and latencies in dense urban and suburban environments. Concertedly, academic research into mmWave signal propagation modeling has also gained a renewed emphasis. In this paper, we briefly summarize our efforts in executing a measurement campaign with a \SI{28}{\giga\hertz} sliding-correlator channel sounder and a fully autonomous robotic antenna alignment \& tracking platform, on the NSF POWDER testbed at the University of Utah in Salt Lake City, UT~\cite{POWDER}. 
+
+An earlier measurement campaign~\cite{Purdue} by our research group centered around a manual antenna alignment \& tracking platform in semi-stationary settings for \SI{28}{\giga\hertz} systems in suburban neighborhoods% around the US Naval Academy campus in Annapolis, MD
+. Similarly, the system detailed in~\cite{Harvard} also involves manual alignment and is restricted to indoor environments. On the other hand, the beam-alignment framework outlined here is fully autonomous and capable of operating in V$2$X mobility scenarios, with remote monitoring and troubleshooting capabilities; furthermore, this measurement campaign on the POWDER testbed is executed on a geographically diverse site encompassing both urban and suburban routes. Although electronic beam-alignment strategies involving phased-arrays offer faster switching times (${\approx}\SI{2.5}{\milli\second}$)~\cite{Agile-Link} and greater flexibility (side-lobe \& beam-width control) relative to mechanical fixed-beam steering, they constitute computationally expensive signal sampling along multiple directions and their design necessitates complex hardware due to resource-heavy algorithmic models. In the the following section, we briefly summarize the design of our prototype and demonstrate its efficacy through field-tested performance metrics.
+
+\newcommand{\txrxfigwidth}{0.95\linewidth}
+\begin{figure}[t]
+    \begin{tabular}{cc}
+        \begin{minipage}{0.49\linewidth} 
+        	 \centering
+            \includegraphics[width=\txrxfigwidth]{figs/tx-browning-deployment.png}
+            \\ [0.5ex]
+            \centering
+            \includegraphics[width=\txrxfigwidth]{figs/urban-campus-II-rx-power.png}
+        \end{minipage}&
+        \hspace{-6mm}
+        \begin{minipage}{0.51\linewidth}
+        	 \centering
+            \includegraphics[width=\txrxfigwidth]{figs/urban-vegetation-rx-power.png}
+            \\ [0.5ex]
+            \centering
+            \includegraphics[width=\txrxfigwidth]{figs/suburban-fraternities-rx-power.png}
+        \end{minipage}
+    \end{tabular}
+    \caption{Clockwise from top-left: our remote monitoring \& troubleshooting interface---via an Android Debug Bridge---exhibiting the deployment of our \gls{tx} on the roof-top of the William Browning Building; illustrations of the received signal power values superimposed on a Google Hybrid map of the sites under analysis for urban foliage (Rx on cart), suburban neighborhood (Rx on cart), and urban-campus (Rx on minivan), respectively. The dots with heat-map color palette values denote \gls{rx} locations as it was driven/pushed around, and the purple diamond denotes the fixed \gls{tx} location.}
+    \label{fig:TxRx}
+    \vspace{-6mm}
+\end{figure}
+
+\begin{figure*} [t]
+    \centerline{
+    \includegraphics[width=1.0\textwidth]{figs/odin-system-arch.pdf}}
+    \vspace{-4mm}
+    \caption{The system architecture of our fully autonomous robotic antenna alignment \& tracking platform with a sliding-correlator channel sounder}
+    \label{fig: Arch}
+    \vspace{-6mm}
+\end{figure*}
+
+\vspace{\extraspacebeforesec}
+\section{Design Description}\label{II}
+The prototype deployed for our \SI{28}{\giga\hertz} measurement campaign on the POWDER testbed constitutes three modules: an autonomous \emph{beam-steering controller} replicated at both the \glsfirst{tx} and the \glsfirst{rx}, their respective \emph{communication subsystems} consistent with our sounder design, and a \emph{centralized nerve center} for component registration \& coordination, timing synchronization, messaging middleware, and data storage with redundancy. Here, the nerve center is deployed on a high-availability cluster of four Dell R740 compute nodes at the Fort Douglas data center; additionally, as depicted in Fig. \ref{fig:TxRx}, the \gls{tx} is fixed atop the William Browning Building, and the \gls{rx} is mounted on a Toyota Sienna minivan or a cart that is driven or pushed around campus.
+
+\vspace{\extraspacebeforesubsubsec}\noindent{\bf Channel Sounder:} As illustrated in Fig. \ref{fig: Arch}, our prototype consists of a custom-built sliding-correlator channel sounder~\cite{Purdue}, whose principles have been laid down in~\cite{Sounder}. Using highly directional WR-$28$ horn antennas with $+$\SI{22}{\deci\bel{i}} gain \& \SI{15}{\degree} half-power beam-width, up/down-converters, and commercial off-the-shelf circuitry, we record the power-delay profiles (as complex-$64$ I/Q samples) at a Raspberry Pi via a GNURadio sink coupled with a USRP B$200$mini UHD source (bandwidth${=}$\SI{0}{\hertz}, gain${=}$\num{0} or \SI{76}{\deci\bel}, center frequency${=}$\SI{2.5}{\giga\hertz}, and sample rate${=}$\SI{2}{\mega{sps}}). Furthermore, leveraging QT GUI time sink visualization capabilities of GNURadio (with dynamic trigger levels) over an ad-hoc WLAN with the Pi, this design enables seamless oversight of our recording activities.
+
+\vspace{\extraspacebeforesubsubsec}\noindent{\bf Alignment \& Tracking:} As shown in Fig. \ref{fig: Arch}, our mechanical beam-steering controller (written in C/C++ and Python) is inherited and extended at the \gls{tx} and the \gls{rx}. Each side interfaces with inertial motion and global positioning breakout boards through an ATMega328P microcontroller over I2C peripherals, gets notified of alignment \& location updates from its counterpart in real-time, and orchestrates yaw-/pitch-axis positioning via open-loop servo (HSR-2645CRH) control. The RPyC API handles controller registration \& coordination. A Network Time Protocol client-server architecture administers timing synchronization. A Zookeeper-managed cluster of Kafka brokers handles the publish-subscribe middleware operations between the \gls{tx} and \gls{rx} controllers, with redundant data storage. This fully autonomous architecture allows for an average beam-steering response time of \SI{27.8}{\milli\second}, evaluated over $12,870$ interactions; moreover, our loosely coupled modular design allows for remote monitoring and troubleshooting of each controller. Corroborated both in-field and on an ad-hoc laser testbed, our principal axes positioning framework achieves an accuracy of \SI{1.1}{\degree} across all fine- \& coarse-grained yaw and pitch movements. Likewise, corroborated both in-field (Plotly Dash/MapBox API) and on a vendor-specific console (uBlox u-Center/Google Maps JavaScript API), our geo-location framework---with real-time kinematic correction streams---achieves a $3$D accuracy of \SI{17}{\centi\meter}.
+
+\vspace{\extraspacebeforesubsubsec}\noindent{\bf Post-Processing:} Upon completion of our data collection activities on the POWDER testbed, for a chosen site, our post-processing scripts parse the metadata associated the recorded power-delay profiles, extract the timestamps corresponding to each recorded data segment ($10^6$ complex-$64$ I/Q samples), process the samples in each segment (pre-filtering, temporal truncation, time-windowing, noise elimination), compute the received signal power off of these processed segments (with an initial calibration driven correction), couple these segments with the recorded geo-location \& inertial motion logs, and visualize the results on a Google Hybrid map rendered via the Bokeh toolbox: these visualizations for a \gls{rx} route around foliage in an urban campus environment, a suburban neighborhood, and President's Circle are shown in Fig. \ref{fig:TxRx}.
+
+\vspace{\extraspacebeforesec}
+\section{Conclusion}\label{III}
+In this summary, we outline the key design details encompassing our mmWave propagation modeling measurement prototype. With several sites successfully analyzed at the University of Utah in Salt Lake City, our system has been proven both in the field and in a laboratory environment to achieve an average alignment accuracy of \SI{1.1}{\degree}, a $3$D geo-location accuracy of \SI{17}{\centi\meter}, and an average beam-alignment response time of \SI{27.8}{\milli\second} under V$2$X mobility evaluations. Offering unrestrained rotation and remote orchestration capabilities, in addition to a modular fault-tolerant messaging middleware framework, our fully autonomous beam-steering controller is well-suited to be scaled to increasingly complex mmWave modeling activities.
+
+\vspace{0mm}
+
+\balance
+\bibliographystyle{IEEEtran}
+\vspace{-4mm}
+\bibliography{IEEEabrv,ref}
+
+\end{document}
