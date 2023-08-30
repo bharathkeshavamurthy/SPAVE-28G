@@ -5,7 +5,7 @@ begin_<globals>
 longitude 0
 latitude 0
 end_<globals>
-FirstAvailableFeatureNumber 3
+FirstAvailableFeatureNumber 4
 FirstAvailableUnknownLayoutNumber 0
 FirstAvailableStudyAreaNumber 1
 begin_<caches> 

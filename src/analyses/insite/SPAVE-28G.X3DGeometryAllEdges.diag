@@ -5,29 +5,29 @@ wibatch version 3.3.5.6 - r70036
   Built with Qt 4.8.7
   Using Qt 4.8.7
 
-2023.04.09 23:14:50.639 Hostname: ArkAngel-V
-2023.04.09 23:14:50.639 Set working directory: C:/Users/kesha/Workspaces/SPAVE-28G/src/analyses/insite
-2023.04.09 23:14:50.639 Sun Apr 9 23:14:50 2023
+2023.04.13 13:32:00.055 Hostname: ArkAngel-V
+2023.04.13 13:32:00.055 Set working directory: C:/Users/kesha/Workspaces/SPAVE-28G/src/analyses/insite
+2023.04.13 13:32:00.075 Thu Apr 13 13:32:00 2023
 
-2023.04.09 23:14:50.639 Creating geolocated X3D geometry cache (8 threads): ./SPAVE-28G.X3DGeometryAllEdges.cache
-2023.04.09 23:14:50.839 Loaded geometry: ./SLC_Terrain.ter
-2023.04.09 23:14:51.448 Loaded geometry: ./SLC_Structures.city
-2023.04.09 23:14:51.634   Lowering structures to terrain
-2023.04.09 23:14:51.766     Done lowering structures to terrain
-2023.04.09 23:14:53.197   Creating candidate facets for edge creation
-2023.04.09 23:14:55.343     Done creating candidate facets for edge creation
-2023.04.09 23:14:55.415   Creating scene edges
-2023.04.09 23:14:55.749     Done creating scene edges
-2023.04.09 23:14:56.145   Finishing scene edges
-2023.04.09 23:14:56.516     Done finishing scene edges
-2023.04.09 23:14:57.487 Writing 137068 triangles to cache file
-2023.04.09 23:14:57.615 Writing edgeset (145743 edges) to cache
-2023.04.09 23:14:57.864 Writing property list (1 properties) to cache
-2023.04.09 23:14:57.864   Property: 0, name=po_object_type, 137068 entries
-2023.04.09 23:14:57.949 Successfully generated geometry cache; exiting.
+2023.04.13 13:32:00.075 Creating geolocated X3D geometry cache (8 threads): ./SPAVE-28G.X3DGeometryAllEdges.cache
+2023.04.13 13:32:00.292 Loaded geometry: ./SLC_Terrain.ter
+2023.04.13 13:32:01.041 Loaded geometry: ./SLC_Structures.city
+2023.04.13 13:32:01.269   Lowering structures to terrain
+2023.04.13 13:32:01.410     Done lowering structures to terrain
+2023.04.13 13:32:02.942   Creating candidate facets for edge creation
+2023.04.13 13:32:05.305     Done creating candidate facets for edge creation
+2023.04.13 13:32:05.378   Creating scene edges
+2023.04.13 13:32:05.809     Done creating scene edges
+2023.04.13 13:32:06.267   Finishing scene edges
+2023.04.13 13:32:06.647     Done finishing scene edges
+2023.04.13 13:32:07.522 Writing 137068 triangles to cache file
+2023.04.13 13:32:07.647 Writing edgeset (145743 edges) to cache
+2023.04.13 13:32:07.895 Writing property list (1 properties) to cache
+2023.04.13 13:32:07.895   Property: 0, name=po_object_type, 137068 entries
+2023.04.13 13:32:08.004 Successfully generated geometry cache; exiting.
 
-2023.04.09 23:14:57.949 Sun Apr 9 23:14:57 2023
+2023.04.13 13:32:08.005 Thu Apr 13 13:32:08 2023
 
 
 
-2023.04.09 23:14:57.961 Total Runtime: : 00:00:07.309
+2023.04.13 13:32:08.006 Total Runtime: : 00:00:07.927

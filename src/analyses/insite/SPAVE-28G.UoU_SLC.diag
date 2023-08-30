@@ -5,60 +5,60 @@ wibatch version 3.3.5.6 - r70036
   Built with Qt 4.8.7
   Using Qt 4.8.7
 
-2023.04.09 23:14:58.466 Hostname: ArkAngel-V
-2023.04.09 23:14:58.466 Set working directory: C:/Users/kesha/Workspaces/SPAVE-28G/src/analyses/insite
-2023.04.09 23:14:58.466 Sun Apr 9 23:14:58 2023
+2023.04.13 13:32:08.570 Hostname: ArkAngel-V
+2023.04.13 13:32:08.570 Set working directory: C:/Users/kesha/Workspaces/SPAVE-28G/src/analyses/insite
+2023.04.13 13:32:08.582 Thu Apr 13 13:32:08 2023
 
-2023.04.09 23:14:58.851 OptiX Runtime version = 40100
-2023.04.09 23:14:58.851 CUDA runtime unable to retrieve version information. (CUDA driver version is insufficient for CUDA runtime version)
-2023.04.09 23:14:58.851 CUDA Runtime version = 0.0
-2023.04.09 23:14:58.851 CUDA Driver version  = 0.0
-2023.04.09 23:14:58.851 No X3D compatible CUDA cards detected - using CPU ray tracing.
-2023.04.09 23:14:58.851 Please see Appendix I.3 of the Reference Manual to troubleshoot this problem
+2023.04.13 13:32:08.932 OptiX Runtime version = 40100
+2023.04.13 13:32:08.935 CUDA runtime unable to retrieve version information. (CUDA driver version is insufficient for CUDA runtime version)
+2023.04.13 13:32:08.936 CUDA Runtime version = 0.0
+2023.04.13 13:32:08.936 CUDA Driver version  = 0.0
+2023.04.13 13:32:08.936 No X3D compatible CUDA cards detected - using CPU ray tracing.
+2023.04.13 13:32:08.936 Please see Appendix I.3 of the Reference Manual to troubleshoot this problem
 
-2023.04.09 23:15:00.583 Initializing X3D model
+2023.04.13 13:32:09.576 Initializing X3D model
 
-2023.04.09 23:15:00.583 Diffuse Scattering: Enabled, Refl: 2, Diff: 1, Trans: 0, FinalOnly: true
-2023.04.09 23:15:00.583 ============ GEOMETRY ============
+2023.04.13 13:32:09.578 Diffuse Scattering: Enabled, Refl: 2, Diff: 1, Trans: 0, FinalOnly: true
+2023.04.13 13:32:09.578 ============ GEOMETRY ============
 
-2023.04.09 23:15:00.583 Processing geometry (8 CPU threads)
-2023.04.09 23:15:00.583 X3D's CPU ray tracing mode does not currently support cached geometry. The geometry will be processed normally.
-2023.04.09 23:15:00.646 Loaded geometry: ./SLC_Terrain.ter
-2023.04.09 23:15:01.269 Loaded geometry: ./SLC_Structures.city
-2023.04.09 23:15:01.517   Lowering structures to terrain
-2023.04.09 23:15:01.651     Done lowering structures to terrain
-2023.04.09 23:15:06.358   Creating candidate facets for edge creation
-2023.04.09 23:15:08.539     Done creating candidate facets for edge creation
-2023.04.09 23:15:08.660   Creating scene edges
-2023.04.09 23:15:09.067     Done creating scene edges
-2023.04.09 23:15:09.411   Finishing scene edges
-2023.04.09 23:15:09.748     Done finishing scene edges
-2023.04.09 23:15:46.421   Finishing scene edges
-2023.04.09 23:15:47.130     Done finishing scene edges
+2023.04.13 13:32:09.578 Processing geometry (8 CPU threads)
+2023.04.13 13:32:09.578 X3D's CPU ray tracing mode does not currently support cached geometry. The geometry will be processed normally.
+2023.04.13 13:32:09.656 Loaded geometry: ./SLC_Terrain.ter
+2023.04.13 13:32:10.408 Loaded geometry: ./SLC_Structures.city
+2023.04.13 13:32:10.697   Lowering structures to terrain
+2023.04.13 13:32:10.854     Done lowering structures to terrain
+2023.04.13 13:32:19.590   Creating candidate facets for edge creation
+2023.04.13 13:32:21.920     Done creating candidate facets for edge creation
+2023.04.13 13:32:22.052   Creating scene edges
+2023.04.13 13:32:22.569     Done creating scene edges
+2023.04.13 13:32:23.023   Finishing scene edges
+2023.04.13 13:32:23.480     Done finishing scene edges
+2023.04.13 13:33:16.975   Finishing scene edges
+2023.04.13 13:33:17.955     Done finishing scene edges
 
-2023.04.09 23:15:48.619  ============ TRANSMITTER/RECEIVER SETS ============
+2023.04.13 13:33:22.178  ============ TRANSMITTER/RECEIVER SETS ============
 
-2023.04.09 23:15:48.619 Generating transmitter and receiver sets
-2023.04.09 23:15:50.052 TxRx set: Tx_Browning  Set number: 2  Type: PointSet  Number of points: 1  APG Accelerated: no  Fit to terrain: yes
-2023.04.09 23:15:50.052   Transmitter:
-2023.04.09 23:15:50.052     Input power (dBm): 23
-2023.04.09 23:15:50.052     Waveform: Sinusoid  Amplitude: 1  Carrier frequency (MHz): 28000  Phase (degrees): 0
-2023.04.09 23:15:50.052     Antenna: Horn  Cable loss (dB): 0  Gain (dBi): 22  Polarization: Vertical  Power threshold (dBm): -250  Temperature (K): 293  VSWR: 1
-2023.04.09 23:15:50.052     Feed aperture height (m): 0.0749  Feed aperture length (m): 1.499  Feed aperture width (m): 0.1499  Horn aperture height (m): 0.8244  Horn aperture width(m): 1.6489
+2023.04.13 13:33:22.178 Generating transmitter and receiver sets
+2023.04.13 13:33:23.948 TxRx set: Tx_Browning  Set number: 2  Type: PointSet  Number of points: 1  APG Accelerated: no  Fit to terrain: yes
+2023.04.13 13:33:23.948   Transmitter:
+2023.04.13 13:33:23.948     Input power (dBm): 23
+2023.04.13 13:33:23.949     Waveform: Sinusoid  Amplitude: 1  Carrier frequency (MHz): 28000  Phase (degrees): 0
+2023.04.13 13:33:23.949     Antenna: Horn  Cable loss (dB): 0  Gain (dBi): 22  Polarization: Vertical  Power threshold (dBm): -250  Temperature (K): 293  VSWR: 1
+2023.04.13 13:33:23.949     Feed aperture height (m): 0.0749  Feed aperture length (m): 1.499  Feed aperture width (m): 0.1499  Horn aperture height (m): 0.8244  Horn aperture width(m): 1.6489
 
-2023.04.09 23:15:51.120 TxRx set: Rx_Presidents_Circle  Set number: 3  Type: RouteSet  Number of points: 113  APG Accelerated: no  Fit to terrain: yes
-2023.04.09 23:15:51.120   Receiver:
-2023.04.09 23:15:51.120     Collection radius (m): auto
-2023.04.09 23:15:51.120     Waveform: Sinusoid  Amplitude: 1  Carrier frequency (MHz): 28000  Phase (degrees): 0
-2023.04.09 23:15:51.120     Antenna: Horn  Cable loss (dB): 0  Polarization: Vertical  Power threshold (dBm): -250  Temperature (K): 293  VSWR: 1
-2023.04.09 23:15:51.120     Feed aperture height (m): 0.0749  Feed aperture length (m): 1.499  Feed aperture width (m): 0.1499  Horn aperture height (m): 0.8244  Horn aperture width(m): 1.6489
-2023.04.09 23:15:51.120   Average velocity (m/s): 0  Spacing (m): 5
+2023.04.13 13:33:25.225 TxRx set: Rx_Presidents_Circle  Set number: 3  Type: RouteSet  Number of points: 113  APG Accelerated: no  Fit to terrain: yes
+2023.04.13 13:33:25.225   Receiver:
+2023.04.13 13:33:25.225     Collection radius (m): auto
+2023.04.13 13:33:25.225     Waveform: Sinusoid  Amplitude: 1  Carrier frequency (MHz): 28000  Phase (degrees): 0
+2023.04.13 13:33:25.225     Antenna: Horn  Cable loss (dB): 0  Polarization: Vertical  Power threshold (dBm): -250  Temperature (K): 293  VSWR: 1
+2023.04.13 13:33:25.225     Feed aperture height (m): 0.0749  Feed aperture length (m): 1.499  Feed aperture width (m): 0.1499  Horn aperture height (m): 0.8244  Horn aperture width(m): 1.6489
+2023.04.13 13:33:25.225   Average velocity (m/s): 0  Spacing (m): 5
 
-2023.04.09 23:15:51.120   Auto Collection Radius = 29.6636m
+2023.04.13 13:33:25.232   Auto Collection Radius = 29.6636m
 
-2023.04.09 23:15:51.120 ============ SCENE ============
+2023.04.13 13:33:25.232 ============ SCENE ============
 
-2023.04.09 23:15:51.120 Scene information: 
+2023.04.13 13:33:25.232 Scene information: 
                           Number of original facets: 137068
                           Number of fragmented facets: 2337909
                           Number of spheres: 113
@@ -72,44 +72,43 @@ wibatch version 3.3.5.6 - r70036
                           Number of superedges: 145743
                           Number of subedges: 401188
 
-2023.04.09 23:15:51.120 ============ MATERIALS ============
+2023.04.13 13:33:25.232 ============ MATERIALS ============
 
-2023.04.09 23:15:51.120 Material number: 2  Type: DielectricHalfspace  Thickness (m): 0
-2023.04.09 23:15:51.120   Layer 0: 
-2023.04.09 23:15:51.120     Relative permittivity: 15.7592  Conductivity (S/m): 1.215  Thickness (m): 0  Roughness (m): 0
+2023.04.13 13:33:25.236 Material number: 2  Type: DielectricHalfspace  Thickness (m): 0
+2023.04.13 13:33:25.238   Layer 0: 
+2023.04.13 13:33:25.238     Relative permittivity: 15.7592  Conductivity (S/m): 1.215  Thickness (m): 0  Roughness (m): 0
 
-2023.04.09 23:15:51.136 Material number: 1  Type: LayeredDielectric  Thickness (m): 0
-2023.04.09 23:15:51.136   Layer 0: 
-2023.04.09 23:15:51.136     Relative permittivity: 5.31  Conductivity (S/m): 0.12  Thickness (m): 0.3  Roughness (m): 0
+2023.04.13 13:33:25.239 Material number: 1  Type: LayeredDielectric  Thickness (m): 0
+2023.04.13 13:33:25.239   Layer 0: 
+2023.04.13 13:33:25.239     Relative permittivity: 5.31  Conductivity (S/m): 0.12  Thickness (m): 0.3  Roughness (m): 0
 
-2023.04.09 23:15:51.136 ============ ATMOSPHERE ============
+2023.04.13 13:33:25.240 ============ ATMOSPHERE ============
 
-2023.04.09 23:15:51.136 Pressure = 1013.25
-2023.04.09 23:15:51.136 Temperature = 22.2
-2023.04.09 23:15:51.136 Humidity = 50
+2023.04.13 13:33:25.240 Pressure = 1013.25
+2023.04.13 13:33:25.240 Temperature = 22.2
+2023.04.13 13:33:25.240 Humidity = 50
 
-2023.04.09 23:15:54.585 ============ MODEL ============
+2023.04.13 13:33:26.281 ============ MODEL ============
 
-2023.04.09 23:15:54.684 Starting X3D ray tracing for Tx set 2, point 1 (point 1 of 1 total)
-2023.04.09 23:15:54.684   Diffraction cone ray angle = 0.25
-2023.04.09 23:15:54.684   Using CPU ray tracer (8 CPU threads)
-2023.04.09 23:15:54.749   Ray tracing ranges: 
-2023.04.09 23:15:54.749     Minimum phi: 0
-2023.04.09 23:15:54.749     Maximum phi: 360
-2023.04.09 23:15:54.749     Minimum theta: 0
-2023.04.09 23:15:54.749     Maximum theta: 180
-2023.04.09 23:15:54.749   Model parameters: 
-2023.04.09 23:15:54.749     Reflections:         6
-2023.04.09 23:15:54.749     Transmissions:       0
-2023.04.09 23:15:54.749     Diffractions:        1
-2023.04.09 23:15:54.749     Ray spacing (degrees): 0.25
+2023.04.13 13:33:26.311 Starting X3D ray tracing for Tx set 2, point 1 (point 1 of 1 total)
+2023.04.13 13:33:26.311   Diffraction cone ray angle = 0.25
+2023.04.13 13:33:26.311   Using CPU ray tracer (8 CPU threads)
+2023.04.13 13:33:26.643   Ray tracing ranges: 
+2023.04.13 13:33:26.645     Minimum phi: 0
+2023.04.13 13:33:26.645     Maximum phi: 360
+2023.04.13 13:33:26.645     Minimum theta: 0
+2023.04.13 13:33:26.645     Maximum theta: 180
+2023.04.13 13:33:26.645   Model parameters: 
+2023.04.13 13:33:26.645     Reflections:         6
+2023.04.13 13:33:26.645     Transmissions:       0
+2023.04.13 13:33:26.645     Diffractions:        1
+2023.04.13 13:33:26.645     Ray spacing (degrees): 0.25
 
-2023.04.09 23:15:54.749   Advanced model parameters:
-2023.04.09 23:15:54.749     Maximum reflections before first diffraction: 3
-2023.04.09 23:15:54.749     Maximum reflections between two diffractions: 0
-2023.04.09 23:15:54.749     Maximum reflections after last diffraction: 3
-2023.04.09 23:16:43.551   CPU ray tracing (4653056 active): 6% complete
+2023.04.13 13:33:26.647   Advanced model parameters:
+2023.04.13 13:33:26.647     Maximum reflections before first diffraction: 3
+2023.04.13 13:33:26.647     Maximum reflections between two diffractions: 0
+2023.04.13 13:33:26.647     Maximum reflections after last diffraction: 3
+2023.04.13 13:35:08.909   CPU ray tracing (4653056 active): 6% complete
 
-2023.04.09 23:16:45.974   Beginning next round of queued diffractions
+2023.04.13 13:35:11.100   Beginning next round of queued diffractions
 
-2023.04.09 23:27:23.240   CPU ray tracing (29884416 active): 5% complete

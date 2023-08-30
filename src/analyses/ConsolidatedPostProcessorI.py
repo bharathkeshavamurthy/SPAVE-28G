@@ -50,6 +50,7 @@ import plotly
 import scipy.io
 import datetime
 import requests
+import traceback
 import dataclasses
 import numpy as np
 import pandas as pd
@@ -57,29 +58,30 @@ from enum import Enum
 from pyproj import Proj
 from geopy import distance
 import plotly.graph_objs as go
-from bokeh.plotting import gmap
-from bokeh.io import export_png
-from bokeh.palettes import brewer
+from json import JSONDecodeError
+# from bokeh.plotting import gmap
+# from bokeh.io import export_png
 from typing import List, Tuple, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
 from scipy import signal, constants, integrate
 from concurrent.futures import ThreadPoolExecutor
-from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper
+
+# from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper, FixedTicker
 
 """
-INITIALIZATIONS-I: Collections & Utilities
+INITIALIZATIONS I: Collections & Utilities
 """
 distns, pls = [], []
 pi, c = np.pi, constants.speed_of_light
 deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
 linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
 decibel_1, decibel_2 = lambda x: 10.0 * np.log10(x), lambda x: 20.0 * np.log10(x)
-gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods, calc_pwrs = [], [], [], [], [], []
+gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods, meas_pwrs = [], [], [], [], [], []
 
 """
-INITIALIZATIONS-II: Enumerations & Dataclasses
+INITIALIZATIONS II: Enumerations & Dataclasses
 """
 
 
@@ -210,107 +212,133 @@ class Pod:
 
 
 """
-CONFIGURATIONS-I: A few route-specific Bokeh & Plotly visualization options
+CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
                   Input & Output Dirs | GPS & IMU logs | Power delay profiles | Antenna pattern logs | Calibration logs
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/'
-rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
-pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
-map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+# fast_fading_eval_enabled = True
+# ffe_png = 'urban_campus_I_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
+# map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
+# pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-campus-II'
-# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
+fast_fading_eval_enabled = True
+# ffe_png = 'urban_campus_II_ffe.png'
+gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_rx_df.csv'
+pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_pl_df.csv'
+# map_width, map_height, map_zoom_level, map_title = 8400, 2800, 20, 'urban-campus-II'
+tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
+# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7650), longitude=Member(component=-111.8550))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-campus-III'
+# fast_fading_eval_enabled = True
+# ffe_png = 'urban_campus_III_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
+# map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
 
-''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
+''' urban-garage route (semi-autonomous) (NW Garage on 1460 E St) '''
+# fast_fading_eval_enabled = True
+# ffe_png = 'urban_garage_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-garage'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
 # pwr_png, pl_png, pl_dist_png = 'urban_garage_pwr.png', 'urban_garage_pl.png', 'urban_garage_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# map_width, map_height, map_zoom_level, map_title = 5500, 2800, 20, 'urban-stadium'
+# fast_fading_eval_enabled = True
+# ffe_png = 'urban_stadium_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_pl_df.csv'
+# map_width, map_height, map_zoom_level, map_title = 5500, 3500, 20, 'urban-stadium'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
 # pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# fast_fading_eval_enabled = True
+# ffe_png = 'suburban_fraternities_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
-# gps_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-# comm_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# tx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/'
-# rx_imu_dir = 'D:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# fast_fading_eval_enabled = True
+# ffe_png = 'urban_vegetation_ffe.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
-output_dir = 'C:/Users/kesha/Workspaces/SPAVE-28G/test/analyses/'
-ant_log_file, ant_pat_3d_png = 'D:/SPAVE-28G/analyses/antenna_pattern.mat', 'antenna_pattern_3d.png'
+# output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
+ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
-cali_dir, cali_samples_file_left, cali_samples_file_right = 'D:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
+cali_dir, cali_samples_file_left, cali_samples_file_right = 'E:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
 
 """
-CONFIGURATIONS-II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
+CONFIGURATIONS II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-
+datetime_format, ne_amp_threshold = '%Y-%m-%d %H:%M:%S.%f', 0.05
 h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 21.3, 15.4, 76.0, 2e6, 1e5
 carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, uconv_gain, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4, 13.4
-meas_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
-
-noise_elimination_config = {'multiplier': 3.5, 'min_peak_index': 2000, 'num_samples_discard': 0,
-                            'max_num_samples': int(5e5), 'relative_range': [0.875, 0.975], 'threshold_ratio': 0.9}
-datetime_format, time_windowing_config = '%Y-%m-%d %H:%M:%S.%f', {'multiplier': 0.5, 'truncation_length': int(2e5)}
+time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
+calc_pwrs = [-39.6, -42.1, -44.6, -47.1, -49.6, -52.1, -54.6, -57.1, -59.6, -62.1, -64.6, -67.1, -69.6, -72.1, -74.6]
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
-CONFIGURATIONS-III: LLA-to-UTM converter | Additional Bokeh & Plotly visualization options
+CONFIGURATIONS III: LLA-to-UTM converter | Additional Bokeh & Plotly visualization options
 """
+max_workers, sg_wsize, sg_poly_order = 4096, 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-max_workers, fjump, sg_wsize, sg_poly_order = 1024, 10, 53, 3
-color_bar_layout_location, color_palette, color_palette_index = 'right', 'RdYlGn', 11
-plotly.tools.set_credentials_file(username='bkeshav1', api_key='PUYaTVhV1Ok04I07S4lU')
-tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'red', 50, 1.0
-# For security reasons, our Google Maps API key isn't listed here. Create an API key for your use.
-google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 3000
-color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 2700, '125px', 'vertical'
+# color_bar_width, color_bar_height, color_bar_orientation = 100, 3400, 'vertical'
+plotly.tools.set_credentials_file(username='total.academe', api_key='Gj8cx8zKANbBjvMAKM9t')
+# rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
+# color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
+# tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'blue', 40, 1.0
+# google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 12000
+
 
 """
-CONFIGURATIONS-IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT.
+CONFIGURATIONS IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT.
 """
 tx = GPSEvent(latitude=Member(component=40.766173670),
               longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
@@ -376,10 +404,30 @@ def distance_3d(y: GPSEvent) -> float:
 
 # USGS EPQS: Tx/Rx elevation (m)
 def elevation(y: GPSEvent) -> float:
+    elev_url, elev_val = '', 0.0
     lat, lon, alt = latitude(y), longitude(y), altitude(y)
-    base_epqs_url = 'https://nationalmap.gov/epqs/pqs.php?x={}&y={}&output=json&units=Meters'
-    epqs_kw, eq_kw, e_kw = 'USGS_Elevation_Point_Query_Service', 'Elevation_Query', 'Elevation'
-    return abs(alt - requests.get(base_epqs_url.format(lon, lat)).json()[epqs_kw][eq_kw][e_kw])
+    base_epqs_url = ('https://epqs.nationalmap.gov/v1/json?'
+                     'x={}&y={}&units=Meters&wkid=4326&includeDate=False')
+
+    while True:
+        try:
+            elev_url = base_epqs_url.format(lon, lat)
+            elev_val = abs(alt - float(requests.get(elev_url).json()['value']))
+        except KeyError as ke:
+            print('SPAVE-28G | Consolidated Processing I | KeyError caught while getting elevation data '
+                  'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(ke.__traceback__)))
+            continue  # Retry querying the USGS EPQS URL for accurate elevation data...
+        except JSONDecodeError as jde_:
+            print('SPAVE-28G | Consolidated Processing I | JSONDecodeError caught while getting elevation data '
+                  'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(jde_.__traceback__)))
+            continue  # Retry querying the USGS EPQS URL for accurate elevation data...
+        except Exception as e_:
+            print('SPAVE-28G | Consolidated Processing I | Exception caught while getting elevation data '
+                  'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(e_.__traceback__)))
+            continue  # Retry querying the USGS EPQS URL for accurate elevation data...
+        break
+
+    return elev_val
 
 
 # Cartesian coordinates to Spherical coordinates (x, y, z) -> (r, phi, theta) radians
@@ -394,35 +442,29 @@ def sph2cart(r: float, phi: float, theta: float) -> Tuple:
 
 # Process the power-delay-profiles recorded at the receiver
 def process_rx_samples(x: np.array) -> Tuple:
-    fs = sample_rate
-    t_mul, t_len = time_windowing_config.values()
+    fs, ne_th = sample_rate, ne_amp_threshold
     f_pass, f_stop, d_pass, d_stop = prefilter_config.values()
-    ne_mul, min_peak_idx, n_min, n_max, rel_range, amp_threshold = noise_elimination_config.values()
+    t_win_mul, t_trunc_len, t_trunc_mul = time_windowing_config.values()
 
     # Frequency Manipulation: Pre-filtering via a Low Pass Filter (LPF)
     b = fir_d.fir_remez_lpf(fs=fs, f_pass=f_pass, f_stop=f_stop, d_pass=d_pass, d_stop=d_stop)
     samps = signal.lfilter(b=b, a=1, x=x, axis=0)
 
-    # Temporal Manipulation: Initial temporal truncation | Time-windowing
-    samps = samps[t_len:] if samps.shape[0] > (4 * t_len) else samps
-    window_size, n_samples = int(fs * t_mul), samps.shape[0]
-    if n_samples > window_size:
-        n_samples = window_size
-        samps = samps[int(0.5 * n_samples) + (np.array([-1, 1]) * int(window_size / 2))]
+    # Temporal Manipulation I: Temporal truncation
+    samps = samps[t_trunc_len:] if samps.shape[0] > (t_trunc_mul * t_trunc_len) else samps
 
-    # Noise Elimination: The peak search method is 'TallEnoughAbs' | Thresholded at (ne_mul * sigma) + mu
-    samps_ = samps[n_min:n_max] if n_samples > n_max else samps[n_min:]
-    a_samps = np.abs(samps_)[min_peak_idx:]
-    samps_ = samps_[((np.where(a_samps > amp_threshold * max(a_samps))[0][0] +
-                      min_peak_idx - 1) * np.array(rel_range)).astype(dtype=int)]
-    th_min, th_max = np.array([-1, 1]) * ne_mul * np.std(samps_) + np.mean(samps_)
-    thresholder = np.vectorize(lambda s: 0 + 0j if (s > th_min) and (s < th_max) else s)
+    # Temporal Manipulation II: Time-windowing
+    window_size, n_samples = int(fs * t_win_mul), samps.shape[0]
+    samps = samps[int(0.5 * window_size):int(1.5 * window_size)] if n_samples > 2 * window_size else samps
 
-    return n_samples, thresholder(samps)
+    # Noise Elimination: The peak search method is 'TallEnoughAbs'
+    ne_samps = np.squeeze(samps[np.array(np.where(np.abs(samps) > ne_th * np.max(np.abs(samps))), dtype=int)])
+
+    return ne_samps.shape[0], ne_samps
 
 
 # Rx power computation (dB)
-def compute_rx_power(n: int, x: np.array) -> float:
+def compute_rx_power(n: int, x: np.array, is_calibration=False) -> float:
     fs = sample_rate
 
     # PSD Evaluation: Received signal power computation (calibration or campaign)
@@ -433,7 +475,10 @@ def compute_rx_power(n: int, x: np.array) -> float:
     # Trapezoidal numerical integration to compute signal power at the Rx from the organized PSD data
     computed_rx_power = integrate.trapz(y=pwr_values[indices], x=freq_values[indices])
 
-    return cali_fit(decibel_1(computed_rx_power) - rx_usrp_gain) if (computed_rx_power != 0.0) else -np.inf
+    if is_calibration:
+        return decibel_1(computed_rx_power) - rx_usrp_gain if (computed_rx_power != 0.0) else -np.inf
+    else:
+        return cali_fit(decibel_1(computed_rx_power) - rx_usrp_gain) if (computed_rx_power != 0.0) else -np.inf
 
 
 # Rx power getter (dB)
@@ -578,28 +623,29 @@ def pathloss(y: Pod) -> float:
 
 
 """
-CORE OPERATIONS-I: Calibration
+CORE OPERATIONS I: Calibration
 """
 
 # Evaluate parsed_metadata | Extract power-delay profile samples | Compute received power in this calibration paradigm
 for att_val in att_indices:
-    cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', att_val, cali_samples_file_right])
-    with open(''.join([cali_dir, cali_metadata_file_left, 'a', att_val, cali_metadata_file_right])) as file:
+    cali_samples_file = ''.join([cali_dir, cali_samples_file_left, 'a', str(att_val), cali_samples_file_right])
+    with open(''.join([cali_dir, cali_metadata_file_left, 'a', str(att_val), cali_metadata_file_right])) as file:
         for line_num, line in enumerate(file):
             if (line_num - 11) % 18 == 0:
                 num_samples = int(re.search(r'\d+', line)[0])
-                cali_samples = np.fromfile(cali_samples_file, count=num_samples, dtype=np.csingle)
+                cali_samples = np.fromfile(cali_samples_file,
+                                           count=num_samples, dtype=np.csingle)
                 num_samples, processed_rx_samples = process_rx_samples(cali_samples)
-                calc_pwrs.append(compute_rx_power(num_samples, processed_rx_samples))
+                meas_pwrs.append(compute_rx_power(num_samples, processed_rx_samples, True))
                 break
 
 # 1D interpolation of the measured and calculated powers for curve fitting
-meas_pwrs_ = np.arange(start=0.0, stop=-80.0, step=-2.0)
-calc_pwrs_ = interp1d(meas_pwrs, calc_pwrs)(meas_pwrs_)
-cali_fit = lambda cpwr: meas_pwrs_[min([_ for _ in range(len(calc_pwrs_))], key=lambda x: abs(cpwr - calc_pwrs_[x]))]
+calc_pwrs_ = np.arange(start=0.0, stop=-82.0, step=-2.0)
+meas_pwrs_ = interp1d(calc_pwrs, meas_pwrs, fill_value='extrapolate')(calc_pwrs_)
+cali_fit = lambda mpwr: calc_pwrs_[min([_ for _ in range(len(meas_pwrs_))], key=lambda x: abs(mpwr - meas_pwrs_[x]))]
 
 """
-CORE OPERATIONS-II: Antenna patterns
+CORE OPERATIONS II: Antenna patterns
 """
 
 log = scipy.io.loadmat(ant_log_file)
@@ -610,26 +656,53 @@ el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][
 az_amps_db, el_amps_db = decibel_1(az_amps), decibel_1(el_amps)
 
 """
-CORE OPERATIONS-III: Antenna gains, Received powers, and Pathloss computations
+CORE OPERATIONS III: Antenna gains, Received powers, and Pathloss computations
 """
 
-# Extract gps_events (Rx only | Tx fixed on roof-top | V2I)
+# Extract gps_events (Rx only | Tx fixed on rooftop | V2I)
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(len(os.listdir(gps_dir))):
         filename = 'gps_event_{}.json'.format(i + 1)
-        parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
+
+        # noinspection PyBroadException
+        try:
+            parse(gps_events, GPSEvent, ''.join([gps_dir, filename]))
+        except JSONDecodeError as jde:
+            print('SPAVE-28G | Consolidated Processing I | JSONDecodeError caught while parsing {}.'.format(filename))
+            continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
+        except Exception as e:
+            print('SPAVE-28G | Consolidated Processing I | Exception caught while parsing {}.'.format(filename))
+            continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract Tx imu_traces
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
-    for i in range(len(os.listdir(tx_imu_dir))):
+    for i in range(0, len(os.listdir(tx_imu_dir)), tx_imu_skip_step):
         filename = 'imu_trace_{}.json'.format(i + 1)
-        parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
+
+        # noinspection PyBroadException
+        try:
+            parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
+        except JSONDecodeError as jde:
+            print('SPAVE-28G | Consolidated Processing I | JSONDecodeError caught while parsing {}.'.format(filename))
+            continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
+        except Exception as e:
+            print('SPAVE-28G | Consolidated Processing I | Exception caught while parsing {}.'.format(filename))
+            continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract Rx imu_traces
 with ThreadPoolExecutor(max_workers=max_workers) as executor:
     for i in range(len(os.listdir(rx_imu_dir))):
         filename = 'imu_trace_{}.json'.format(i + 1)
-        parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
+
+        # noinspection PyBroadException
+        try:
+            parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
+        except JSONDecodeError as jde:
+            print('SPAVE-28G | Consolidated Processing I | JSONDecodeError caught while parsing {}.'.format(filename))
+            continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
+        except Exception as e:
+            print('SPAVE-28G | Consolidated Processing I | Exception caught while parsing {}.'.format(filename))
+            continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract timestamp_0 (start_timestamp)
 with open(''.join([comm_dir, start_timestamp_file])) as file:
@@ -660,7 +733,8 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
             raw_rx_samples = np.fromfile(pdp_samples_file,
                                          offset=seq_number * num_samples, count=num_samples, dtype=np.csingle)
 
-            if np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > invalid_min_magnitude:
+            if len(raw_rx_samples) == 0 or \
+                    np.isnan(raw_rx_samples).any() or np.abs(np.min(raw_rx_samples)) > invalid_min_magnitude:
                 continue
 
             num_samples, processed_rx_samples = process_rx_samples(raw_rx_samples)
@@ -687,8 +761,8 @@ for gps_event in gps_events:
     if rx_power_val == -np.inf:
         continue
 
-    pathlosses = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power_val),
-                  pathloss_uma_3gpp_tr38901(gps_event), pathloss_uma_itur_m2135(gps_event)]
+    pathlosses = [pathloss_spave28g_odin(tx_ant_gain, rx_ant_gain, rx_power_val), pathloss_uma_3gpp_tr38901(gps_event),
+                  pathloss_uma_itur_m2135(gps_event), pathloss_umi_mm_magic(gps_event), pathloss_umi_metis(gps_event)]
 
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     gps_event=gps_event, pdp_segment=pdp_segment,
@@ -697,40 +771,26 @@ for gps_event in gps_events:
                     distance_2d=distance_2d(gps_event), distance_3d=distance_3d(gps_event), pathloss=pathlosses))
 
 """
-CORE VISUALIZATIONS-I: 2D and 3D Antenna Patterns
+CORE VISUALIZATIONS I: 2D Azimuth & Elevation Antenna Patterns
 """
 
+'''
 ap2daz_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=az_amps_db, theta=az_angles, mode='lines+markers')]))
 ap2del_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=el_amps_db, theta=el_angles, mode='lines+markers')]))
 
-print('SPAVE-28G | Consolidated Processing I | 2D WR-28 Azimuth Antenna Radiation Pattern Fig: {}'.format(ap2daz_url))
-print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Elevation Antenna Radiation Pattern Fig: {}'.format(ap2del_url))
-
-amp_db_vals = np.transpose(np.array([az_amps_db, el_amps_db]))
-az_vals = np.transpose(np.array([az_angles, np.zeros(az_angles.shape)]))
-el_vals = np.transpose(np.array([el_angles, np.zeros(el_angles.shape)]))
-
-rel_amp_db_vals = amp_db_vals - np.min(amp_db_vals)
-
-# np.array deg2rad broadcast ops are faster here...
-z_vals = rel_amp_db_vals * np.sin(np.deg2rad(el_vals))
-x_vals = rel_amp_db_vals * np.cos(np.deg2rad(el_vals)) * np.sin(np.deg2rad(360.0 - az_vals))
-y_vals = rel_amp_db_vals * np.cos(np.deg2rad(el_vals)) * np.cos(np.deg2rad(360.0 - az_vals))
-
-ap3d_url = plotly.plotly.plot(go.Figure(data=[go.Surface(x=x_vals, y=y_vals, z=z_vals,
-                                                         surfacecolor=rel_amp_db_vals)],
-                                        layout=go.Layout(title='3D Antenna Radiation Pattern',
-                                                         xaxis=dict(range=[np.min(x_vals), np.max(x_vals)]),
-                                                         yaxis=dict(range=[np.min(y_vals), np.max(y_vals)]))))
-print('SPAVE-28G | Consolidated Processing I | 3D WR-28 Antenna Radiation Pattern Figure: {}'.format(ap3d_url))
+print('SPAVE-28G | Consolidated Processing I | 2D Azimuth Antenna Radiation Pattern Fig: {}.'.format(ap2daz_url))
+print('SPAVE-28G | Consolidated Processing I | 2D Elevation Antenna Radiation Pattern Fig: {}.'.format(ap2del_url))
+'''
 
 """
-CORE VISUALIZATIONS-II: Received power maps & Pathloss maps
+CORE VISUALIZATIONS II: Received power maps & Pathloss maps
 """
 
-google_maps_options = GMapOptions(lat=latitude(map_central),
-                                  lng=longitude(map_central),
-                                  map_type=map_type, zoom=map_zoom_level)
+# rx_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=rx_tilt,
+#                                      lat=latitude(map_central), lng=longitude(map_central))
+# pl_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=pl_tilt,
+#                                      lat=latitude(map_central), lng=longitude(map_central))
+
 pl_kw, rx_kw, lat_kw, lon_kw = 'pathloss', 'rx-power', 'latitude', 'longitude'
 
 rx_df = pd.DataFrame(data=[[latitude(x.gps_event),
@@ -738,40 +798,69 @@ rx_df = pd.DataFrame(data=[[latitude(x.gps_event),
 pl_df = pd.DataFrame(data=[[latitude(x.gps_event),
                             longitude(x.gps_event), pathloss(x)] for x in pods], columns=[lat_kw, lon_kw, pl_kw])
 
-rx_color_mapper = LinearColorMapper(low=rx_df[rx_kw].min(), high=rx_df[rx_kw].max(),
-                                    palette=brewer[color_palette][color_palette_index])
-pl_color_mapper = LinearColorMapper(low=pl_df[pl_kw].min(), high=pl_df[pl_kw].max(),
-                                    palette=brewer[color_palette][color_palette_index])
+rx_df.to_csv(rx_df_op_file)
+pl_df.to_csv(pl_df_op_file)
 
-rx_color_bar = ColorBar(color_mapper=rx_color_mapper,
-                        width=color_bar_width, height=color_bar_height,
-                        major_label_text_font_size=color_bar_label_size,
-                        label_standoff=color_palette_index, orientation=color_bar_orientation)
-rx_figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
+# rx_color_mapper = LinearColorMapper(high=rx_df[rx_kw].min() - rx_offset,
+#                                     low=rx_df[rx_kw].max() + rx_offset, palette=color_palette)
+# pl_color_mapper = LinearColorMapper(low=pl_df[pl_kw].min() - pl_offset,
+#                                     high=pl_df[pl_kw].max() + pl_offset, palette=color_palette)
 
-pl_color_bar = ColorBar(color_mapper=pl_color_mapper,
-                        width=color_bar_width, height=color_bar_height,
-                        major_label_text_font_size=color_bar_label_size,
-                        label_standoff=color_palette_index, orientation=color_bar_orientation)
-pl_figure = gmap(google_maps_api_key, google_maps_options, title=map_title, width=map_width, height=map_height)
+# rx_ticks = [_x for _x in np.linspace(rx_df[rx_kw].min(), rx_df[rx_kw].max(), rx_tick_num)]
+# pl_ticks = [_x for _x in np.linspace(pl_df[pl_kw].min(), pl_df[pl_kw].max(), pl_tick_num)]
 
-rx_figure.add_layout(rx_color_bar)
-pl_figure.add_layout(pl_color_bar)
+# rx_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
+#                         major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=rx_ticks),
+#                         color_mapper=rx_color_mapper, label_standoff=len(rx_ticks), orientation=color_bar_orientation)
+# pl_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
+#                         major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=pl_ticks),
+#                         color_mapper=pl_color_mapper, label_standoff=len(pl_ticks), orientation=color_bar_orientation)
 
-rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
-                 color={'field': rx_kw, 'transform': rx_color_mapper}, source=ColumnDataSource(rx_df))
-pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
-                 color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
+# rx_figure = gmap(google_maps_api_key, rx_google_maps_options, width=map_width, height=map_height)
+# pl_figure = gmap(google_maps_api_key, pl_google_maps_options, width=map_width, height=map_height)
 
-pl_fig_loc = ''.join([output_dir, pl_png])
-rx_fig_loc = ''.join([output_dir, pwr_png])
-export_png(pl_figure, filename=pl_fig_loc, timeout=timeout)
-export_png(rx_figure, filename=rx_fig_loc, timeout=timeout)
-print('SPAVE-28G | Consolidated Processing I | Pathloss map: {}'.format(pl_fig_loc))
-print('SPAVE-28G | Consolidated Processing I | Received power map: {}'.format(rx_fig_loc))
+# rx_figure.toolbar.logo = None
+# rx_figure.toolbar_location = None
+# rx_figure.xaxis.major_tick_line_color = None
+# rx_figure.xaxis.minor_tick_line_color = None
+# rx_figure.yaxis.major_tick_line_color = None
+# rx_figure.yaxis.minor_tick_line_color = None
+# rx_figure.xaxis.major_label_text_font_size = '0pt'
+# rx_figure.yaxis.major_label_text_font_size = '0pt'
+
+# pl_figure.toolbar.logo = None
+# pl_figure.toolbar_location = None
+# pl_figure.xaxis.major_tick_line_color = None
+# pl_figure.xaxis.minor_tick_line_color = None
+# pl_figure.yaxis.major_tick_line_color = None
+# pl_figure.yaxis.minor_tick_line_color = None
+# pl_figure.xaxis.major_label_text_font_size = '0pt'
+# pl_figure.yaxis.major_label_text_font_size = '0pt'
+
+# rx_figure.add_layout(rx_color_bar)
+# pl_figure.add_layout(pl_color_bar)
+
+# rx_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
+#                   source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
+# pl_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
+#                   source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
+
+# rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+#                  color={'field': rx_kw, 'transform': rx_color_mapper}, source=ColumnDataSource(rx_df))
+# pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+#                  color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
+
+# rx_fig_loc = ''.join([output_dir, pwr_png])
+# pl_fig_loc = ''.join([output_dir, pl_png])
+
+# export_png(rx_figure, filename=rx_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
+# export_png(pl_figure, filename=pl_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
+
+# print('SPAVE-28G | Consolidated Processing I | Received power map: {}.'.format(rx_fig_loc))
+# print('SPAVE-28G | Consolidated Processing I | Pathloss map: {}.'.format(pl_fig_loc))
 
 """
-CORE VISUALIZATIONS-III: Pathloss v Distance curves
+CORE VISUALIZATIONS III: Pathloss v Distance curves
 """
 
 pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
@@ -779,21 +868,39 @@ pld_traces, pld_layout = [], dict(title='Pathloss v Distance',
 
 for pl_pod in sorted(pods, key=lambda pod: pod.distance_3d):
     pls.append(pl_pod.pathloss)
-    distns.append(np.log10(pl_pod.distance_3d))
+    distns.append(pl_pod.distance_3d)
 
 y_vals = np.array(pls)
 x_vals = np.array(distns)
 [pld_traces.append(go.Scatter(x=x_vals, mode='lines+markers',
+                              name='PL Model: {}'.format(app.name),
                               y=signal.savgol_filter(y_vals[:, app.value],
                                                      sg_wsize, sg_poly_order))) for app in PathlossApproaches]
 
-pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
-print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}'.format(pld_url))
+pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout))
+print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}.'.format(pld_url))
+# pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
+
 
 """
-CORE VISUALIZATIONS-IV: Dynamic Blockages (Pathloss v Time)
+CORE VISUALIZATIONS IV: Path gain v Time for fast-fading evaluations
 """
 
-"""
-CORE VISUALIZATIONS-V: Empirical Shadow Fading Studies
-"""
+if fast_fading_eval_enabled:
+
+    ffe_pods = sorted(pods, key=lambda _pod: datetime.datetime.strptime(_pod.timestamp, datetime_format))
+    pod_zero = ffe_pods[0]
+
+    ffes = []
+    for _ffe_pod in ffe_pods:
+        pathgain = -1 * _ffe_pod.pathloss[0]
+        time_prog = (datetime.datetime.strptime(pod_zero.timestamp, datetime_format) -
+                     datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).seconds
+        ffes.append((time_prog, pathgain))
+
+    ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], y=[_ffes[1] for _ffes in ffes])
+    ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
+
+    ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout))
+    print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(ffe_url))
+    # ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout), filename=ffe_png)
