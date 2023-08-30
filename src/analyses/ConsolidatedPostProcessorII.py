@@ -100,8 +100,7 @@ from concurrent.futures import ThreadPoolExecutor
 """
 INITIALIZATIONS I: Collections & Utilities
 """
-pi, c, distns, alignments = np.pi, constants.c, [], []
-# pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
+pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
 deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
 linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
 rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = [], [], [], [], []
@@ -211,19 +210,17 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# sc_distance_png, sc_alignment_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 250
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'ucc_rms_delay_spread.png', 'ucc_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-# sc_distance_png, sc_alignment_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uccc_rms_delay_spread.png', 'uccc_aoa_rms_dir_spread.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
@@ -245,11 +242,10 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'us_sc_distance.png', 'us_sc_alignment.png', 'us_sc_velocity.png'
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-sc_distance_png, sc_alignment_png = 'sf_sc_distance.png', 'sf_sc_alignment.png'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
@@ -257,7 +253,6 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-r
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-# sc_distance_png, sc_alignment_png = 'uv_sc_distance.png', 'uv_sc_alignment.png'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uv_rms_delay_spread.png', 'uv_aoa_rms_dir_spread.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uv_sc_distance.png', 'uv_sc_alignment.png', 'uv_sc_velocity.png'
@@ -267,13 +262,12 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 ''' Generic configurations '''
-d_max, d_step, a_max, a_step = 500.0, 1.0, 10.0, 0.05
 # output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
 ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
 # n_sigma, max_ant_gain, pn_reps, max_mpcs = 0.015, 22.0, 100
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
-# d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 0.25, 10.0, 0.25, 25.0, 0.25
+d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 0.25, 10.0, 0.25, 25.0, 0.25
 # delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 1.0, 0.1, 0.1, 0.1
 plotly.tools.set_credentials_file(username='bkeshava_bkeshav1', api_key='hspqOdIFQcnHdlL7MGch')
 # tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 1e-9, 1e-6, 0.0, 1e3, -pi, pi, -pi, pi
@@ -441,28 +435,26 @@ def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) 
     return max(abs(180.0 - m_tx_yaw_ - m_rx_yaw_), abs(180.0 - m_tx_pitch_ - m_rx_pitch_))
 
 
-"""
 # Tx-Rx relative velocity (ms-1) [N&W hemispheres only]
 # TO-DO: Instead of using lat & long relative movements, use the Tx & Rx headings from the GPS logs.
-# NOTE: Tx is stationary in this version (tx_v = 0), but this function supports a mobile Tx nonetheless.
-def tx_rx_relative_velocity(tx_i: GPSEvent, tx_j: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> float:
-    tx_i_lat, tx_i_lon = latitude(tx_i), longitude(tx_i)
-    tx_j_lat, tx_j_lon = latitude(tx_j), longitude(tx_j)
+def tx_rx_relative_velocity(tx: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> float:
     rx_i_lat, rx_i_lon = latitude(rx_i), longitude(rx_i)
     rx_j_lat, rx_j_lon = latitude(rx_j), longitude(rx_j)
-    tx_i_dt = datetime.datetime.strptime(tx_i.timestamp, datetime_format)
-    tx_j_dt = datetime.datetime.strptime(tx_j.timestamp, datetime_format)
+    rx_ds = distance.distance((rx_i_lat, rx_i_lon), (rx_j_lat, rx_j_lon)).m
+
     rx_i_dt = datetime.datetime.strptime(rx_i.timestamp, datetime_format)
     rx_j_dt = datetime.datetime.strptime(rx_j.timestamp, datetime_format)
-    tx_v = (distance.distance((tx_i_lat, tx_i_lon), (tx_j_lat, tx_j_lon)).m / (tx_j_dt - tx_i_dt).microseconds) * 1e6
-    rx_v = (distance.distance((rx_i_lat, rx_i_lon), (rx_j_lat, rx_j_lon)).m / (rx_j_dt - rx_i_dt).microseconds) * 1e6
+    rx_dt = abs((rx_j_dt - rx_i_dt).seconds)
 
-    if ((tx_j_lat > tx_i_lat or tx_j_lon < tx_i_lon) and (rx_j_lat > rx_i_lat or rx_j_lon < rx_i_lon)) or \
-            ((tx_j_lat < tx_i_lat or tx_j_lon > tx_i_lon) and (rx_j_lat < rx_i_lat or rx_j_lon > rx_i_lon)):
-        return abs(tx_v - rx_v)  # Moving in the same direction
-    else:
-        return abs(tx_v + rx_v)  # Moving in the opposite directions
-"""
+    if rx_dt == 0.0:
+        return 0.0
+
+    rx_v = rx_ds / rx_dt
+
+    if tx_rx_distance_2d(tx, rx_i) > tx_rx_distance_2d(tx, rx_j):
+        rx_v *= -1  # Multiply by -1 if the Rx is going towards the Tx...
+
+    return rx_v
 
 
 # USGS EPQS: Tx/Rx elevation (m)
@@ -990,15 +982,17 @@ for an in np.arange(start=0.0, stop=a_max, step=a_step):
     i_ = min(idxs, key=lambda idx: abs(an - abs(pod.tx_rx_alignment - pods[idx].tx_rx_alignment)))
     alignments.append((an, s_coeff(pod.pdp_segment, pods[i_].pdp_segment)))
 
-'''
 for vn in np.arange(start=0.0, stop=v_max, step=v_step):
+    '''
     # With Tx-Rx dist and align more or less the same, compute s_coeff w.r.t "pod" for the pod with vel closest to "vn"
     i_ = min(idxs, key=lambda idx: abs(pod.tx_rx_alignment - pods[idx].tx_rx_alignment) +
                                    abs(distance_3d(pod.rx_gps_event, pods[idx].rx_gps_event)) +
                                    abs(vn - tx_rx_relative_velocity(pod.tx_gps_event, pods[idx].tx_gps_event,
                                                                     pod.rx_gps_event, pods[idx].rx_gps_event)))
+    '''
+    i_ = min(idxs, key=lambda idx: abs(vn - tx_rx_relative_velocity(pod.tx_gps_event,
+                                                                    pod.rx_gps_event, pods[idx].rx_gps_event)))
     velocities.append((vn, s_coeff(pod.pdp_segment, pods[i_].pdp_segment)))
-'''
 
 scd_layout = dict(xaxis=dict(title='Tx-Rx Distance (in m)'),
                   title='Spatial Consistency Analysis vis-à-vis Distance',
@@ -1006,28 +1000,25 @@ scd_layout = dict(xaxis=dict(title='Tx-Rx Distance (in m)'),
 scd_trace = go.Scatter(x=[distn[0] for distn in distns], mode='lines+markers',
                        y=signal.savgol_filter([distn[1] for distn in distns], sg_wsize, sg_poly_order))
 
+scv_layout = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
+                  title='Spatial Consistency Analysis vis-à-vis Velocity',
+                  yaxis=dict(title='Spatial Autocorrelation Coefficient'))
+scv_trace = go.Scatter(x=[vel[0] for vel in velocities], mode='lines+markers',
+                       y=signal.savgol_filter([veloc[1] for veloc in velocities], sg_wsize, sg_poly_order))
+
 sca_layout = dict(xaxis=dict(title='Tx-Rx Relative Alignment Accuracy (in deg)'),
                   yaxis=dict(title='Spatial (Angular) Autocorrelation Coefficient'),
                   title='Spatial (Angular) Consistency Analysis vis-à-vis Alignment')
 sca_trace = go.Scatter(x=[alignment[0] for alignment in alignments], mode='lines+markers',
                        y=signal.savgol_filter([alignment[1] for alignment in alignments], sg_wsize, sg_poly_order))
 
-# scv_layout = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
-#                   title='Spatial Consistency Analysis vis-à-vis Velocity',
-#                   yaxis=dict(title='Spatial Autocorrelation Coefficient'))
-# scv_trace = go.Scatter(x=[vel[0] for vel in velocities], mode='lines+markers',
-#                        y=signal.savgol_filter([veloc[1] for veloc in velocities], sg_wsize, sg_poly_order))
-
 scd_url = plotly.plotly.plot(dict(data=[scd_trace], layout=scd_layout), filename=sc_distance_png)
+scv_url = plotly.plotly.plot(dict(data=[scv_trace], layout=scv_layout), filename=sc_velocity_png)
 sca_url = plotly.plotly.plot(dict(data=[sca_trace], layout=sca_layout), filename=sc_alignment_png)
-# scv_url = plotly.plotly.plot(dict(data=[scv_trace], layout=scv_layout), filename=sc_velocity_png)
 
 print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Distance: {}.'.format(scd_url))
-print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Alignment: {}.'.format(sca_url))
-
-'''
 print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Velocity: {}.'.format(scv_url))
-'''
+print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Alignment: {}.'.format(sca_url))
 
 """
 CORE VISUALIZATIONS II: RMS delay spread and RMS direction spread

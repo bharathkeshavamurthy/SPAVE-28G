@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />
@@ -18,53 +16,6 @@
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.UoU_SLC.diag" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.UoU_SLC.diag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.X3DGeometryAllEdges.diag" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.X3DGeometryAllEdges.diag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.setup" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.setup" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.vw" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/insite/SPAVE-28G.vw" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/CurveFitting.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/blockages/urban_canyon_blockages.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/blockages/urban_garage_blockages.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pdaps/suburban_fraternities_pdaps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pdaps/urban_campus_pdaps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pdaps/urban_vegetation_pdaps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pddps/suburban_fraternities_pddps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pddps/urban_campus_pddps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pddps/urban_vegetation_pddps.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/3gpp_tr38901_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/itu_m2135_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/metis_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/mmMAGIC_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/suburban_fraternities_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_campus_III_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_campus_II_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_campus_I_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_garage_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_stadium_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pl/urban_vegetation_pl.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/3gpp_tr38901_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/itu_m2135_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/metis_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/mmMAGIC_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/suburban_fraternities_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_campus_III_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_campus_II_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_campus_I_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_garage_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_stadium_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/pld/urban_vegetation_pld.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/sca/suburban_fraternities_sca.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/sca/urban_campus_sca.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/sca/urban_vegetation_sca.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scd/suburban_fraternities_scd.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scd/urban_campus_scd.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scd/urban_vegetation_scd.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scv/suburban_fraternities_scv.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scv/urban_campus_scv.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/scv/urban_vegetation_scv.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/shadowing/suburban_fraternities_shadowing.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/shadowing/urban_campus_shadowing.xlsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/shadowing/urban_vegetation_shadowing.xlsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

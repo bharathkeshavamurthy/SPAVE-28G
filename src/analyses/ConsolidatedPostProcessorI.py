@@ -57,6 +57,7 @@ import pandas as pd
 from enum import Enum
 from pyproj import Proj
 from geopy import distance
+from scipy.stats import norm
 import plotly.graph_objs as go
 from json import JSONDecodeError
 # from bokeh.plotting import gmap
@@ -217,91 +218,84 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'urban_campus_I_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_campus_I_ffe.png', 'urban_campus_I_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-fast_fading_eval_enabled = True
-# ffe_png = 'urban_campus_II_ffe.png'
 gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
 comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
 rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_rx_df.csv'
 pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_campus_II_ffe.png', 'urban_campus_II_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 8400, 2800, 20, 'urban-campus-II'
 tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7650), longitude=Member(component=-111.8550))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'urban_campus_III_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_campus_III_ffe.png', 'urban_campus_III_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
 
 ''' urban-garage route (semi-autonomous) (NW Garage on 1460 E St) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'urban_garage_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_garage_ffe.png', 'urban_garage_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-garage'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
 # pwr_png, pl_png, pl_dist_png = 'urban_garage_pwr.png', 'urban_garage_pl.png', 'urban_garage_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'urban_stadium_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_stadium_ffe.png', 'urban_stadium_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 5500, 3500, 20, 'urban-stadium'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
 # pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'suburban_fraternities_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
+# ffe_png, shadowing_png = 'suburban_frats_ffe.png', 'suburban_frats_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
-# fast_fading_eval_enabled = True
-# ffe_png = 'urban_vegetation_ffe.png'
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_pl_df.csv'
+# ffe_png, shadowing_png = 'urban_vegetation_ffe.png', 'urban_vegetation_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
@@ -622,6 +616,22 @@ def pathloss(y: Pod) -> float:
     return y.pathloss[0]
 
 
+# Fit a linear curve to pathloss data for empirical shadow fading evaluations
+def linear_fit(x: np.array, y: np.array, x_log: bool = True) -> Tuple[float]:
+    return np.polyfit(np.log10(x), y, deg=1) if x_log else np.polyfit(x, y, deg=1)
+
+
+# Get the y_arr corresponding to the x_arr based on the provided linear model
+def get_linear_fit_values(slope: float, intercept: float, x_arr: np.array, x_log: bool = True) -> np.array:
+    if x_log:
+        model = lambda _x: slope * np.log10(_x) + intercept
+    else:
+        model = lambda _x: slope * _x + intercept
+
+    model_func = np.vectorize(model)
+    return model_func(x_arr)
+
+
 """
 CORE OPERATIONS I: Calibration
 """
@@ -886,21 +896,44 @@ print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}.'.fo
 CORE VISUALIZATIONS IV: Path gain v Time for fast-fading evaluations
 """
 
-if fast_fading_eval_enabled:
+ffe_pods = sorted(pods, key=lambda _pod: datetime.datetime.strptime(_pod.timestamp, datetime_format))
+pod_zero = ffe_pods[0]
 
-    ffe_pods = sorted(pods, key=lambda _pod: datetime.datetime.strptime(_pod.timestamp, datetime_format))
-    pod_zero = ffe_pods[0]
+ffes = []
+for _ffe_pod in ffe_pods:
+    pathgain = -1 * _ffe_pod.pathloss[0]
+    time_prog = (datetime.datetime.strptime(pod_zero.timestamp, datetime_format) -
+                 datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).seconds
+    ffes.append((time_prog, pathgain))
 
-    ffes = []
-    for _ffe_pod in ffe_pods:
-        pathgain = -1 * _ffe_pod.pathloss[0]
-        time_prog = (datetime.datetime.strptime(pod_zero.timestamp, datetime_format) -
-                     datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).seconds
-        ffes.append((time_prog, pathgain))
+ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
+                      y=signal.savgol_filter([_ffes[1] for _ffes in ffes], sg_wsize, sg_poly_order))
+ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
 
-    ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], y=[_ffes[1] for _ffes in ffes])
-    ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
+ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout))
+print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(ffe_url))
+# ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout), filename=ffe_png)
 
-    ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout))
-    print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(ffe_url))
-    # ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout), filename=ffe_png)
+"""
+CORE VISUALIZATIONS V: Empirical shadow fading evaluations
+"""
+
+route_distns, route_meas_pls = np.array(distns), np.array(pls)[:, 0]
+fitted_model = linear_fit(route_distns, route_meas_pls)
+
+route_fitted_pls = get_linear_fit_values(fitted_model[0], fitted_model[1], route_distns)
+sfe_vals = np.subtract(route_meas_pls, route_fitted_pls)
+
+# TO-DO: You may need to shift the mean to zero before fitting a Gaussian to the data...
+
+mu, std = norm.fit(sfe_vals)
+norm_x = np.linspace(np.min(sfe_vals), np.max(sfe_vals), 100)
+
+sfe_data = [go.Histogram(x=sfe_vals, histnorm='probability'),
+            go.Scatter(x=norm_x, y=norm.pdf(norm_x, mu, std), mode='lines+markers')]
+
+sfe_layout = dict(title='Shadowing Plot', yaxis=dict(title='Shadow Fading (in dB)'), xaxis=dict(title='Probability'))
+sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout))
+
+print('SPAVE-28G | Consolidated Processing I | Mean: {} | STD: {} | Shadow Fading Plot: {}.'.format(mu, std, sfe_url))
+# sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout), filename=shadowing_png)
