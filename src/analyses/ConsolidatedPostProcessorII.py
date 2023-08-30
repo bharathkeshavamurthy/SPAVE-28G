@@ -210,12 +210,12 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 250
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'ucc_rms_delay_spread.png', 'ucc_aoa_rms_dir_spread.png'
-sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
@@ -242,12 +242,12 @@ sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'us_sc_distance.png', 'us_sc_alignment.png', 'us_sc_velocity.png'
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
@@ -267,7 +267,7 @@ ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
 # n_sigma, max_ant_gain, pn_reps, max_mpcs = 0.015, 22.0, 100
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
-d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 0.25, 10.0, 0.25, 25.0, 0.25
+d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
 # delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 1.0, 0.1, 0.1, 0.1
 plotly.tools.set_credentials_file(username='bkeshava_bkeshav1', api_key='hspqOdIFQcnHdlL7MGch')
 # tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 1e-9, 1e-6, 0.0, 1e3, -pi, pi, -pi, pi
