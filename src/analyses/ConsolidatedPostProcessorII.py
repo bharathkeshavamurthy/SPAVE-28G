@@ -202,12 +202,12 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-# rx_imu_dir = 'E`:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+rx_imu_dir = 'E`:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uc_rms_delay_spread.png', 'uc_aoa_rms_dir_spread.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
@@ -242,12 +242,12 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'us_sc_distance.png', 'us_sc_alignment.png', 'us_sc_velocity.png'
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
-sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
+# sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
@@ -257,7 +257,7 @@ sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_s
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uv_rms_delay_spread.png', 'uv_aoa_rms_dir_spread.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uv_sc_distance.png', 'uv_sc_alignment.png', 'uv_sc_velocity.png'
 
-''' Tx location fixed on the rooftop of the William Browning Building in SLC, UT. '''
+''' Tx location fixed on the rooftop of the William Browning Building in SLC, UT '''
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
@@ -923,7 +923,7 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
                                            correlation_peak=correlation_peak(processed_rx_samples),
                                            raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
 
-''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms'''
+''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms '''
 
 for seqnum in range(1, len(rx_gps_events)):
     rx_gps_event = rx_gps_events[seqnum]

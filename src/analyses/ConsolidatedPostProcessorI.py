@@ -218,26 +218,26 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_campus_I_ffe.png', 'urban_campus_I_shadowing.png'
+gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
+pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'uc_rxp_ffe.png', 'uc_pg_ffe.png', 'uc_shadowing.png'
+tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_rx_df.csv'
-pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_campus_II_ffe.png', 'urban_campus_II_shadowing.png'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 8400, 2800, 20, 'urban-campus-II'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'ucc_rxp_ffe.png', 'ucc_pg_ffe.png', 'ucc_shadowing.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7650), longitude=Member(component=-111.8550))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
@@ -247,9 +247,9 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/i
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_campus_III_ffe.png', 'urban_campus_III_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'uccc_rxp_ffe.png', 'uccc_pg_ffe.png', 'uccc_shadowing.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
 
@@ -259,10 +259,10 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/i
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_garage_ffe.png', 'urban_garage_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-garage'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'ug_rxp_ffe.png', 'ug_pg_ffe.png', 'ug_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'urban_garage_pwr.png', 'urban_garage_pl.png', 'urban_garage_pl_dist.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
@@ -271,10 +271,10 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/i
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_stadium_ffe.png', 'urban_stadium_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 5500, 3500, 20, 'urban-stadium'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'us_rxp_ffe.png', 'us_pg_ffe.png', 'us_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
@@ -283,11 +283,11 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/i
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
-# ffe_png, shadowing_png = 'suburban_frats_ffe.png', 'suburban_frats_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'sf_rxp_ffe.png', 'sf_pg_ffe.png', 'sf_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
@@ -295,9 +295,9 @@ tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/i
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
 # rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_rx_df.csv'
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_pl_df.csv'
-# ffe_png, shadowing_png = 'urban_vegetation_ffe.png', 'urban_vegetation_shadowing.png'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
+# rxp_ffe_png, pg_ffe_png, shadowing_png = 'uv_rxp_ffe.png', 'uv_pg_ffe.png', 'uv_shadowing.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
@@ -324,15 +324,15 @@ CONFIGURATIONS III: LLA-to-UTM converter | Additional Bokeh & Plotly visualizati
 max_workers, sg_wsize, sg_poly_order = 4096, 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
 # color_bar_width, color_bar_height, color_bar_orientation = 100, 3400, 'vertical'
-plotly.tools.set_credentials_file(username='total.academe', api_key='Gj8cx8zKANbBjvMAKM9t')
 # rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
 # color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
+plotly.tools.set_credentials_file(username='bkeshava_bkeshav1', api_key='hspqOdIFQcnHdlL7MGch')
 # tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'blue', 40, 1.0
 # google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 12000
 
 
 """
-CONFIGURATIONS IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT.
+CONFIGURATIONS IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT
 """
 tx = GPSEvent(latitude=Member(component=40.766173670),
               longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
@@ -901,18 +901,26 @@ pod_zero = ffe_pods[0]
 
 ffes = []
 for _ffe_pod in ffe_pods:
-    pathgain = -1 * _ffe_pod.pathloss[0]
+    rxpower, pathgain = _ffe_pod.rx_power, -1 * _ffe_pod.pathloss[0]
     time_prog = (datetime.datetime.strptime(pod_zero.timestamp, datetime_format) -
                  datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).seconds
-    ffes.append((time_prog, pathgain))
+    ffes.append((time_prog, rxpower, pathgain))
 
-ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
-                      y=signal.savgol_filter([_ffes[1] for _ffes in ffes], sg_wsize, sg_poly_order))
-ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
+rxp_ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
+                          y=signal.savgol_filter([_ffes[1] for _ffes in ffes], sg_wsize, sg_poly_order))
+rxp_ffe_layout = dict(title='Rx Power v Time', yaxis=dict(title='Rx Power (in dB)'), xaxis=dict(title='Time (in s)'))
 
-ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout))
-print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(ffe_url))
-# ffe_url = plotly.plotly.plot(dict(data=[ffe_data], layout=ffe_layout), filename=ffe_png)
+pg_ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
+                         y=signal.savgol_filter([_ffes[2] for _ffes in ffes], sg_wsize, sg_poly_order))
+pg_ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
+
+rxp_ffe_url = plotly.plotly.plot(dict(data=[rxp_ffe_data], layout=rxp_ffe_layout))
+print('SPAVE-28G | Consolidated Processing I | Rx Power v Time Plot: {}.'.format(rxp_ffe_url))
+# rxp_ffe_url = plotly.plotly.plot(dict(data=[rxp_ffe_data], layout=rxp_ffe_layout), filename=rxp_ffe_png)
+
+pg_ffe_url = plotly.plotly.plot(dict(data=[pg_ffe_data], layout=pg_ffe_layout))
+print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(pg_ffe_url))
+# pg_ffe_url = plotly.plotly.plot(dict(data=[pg_ffe_data], layout=pg_ffe_layout), filename=pg_ffe_png)
 
 """
 CORE VISUALIZATIONS V: Empirical shadow fading evaluations
@@ -927,12 +935,12 @@ sfe_vals = np.subtract(route_meas_pls, route_fitted_pls)
 # TO-DO: You may need to shift the mean to zero before fitting a Gaussian to the data...
 
 mu, std = norm.fit(sfe_vals)
-norm_x = np.linspace(np.min(sfe_vals), np.max(sfe_vals), 100)
+norm_x = np.linspace(np.min(sfe_vals), np.max(sfe_vals), sfe_norm_fit_num)
 
 sfe_data = [go.Histogram(x=sfe_vals, histnorm='probability'),
             go.Scatter(x=norm_x, y=norm.pdf(norm_x, mu, std), mode='lines+markers')]
 
-sfe_layout = dict(title='Shadowing Plot', yaxis=dict(title='Shadow Fading (in dB)'), xaxis=dict(title='Probability'))
+sfe_layout = dict(title='Shadowing Plot', xaxis=dict(title='Probability'), yaxis=dict(title='Shadow Fading (in dB)'))
 sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout))
 
 print('SPAVE-28G | Consolidated Processing I | Mean: {} | STD: {} | Shadow Fading Plot: {}.'.format(mu, std, sfe_url))
