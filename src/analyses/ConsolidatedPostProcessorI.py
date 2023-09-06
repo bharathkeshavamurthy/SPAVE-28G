@@ -218,14 +218,14 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
-pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
+# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'uc_rxp_ffe.png', 'uc_pg_ffe.png', 'uc_shadowing.png'
-tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
@@ -278,16 +278,16 @@ tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-ca
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
+gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
+pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'sf_rxp_ffe.png', 'sf_pg_ffe.png', 'sf_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
+tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
@@ -941,7 +941,7 @@ sfe_data = [go.Histogram(x=sfe_vals, histnorm='probability'),
             go.Scatter(x=norm_x, y=norm.pdf(norm_x, mu, std), mode='lines+markers')]
 
 sfe_layout = dict(title='Shadowing Plot', xaxis=dict(title='Probability'), yaxis=dict(title='Shadow Fading (in dB)'))
-sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout))
+sfe_url = plotly.plotly.plot(dict(data=sfe_data, layout=sfe_layout))
 
 print('SPAVE-28G | Consolidated Processing I | Mean: {} | STD: {} | Shadow Fading Plot: {}.'.format(mu, std, sfe_url))
 # sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout), filename=shadowing_png)
