@@ -903,7 +903,7 @@ ffes = []
 for _ffe_pod in ffe_pods:
     rxpower, pathgain = _ffe_pod.rx_power, -1 * _ffe_pod.pathloss[0]
     time_prog = (datetime.datetime.strptime(pod_zero.timestamp, datetime_format) -
-                 datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).seconds
+                 datetime.datetime.strptime(_ffe_pod.timestamp, datetime_format)).total_seconds()
     ffes.append((time_prog, rxpower, pathgain))
 
 rxp_ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
@@ -930,9 +930,8 @@ route_distns, route_meas_pls = np.array(distns), np.array(pls)[:, 0]
 fitted_model = linear_fit(route_distns, route_meas_pls)
 
 route_fitted_pls = get_linear_fit_values(fitted_model[0], fitted_model[1], route_distns)
-sfe_vals = np.subtract(route_meas_pls, route_fitted_pls)
-
-# TO-DO: You may need to shift the mean to zero before fitting a Gaussian to the data...
+sfe_vals_ = np.subtract(route_meas_pls, route_fitted_pls)
+sfe_vals = np.subtract(sfe_vals_, np.mean(sfe_vals_))
 
 mu, std = norm.fit(sfe_vals)
 norm_x = np.linspace(np.min(sfe_vals), np.max(sfe_vals), sfe_norm_fit_num)
