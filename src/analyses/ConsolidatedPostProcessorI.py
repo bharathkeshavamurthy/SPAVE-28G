@@ -3,8 +3,8 @@ This script encapsulates the operations involved in visualizing the antenna patt
 mmWave (28 GHz) V2X propagation modeling activities on the POWDER testbed in Salt Lake City. Subsequently, this
 script  generates the pathloss maps of the routes traversed during this measurement campaign, along with the
 plots of pathloss versus distance which will help us with next-generation mmWave V2V/V2I network design.
-Also, we evaluate these empirical pathloss values against the ITU-R M.2135, 3GPP TR38.901, mmMAGIC,
-and METIS outdoor urban micro-cellular (UMi) and/or urban macro-cellular (UMa) pathloss standards.
+Also, we evaluate these empirical pathloss results against the 3GPP TR38.901, ITU-R M.2135, METIS,
+and mmMAGIC outdoor urban micro-cellular (UMi) and urban macro-cellular (UMa) pathloss standards.
 
 Lastly, as a part of this script, we evaluate the impact of blockages (moving/parked vehicles, pedestrians, trees) on
 the pathloss behavior of 28 GHz signals in V2I/V2V settings, in addition to analytical studies of fitted models to
@@ -59,17 +59,16 @@ from pyproj import Proj
 from geopy import distance
 from scipy.stats import norm
 import plotly.graph_objs as go
+from bokeh.plotting import gmap
+from bokeh.io import export_png
 from json import JSONDecodeError
-# from bokeh.plotting import gmap
-# from bokeh.io import export_png
 from typing import List, Tuple, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
 import sk_dsp_comm.fir_design_helper as fir_d
 from scipy import signal, constants, integrate
 from concurrent.futures import ThreadPoolExecutor
-
-# from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper, FixedTicker
+from bokeh.models import GMapOptions, ColumnDataSource, ColorBar, LinearColorMapper, FixedTicker
 
 """
 INITIALIZATIONS I: Collections & Utilities
@@ -225,8 +224,8 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 # pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'uc_rxp_ffe.png', 'uc_pg_ffe.png', 'uc_shadowing.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
@@ -242,16 +241,16 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
-# map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
-# rxp_ffe_png, pg_ffe_png, shadowing_png = 'uccc_rxp_ffe.png', 'uccc_pg_ffe.png', 'uccc_shadowing.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5, 1000
-# map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
-# pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
+gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
+rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
+pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
+map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
+rxp_ffe_png, pg_ffe_png, shadowing_png = 'uccc_rxp_ffe.png', 'uccc_pg_ffe.png', 'uccc_shadowing.png'
+map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
+tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5, 1000
+pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
 
 ''' urban-garage route (semi-autonomous) (NW Garage on 1460 E St) '''
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
@@ -278,16 +277,16 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
-pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
+# gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
+# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
+# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
+# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'sf_rxp_ffe.png', 'sf_pg_ffe.png', 'sf_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
-tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
@@ -302,7 +301,7 @@ tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
-# output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
+output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
 ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
@@ -311,7 +310,7 @@ cali_dir, cali_samples_file_left, cali_samples_file_right = 'E:/SPAVE-28G/analys
 """
 CONFIGURATIONS II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
 """
-datetime_format, ne_amp_threshold = '%Y-%m-%d %H:%M:%S.%f', 0.05
+datetime_format, ne_amp_threshold, sfe_avg_dist = '%Y-%m-%d %H:%M:%S.%f', 0.05, 1.0
 h_avg, w_avg, rx_usrp_gain, sample_rate, invalid_min_magnitude = 21.3, 15.4, 76.0, 2e6, 1e5
 carrier_freq, max_ant_gain, angle_res_ext, tx_pwr, uconv_gain, dconv_gain = 28e9, 22.0, 5.0, 23.0, 13.4, 13.4
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
@@ -323,13 +322,12 @@ CONFIGURATIONS III: LLA-to-UTM converter | Additional Bokeh & Plotly visualizati
 """
 max_workers, sg_wsize, sg_poly_order = 4096, 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-# color_bar_width, color_bar_height, color_bar_orientation = 100, 3400, 'vertical'
-# rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
-# color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
-plotly.tools.set_credentials_file(username='bkeshava_bkeshav1', api_key='hspqOdIFQcnHdlL7MGch')
-# tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'blue', 40, 1.0
-# google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 12000
-
+color_bar_width, color_bar_height, color_bar_orientation = 100, 3400, 'vertical'
+plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdvH8YuKmjEF')
+rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
+color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
+tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'blue', 40, 1.0
+google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 12000
 
 """
 CONFIGURATIONS IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT
@@ -784,22 +782,20 @@ for gps_event in gps_events:
 CORE VISUALIZATIONS I: 2D Azimuth & Elevation Antenna Patterns
 """
 
-'''
 ap2daz_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=az_amps_db, theta=az_angles, mode='lines+markers')]))
 ap2del_url = plotly.plotly.plot(go.Figure(data=[go.Scatterpolar(r=el_amps_db, theta=el_angles, mode='lines+markers')]))
 
 print('SPAVE-28G | Consolidated Processing I | 2D Azimuth Antenna Radiation Pattern Fig: {}.'.format(ap2daz_url))
 print('SPAVE-28G | Consolidated Processing I | 2D Elevation Antenna Radiation Pattern Fig: {}.'.format(ap2del_url))
-'''
 
 """
 CORE VISUALIZATIONS II: Received power maps & Pathloss maps
 """
 
-# rx_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=rx_tilt,
-#                                      lat=latitude(map_central), lng=longitude(map_central))
-# pl_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=pl_tilt,
-#                                      lat=latitude(map_central), lng=longitude(map_central))
+rx_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=rx_tilt,
+                                     lat=latitude(map_central), lng=longitude(map_central))
+pl_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, tilt=pl_tilt,
+                                     lat=latitude(map_central), lng=longitude(map_central))
 
 pl_kw, rx_kw, lat_kw, lon_kw = 'pathloss', 'rx-power', 'latitude', 'longitude'
 
@@ -811,63 +807,63 @@ pl_df = pd.DataFrame(data=[[latitude(x.gps_event),
 rx_df.to_csv(rx_df_op_file)
 pl_df.to_csv(pl_df_op_file)
 
-# rx_color_mapper = LinearColorMapper(high=rx_df[rx_kw].min() - rx_offset,
-#                                     low=rx_df[rx_kw].max() + rx_offset, palette=color_palette)
-# pl_color_mapper = LinearColorMapper(low=pl_df[pl_kw].min() - pl_offset,
-#                                     high=pl_df[pl_kw].max() + pl_offset, palette=color_palette)
+rx_color_mapper = LinearColorMapper(high=rx_df[rx_kw].min() - rx_offset,
+                                    low=rx_df[rx_kw].max() + rx_offset, palette=color_palette)
+pl_color_mapper = LinearColorMapper(low=pl_df[pl_kw].min() - pl_offset,
+                                    high=pl_df[pl_kw].max() + pl_offset, palette=color_palette)
 
-# rx_ticks = [_x for _x in np.linspace(rx_df[rx_kw].min(), rx_df[rx_kw].max(), rx_tick_num)]
-# pl_ticks = [_x for _x in np.linspace(pl_df[pl_kw].min(), pl_df[pl_kw].max(), pl_tick_num)]
+rx_ticks = [_x for _x in np.linspace(rx_df[rx_kw].min(), rx_df[rx_kw].max(), rx_tick_num)]
+pl_ticks = [_x for _x in np.linspace(pl_df[pl_kw].min(), pl_df[pl_kw].max(), pl_tick_num)]
 
-# rx_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
-#                         major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=rx_ticks),
-#                         color_mapper=rx_color_mapper, label_standoff=len(rx_ticks), orientation=color_bar_orientation)
-# pl_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
-#                         major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=pl_ticks),
-#                         color_mapper=pl_color_mapper, label_standoff=len(pl_ticks), orientation=color_bar_orientation)
+rx_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
+                        major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=rx_ticks),
+                        color_mapper=rx_color_mapper, label_standoff=len(rx_ticks), orientation=color_bar_orientation)
+pl_color_bar = ColorBar(width=color_bar_width, height=color_bar_height,
+                        major_label_text_font_size=color_bar_label_size, ticker=FixedTicker(ticks=pl_ticks),
+                        color_mapper=pl_color_mapper, label_standoff=len(pl_ticks), orientation=color_bar_orientation)
 
-# rx_figure = gmap(google_maps_api_key, rx_google_maps_options, width=map_width, height=map_height)
-# pl_figure = gmap(google_maps_api_key, pl_google_maps_options, width=map_width, height=map_height)
+rx_figure = gmap(google_maps_api_key, rx_google_maps_options, width=map_width, height=map_height)
+pl_figure = gmap(google_maps_api_key, pl_google_maps_options, width=map_width, height=map_height)
 
-# rx_figure.toolbar.logo = None
-# rx_figure.toolbar_location = None
-# rx_figure.xaxis.major_tick_line_color = None
-# rx_figure.xaxis.minor_tick_line_color = None
-# rx_figure.yaxis.major_tick_line_color = None
-# rx_figure.yaxis.minor_tick_line_color = None
-# rx_figure.xaxis.major_label_text_font_size = '0pt'
-# rx_figure.yaxis.major_label_text_font_size = '0pt'
+rx_figure.toolbar.logo = None
+rx_figure.toolbar_location = None
+rx_figure.xaxis.major_tick_line_color = None
+rx_figure.xaxis.minor_tick_line_color = None
+rx_figure.yaxis.major_tick_line_color = None
+rx_figure.yaxis.minor_tick_line_color = None
+rx_figure.xaxis.major_label_text_font_size = '0pt'
+rx_figure.yaxis.major_label_text_font_size = '0pt'
 
-# pl_figure.toolbar.logo = None
-# pl_figure.toolbar_location = None
-# pl_figure.xaxis.major_tick_line_color = None
-# pl_figure.xaxis.minor_tick_line_color = None
-# pl_figure.yaxis.major_tick_line_color = None
-# pl_figure.yaxis.minor_tick_line_color = None
-# pl_figure.xaxis.major_label_text_font_size = '0pt'
-# pl_figure.yaxis.major_label_text_font_size = '0pt'
+pl_figure.toolbar.logo = None
+pl_figure.toolbar_location = None
+pl_figure.xaxis.major_tick_line_color = None
+pl_figure.xaxis.minor_tick_line_color = None
+pl_figure.yaxis.major_tick_line_color = None
+pl_figure.yaxis.minor_tick_line_color = None
+pl_figure.xaxis.major_label_text_font_size = '0pt'
+pl_figure.yaxis.major_label_text_font_size = '0pt'
 
-# rx_figure.add_layout(rx_color_bar)
-# pl_figure.add_layout(pl_color_bar)
+rx_figure.add_layout(rx_color_bar)
+pl_figure.add_layout(pl_color_bar)
 
-# rx_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
-#                   source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
-# pl_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
-#                   source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
+rx_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
+                  source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
+pl_figure.diamond('lon', 'lat', size=tx_pin_size, fill_color=tx_pin_color, fill_alpha=tx_pin_alpha,
+                  source=ColumnDataSource(data=dict(lat=[latitude(tx)], lon=[longitude(tx)])))
 
-# rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
-#                  color={'field': rx_kw, 'transform': rx_color_mapper}, source=ColumnDataSource(rx_df))
-# pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
-#                  color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
+rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+                 color={'field': rx_kw, 'transform': rx_color_mapper}, source=ColumnDataSource(rx_df))
+pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
+                 color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
 
-# rx_fig_loc = ''.join([output_dir, pwr_png])
-# pl_fig_loc = ''.join([output_dir, pl_png])
+rx_fig_loc = ''.join([output_dir, pwr_png])
+pl_fig_loc = ''.join([output_dir, pl_png])
 
-# export_png(rx_figure, filename=rx_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
-# export_png(pl_figure, filename=pl_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
+export_png(rx_figure, filename=rx_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
+export_png(pl_figure, filename=pl_fig_loc, width=map_width + 100, height=map_height + 100, timeout=timeout)
 
-# print('SPAVE-28G | Consolidated Processing I | Received power map: {}.'.format(rx_fig_loc))
-# print('SPAVE-28G | Consolidated Processing I | Pathloss map: {}.'.format(pl_fig_loc))
+print('SPAVE-28G | Consolidated Processing I | Received power map: {}.'.format(rx_fig_loc))
+print('SPAVE-28G | Consolidated Processing I | Pathloss map: {}.'.format(pl_fig_loc))
 
 """
 CORE VISUALIZATIONS III: Pathloss v Distance curves
@@ -887,10 +883,8 @@ x_vals = np.array(distns)
                               y=signal.savgol_filter(y_vals[:, app.value],
                                                      sg_wsize, sg_poly_order))) for app in PathlossApproaches]
 
-pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout))
+pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
 print('SPAVE-28G | Consolidated Processing I | Pathloss v Distance Plot: {}.'.format(pld_url))
-# pld_url = plotly.plotly.plot(dict(data=pld_traces, layout=pld_layout), filename=pl_dist_png)
-
 
 """
 CORE VISUALIZATIONS IV: Path gain v Time for fast-fading evaluations
@@ -914,24 +908,59 @@ pg_ffe_data = go.Scatter(x=[_ffes[0] for _ffes in ffes], mode='lines+markers',
                          y=signal.savgol_filter([_ffes[2] for _ffes in ffes], sg_wsize, sg_poly_order))
 pg_ffe_layout = dict(title='Pathgain v Time', yaxis=dict(title='Pathgain (in dB)'), xaxis=dict(title='Time (in s)'))
 
-rxp_ffe_url = plotly.plotly.plot(dict(data=[rxp_ffe_data], layout=rxp_ffe_layout))
+rxp_ffe_url = plotly.plotly.plot(dict(data=[rxp_ffe_data], layout=rxp_ffe_layout), filename=rxp_ffe_png)
 print('SPAVE-28G | Consolidated Processing I | Rx Power v Time Plot: {}.'.format(rxp_ffe_url))
-# rxp_ffe_url = plotly.plotly.plot(dict(data=[rxp_ffe_data], layout=rxp_ffe_layout), filename=rxp_ffe_png)
 
-pg_ffe_url = plotly.plotly.plot(dict(data=[pg_ffe_data], layout=pg_ffe_layout))
+pg_ffe_url = plotly.plotly.plot(dict(data=[pg_ffe_data], layout=pg_ffe_layout), filename=pg_ffe_png)
 print('SPAVE-28G | Consolidated Processing I | Pathgain v Time Plot: {}.'.format(pg_ffe_url))
-# pg_ffe_url = plotly.plotly.plot(dict(data=[pg_ffe_data], layout=pg_ffe_layout), filename=pg_ffe_png)
+
+# Run AFDp and AFDu computations on the XLSX/CSV data obtained from here: use a 6dB (1/4 power) drop for calculation...
 
 """
 CORE VISUALIZATIONS V: Empirical shadow fading evaluations
 """
 
-route_distns, route_meas_pls = np.array(distns), np.array(pls)[:, 0]
-fitted_model = linear_fit(route_distns, route_meas_pls)
+''' Variant 1: No averaging out over >40 wavelengths '''
 
+route_distns, route_meas_pls = np.array(distns), np.array(pls)[:, 0]
+
+fitted_model = linear_fit(route_distns, route_meas_pls)
 route_fitted_pls = get_linear_fit_values(fitted_model[0], fitted_model[1], route_distns)
+
 sfe_vals_ = np.subtract(route_meas_pls, route_fitted_pls)
 sfe_vals = np.subtract(sfe_vals_, np.mean(sfe_vals_))
+
+''' Variant 2: Averaging out other effects over >40 wavelengths (e.g., 1 meter) '''
+
+# route_distns, route_meas_pls = [], []
+# route_distn_bins = np.arange(start=min(distns), stop=max(distns) + sfe_avg_dist, step=sfe_avg_dist)
+# route_meas_pls__, route_meas_pls_ = [[] for _ in route_distn_bins], {_d: 0.0 for _d in route_distn_bins}
+
+# Binning distances and computing average pathloss over individual bins...
+# for bin_idx in range(len(route_distn_bins)):
+#
+#     for to_be_binned_pod in pods:
+#         bin_distn_max = route_distn_bins[bin_idx]
+#         bin_distn_min = 0 if bin_idx == 0 else route_distn_bins[bin_idx - 1]
+#
+#         if bin_distn_min <= to_be_binned_pod.distance_3d < bin_distn_max:
+#             route_meas_pls__[bin_idx].append(to_be_binned_pod.pathloss)
+#
+#     route_meas_pls_[route_distn_bins[bin_idx]] = np.mean(np.array(route_meas_pls__[bin_idx]))
+
+# Filtering out un-touched distance bins...
+# for bin_distn, bin_avg_pl in route_meas_pls_.items():
+#     if bin_avg_pl != 0.0:
+#         route_distns.append(bin_distn)
+#         route_meas_pls.append(bin_avg_pl)
+
+# fitted_model = linear_fit(route_distns, route_meas_pls)
+# route_fitted_pls = get_linear_fit_values(fitted_model[0], fitted_model[1], route_distns)
+
+# sfe_vals_ = np.subtract(route_meas_pls, route_fitted_pls)
+# sfe_vals = np.subtract(sfe_vals_, np.mean(sfe_vals_))
+
+''' Plotting the histogram and the associated Gaussian fit '''
 
 mu, std = norm.fit(sfe_vals)
 norm_x = np.linspace(np.min(sfe_vals), np.max(sfe_vals), sfe_norm_fit_num)
@@ -940,7 +969,6 @@ sfe_data = [go.Histogram(x=sfe_vals, histnorm='probability'),
             go.Scatter(x=norm_x, y=norm.pdf(norm_x, mu, std), mode='lines+markers')]
 
 sfe_layout = dict(title='Shadowing Plot', xaxis=dict(title='Probability'), yaxis=dict(title='Shadow Fading (in dB)'))
-sfe_url = plotly.plotly.plot(dict(data=sfe_data, layout=sfe_layout))
+sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout), filename=shadowing_png)
 
 print('SPAVE-28G | Consolidated Processing I | Mean: {} | STD: {} | Shadow Fading Plot: {}.'.format(mu, std, sfe_url))
-# sfe_url = plotly.plotly.plot(dict(data=[sfe_data], layout=sfe_layout), filename=shadowing_png)
