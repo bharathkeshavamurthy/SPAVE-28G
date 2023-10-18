@@ -339,19 +339,19 @@ In this section, we discuss the operations involved in our \SI{28}{\giga\hertz} 
 \noindent{\textbf{NSF POWDER Deployment}}: As described in Sec.~\ref{S2}, our measurement system assembly constitutes an autonomous beam-steering controller replicated at both the Tx and the Rx, their respective sounder circuits, and a centralized nerve center for aggregation (via RPyC), timing synchronization (via NTP), and coordination (via Kafka-Zookeeper). On the NSF POWDER testbed, the nerve center is deployed on a high-availability cluster of four Dell R$740$ compute nodes at the Fort Douglas datacenter, with fault tolerance being a key feature to ensure storage redundancy for the recorded data. As depicted in Fig.~\ref{F3a}, the Tx is mounted on a building rooftop; while, as shown in Fig.~\ref{F3b}, the Rx is mounted on a van (or a push-cart) that is driven (or pushed) along unplanned routes onsite. Remote monitoring and troubleshooting is provided for validation of geo-positioning, alignment, and power delay profile samples. The goal of this measurement campaign was to obtain a reasonably large dataset of site-specific measurements for evaluating the propagation characteristics of \SI{28}{\giga\hertz} signals in vehicular communication settings. Thus, our propagation modeling activities included V$2$I measurements under manual, semi-, and fully-autonomous alignment operations traversing nine routes spanning urban, suburban, and foliage environments. Although our platform is capable of double-directional measurements and facilitates easy scalability to MIMO settings, in this paper, we focus only on beam-steered measurements in V$2$X settings -- particularly for spatial decoherence studies, multipath clustering evaluations under LoS/OLoS link scenarios, and Doppler shift and small-scale fading analyses.
 \begin{figure*}[t]
     \centering
-     \begin{subfigure}{0.355\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/tx_deployment.pdf}
-         \caption{Tx Deployment at Browning}
-         \label{F3a}
-     \end{subfigure}
-     \begin{subfigure}{0.635\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/rx_deployment.pdf}
-         \caption{Rx Cart Deployment}
-         \label{F3b}
-     \end{subfigure}
-     \vspace{-8mm}
+    \begin{subfigure}{0.355\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/tx_deployment.pdf}
+        \caption{Tx Deployment at Browning}
+        \label{F3a}
+    \end{subfigure}
+    \begin{subfigure}{0.635\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/rx_deployment.pdf}
+        \caption{Rx Cart Deployment}
+        \label{F3b}
+    \end{subfigure}
+    \vspace{-8mm}
     \caption{The Tx deployment atop the William Browning building, where the sounder circuits are housed in a climate-controlled enclosure with the antenna mounted on the pan-and-tilt platform (a); and the Rx deployment on a push-cart (or a minivan) (b).}
     \label{F3}
 \end{figure*}
@@ -363,84 +363,73 @@ In this section, we discuss the operations involved in our \SI{28}{\giga\hertz} 
 \section{Pathloss and Spatial Consistency Evaluations}\label{S4}
 In this section, we outline the initial set of results derived from our evaluations on the collected datasets. We first briefly study the radiation patterns of the directional horn antennas and the results of our calibration procedure, both of which are then employed in our ensuing evaluations; next, we analyze the empirical pathloss results attained from our measurements along a diverse set of routes and validate them against popular outdoor pathloss standards; additionally, we outline the insights obtained from our shadow fading investigations under the effects of static geometry-induced losses; subsequently, we detail our spatial consistency evaluations and examine the resultant plots vis-\`{a}-vis Tx-Rx distance, alignment accuracy, and relative velocity; finally, we describe our findings on the small-scale fading attributes of \SI{28}{\giga\hertz} signals in V$2$X applications, in addition to their comparisons with state-of-the-art D$2$D mmWave statistical channel model. 
 
-\noindent{\textbf{Antenna Patterns \& Calibration}}: Obtained via empirical recordings of the WR-$28$ antenna's operational characteristics, Fig.~\ref{F4a} and Fig.~\ref{F4b} illustrate its $2$D radiation patterns along the azimuth and elevation directions, respectively: these enable us to compute the gains at specific locations along a route and at specific degrees of alignment, crucial for our subsequent analyses. As evident from these radiation pattern illustrations, the WR-$28$ horn antennas employed in our propagation modeling campaign are highly-directional, thus necessitating the need for an accurate and reliable beam-steering system, particularly in V$2$X measurement scenarios. Furthermore, conducting the pre-deployment calibration procedure as outlined in Sec.~\ref{S3}, we derive a linear relationship between the measured received power levels and their calculated power values corresponding to artificial attenuation injections into the signal path between the Tx and the Rx. This calibration relationship (for both \SI{0}{\deci\bel} and \SI{76}{\deci\bel} USRP gain values) allows us to account for losses introduced into our measurements due to imperfect circuit components: refer to the preliminary manuscript of our research efforts for illustrations and additional details~\cite{SPAVE_ICC}.
+\noindent{\textbf{Antenna Patterns \& Calibration}}: Obtained via empirical recordings of the WR-$28$ antenna's operational characteristics, Fig.~\ref{F4} illustrates its normalized measured $2$D radiation patterns along the azimuth and elevation directions: these enable us to compute the gains at specific locations along a route and at specific degrees of alignment, crucial for our subsequent analyses. As evident from these radiation pattern illustrations, the WR-$28$ horn antennas employed in our propagation modeling campaign are highly-directional, thus necessitating the need for an accurate and reliable beam-steering system, particularly in V$2$X measurement scenarios. Furthermore, conducting the pre-deployment calibration procedure as outlined in Sec.~\ref{S3}, we derive a linear relationship between the measured received power levels and their calculated power values corresponding to artificial attenuation injections into the signal path between the Tx and the Rx. This calibration relationship (for both \SI{0}{\deci\bel} and \SI{76}{\deci\bel} USRP gain values) allows us to account for losses introduced into our measurements due to imperfect circuit components: refer to the preliminary manuscript of our research efforts for illustrations and additional details~\cite{SPAVE_ICC}.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.494\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/antenna_pattern_az.pdf}
-         \caption{Antenna Pattern (Azimuth)}
-         \label{F4a}
-     \end{subfigure}
-     \begin{subfigure}{0.496\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/antenna_pattern_el.pdf}
-         \caption{Antenna Pattern (Elevation)}
-         \label{F4b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The normalized measured $2$D radiation patterns along the azimuth (a) and elevation (b) directions for the WR-$28$ antennas.}
-     \label{F4}
+    \centering
+    \includegraphics[width=0.55\linewidth]{figs/antenna_pattern_combined.pdf}
+    \vspace{-2mm}
+    \caption{The normalized measured $2$D radiation patterns along the azimuth and elevation directions for our WR-$28$ horn antennas.}
+    \label{F4}
 \end{figure*}
 
-\noindent{\textbf{Pathloss Studies}}: Upon post-processing the collected measurements (GPS logs, IMU samples, and power delay profiles) according to the processing operations detailed in Sec.~\ref{S3}, we compute the signal power at the Rx (with calibration offsets); subsequently, knowing the Tx power and the antenna gains, we compute the pathloss experienced at each Rx position along a specific route onsite. Fig.~\ref{F5a} and Fig.~\ref{F5b} depict the pathloss heat-maps (superimposed on Google Hybrid maps) for the urban campus routes traversed during our measurement campaign -- namely, the route around President's Circle and the route around 100 S St, respectively. With the Tx affixed atop the William Browning building, for the urban campus route around President's Circle (Fig.~\ref{F5a}), the Rx was mounted on a minivan and driven around onsite, while for the urban campus route around 100 S St (Fig.~\ref{F5b}), the Rx was mounted on a cart and pushed around onsite. It is evident from these pathloss heatmaps in Fig~\ref{F5a} and Fig.~\ref{F5b} that the received signals along the 100 S St route (Fig.~\ref{F5b}) as opposed to those along the President's Circle route (Fig.~\ref{F5a}) experience relatively lower pathloss due to their comparatively smaller Tx-Rx distances and smaller Tx-Rx relative velocities (cart vs van). Also, note that in Fig.~\ref{F5b}, since at certain locations, the Rx is hidden behind tall buildings, the obstacle-induced losses (i.e., shadow fading) have a dominant impact on the received signal strength: this is discussed in further detail later in this section. Similarly, Fig.~\ref{F6a} and Fig.~\ref{F6b} depict the pathloss heat-maps (superimposed on Google Hybrid maps) of the foliage-dominated route (campus vegetation around the Olpin Union building) and the suburban neighborhood route (around S Wolcott St), respectively. With the Tx affixed atop the William Browning building, for both these routes, the Rx is mounted on a cart and pushed around onsite. Evaluating the differences in received signal power trends between these two routes, we observe that, across similar Tx-Rx distances, the foliage-dominated environment (Fig.~\ref{F6a}) as opposed to the suburban environment with a considerably lower vegetation density (Fig.~\ref{F6b}) presents larger pathloss due to the foliage-induced diffractions introduced into the signal propagation path.
+\noindent{\textbf{Pathloss Studies}}: Upon post-processing the collected measurements (GPS logs, IMU samples, and power delay profiles) according to the processing operations detailed in Sec.~\ref{S3}, we compute the signal power at the Rx (with calibration offsets); subsequently, knowing the Tx power and the antenna gains, we compute the pathloss experienced at each Rx position along a specific route onsite. Fig.~\ref{F5a} and Fig.~\ref{F5b} depict the pathloss heat-maps (superimposed on Google Hybrid maps) for the urban campus routes traversed during our measurement campaign -- namely, the route around President's Circle and the route around $100$ S St, respectively. With the Tx affixed atop the William Browning building, for the urban campus route around President's Circle (Fig.~\ref{F5a}), the Rx was mounted on a minivan and driven around onsite, while for the urban campus route around $100$ S St (Fig.~\ref{F5b}), the Rx was mounted on a cart and pushed around onsite. It is evident from these pathloss heatmaps in Fig~\ref{F5a} and Fig.~\ref{F5b} that the received signals along the $100$ S St route (Fig.~\ref{F5b}) as opposed to those along the President's Circle route (Fig.~\ref{F5a}) experience relatively lower pathloss due to their comparatively smaller Tx-Rx distances and smaller Tx-Rx relative velocities (cart vs van). Also, note that in Fig.~\ref{F5b}, since at certain locations, the Rx is hidden behind tall buildings, the obstacle-induced losses (i.e., shadow fading) have a dominant impact on the received signal strength: this is discussed in further detail later in this section. Similarly, Fig.~\ref{F6a} and Fig.~\ref{F6b} depict the pathloss heat-maps (superimposed on Google Hybrid maps) of the foliage-dominated route (campus vegetation around the Olpin Union building) and the suburban neighborhood route (around S Wolcott St), respectively. With the Tx affixed atop the William Browning building, for both these routes, the Rx is mounted on a cart and pushed around onsite. Evaluating the differences in received signal power trends between these two routes, we observe that, across similar Tx-Rx distances, the foliage-dominated environment (Fig.~\ref{F6a}) as opposed to the suburban environment with a considerably lower vegetation density (Fig.~\ref{F6b}) presents larger pathloss due to the foliage-induced diffractions introduced into the signal propagation path.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.563\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathloss_1.pdf}
-         \caption{Urban Campus (President's Circle)}
-         \label{F5a}
-     \end{subfigure}
-     \begin{subfigure}{0.427\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathloss_2.pdf}
-         \caption{Urban Campus (100 S St)}
-         \label{F5b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The pathloss values superimposed on a Google Hybrid map for the urban campus routes onsite: President's Circle (the Rx is on a minivan) and 100 S St (the Rx is on a push-cart). Here, the heat-map color palette dots denote the Rx positions along the route, while the blue diamond denotes the fixed Tx location atop the William Browning building.}
-     \label{F5}
+    \centering
+    \begin{subfigure}{0.563\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathloss_1.pdf}
+        \caption{Urban Campus (President's Circle)}
+        \label{F5a}
+    \end{subfigure}
+    \begin{subfigure}{0.427\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathloss_2.pdf}
+        \caption{Urban Campus ($100$ S St)}
+        \label{F5b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{The pathloss values superimposed on a Google Hybrid map for the urban campus routes onsite: President's Circle (the Rx is on a minivan) and $100$ S St (the Rx is on a push-cart). Here, the heat-map color palette dots denote the Rx positions along the route, while the blue diamond denotes the fixed Tx location atop the William Browning building.}
+    \label{F5}
 \end{figure*}
 
-Ensuing these heat-map illustrations of the pathlosses experienced by \SI{28}{\giga\hertz} signals around the various routes traversed onsite, we compare the pathloss versus distance behavior of mmWave signals in our measurement campaign with outdoor micro- and macro-cellular pathloss standards ($3$GPP TR$38.901$, ITU-R M$.2135$, METIS, and mmMAGIC~\cite{MacCartneyModelsOverview}). These popular standards constitute both line-of-sight and non-line-of-sight models, with a Tx height of $h_{\text{Tx}}{\approx}$\SI{25}{\meter} and a Tx-Rx $2$D separation range of \SI{10}{\meter}${\leq}d_{2\text{D}}{\leq}$\SI{5000}{\meter}, which match the deployment specifications of our campaign, making them suitable candidates for empirical validations. In particular, as shown in Fig.~\ref{F7a}, evaluating the pathlosses computed from our collected measurements against these standards for the urban campus (President's Circle and 100 S St), suburban neighborhood (S Wolcott St), and foliage environment (Olpin Union) routes, we observe that all these pathloss standards fail to accurately capture the pathloss versus log-distance behavior of \SI{28}{\giga\hertz} signals in V$2$X propagation scenarios. Specifically, we notice that, employing a linear-curve fitting procedure (via a floating intercept model) to extrapolate the pathloss values across an extended range of Tx-Rx distances (solid lines for our measurements and dashed lines for the subsequent extrapolation), there is a significant discrepancy between our measurements and the standards in the characteristics of the pathloss across such distances. Therefore, we can conclude that the $3$GPP TR$38.901$, ITU-R M$.2135$, METIS, and mmMAGIC large-scale outdoor pathloss standards require considerable improvements to account for mmWave propagation in V$2$X applications.
+Ensuing these heat-map illustrations of the pathlosses experienced by \SI{28}{\giga\hertz} signals around the various routes traversed onsite, we compare the pathloss versus distance behavior of mmWave signals in our measurement campaign with outdoor micro- and macro-cellular pathloss standards ($3$GPP TR$38.901$, ITU-R M$.2135$, METIS, and mmMAGIC~\cite{MacCartneyModelsOverview}). These popular standards constitute both line-of-sight and non-line-of-sight models, with a Tx height of $h_{\text{Tx}}{\approx}$\SI{25}{\meter} and a Tx-Rx $2$D separation range of \SI{10}{\meter}${\leq}d_{2\text{D}}{\leq}$\SI{5000}{\meter}, which match the deployment specifications of our campaign, making them suitable candidates for empirical validations. In particular, as shown in Fig.~\ref{F7a}, evaluating the pathlosses computed from our collected measurements against these standards for the urban campus (President's Circle and $100$ S St), suburban neighborhood (S Wolcott St), and foliage environment (Olpin Union) routes, we observe that all these pathloss standards fail to accurately capture the pathloss versus log-distance behavior of \SI{28}{\giga\hertz} signals in V$2$X propagation scenarios. Specifically, we notice that, employing a linear-curve fitting procedure (via a floating intercept model) to extrapolate the pathloss values across an extended range of Tx-Rx distances (solid lines for our measurements and dashed lines for the subsequent extrapolation), there is a significant discrepancy between our measurements and the standards in the characteristics of the pathloss across such distances. Therefore, we can conclude that the $3$GPP TR$38.901$, ITU-R M$.2135$, METIS, and mmMAGIC large-scale outdoor pathloss standards require considerable improvements to account for mmWave propagation in V$2$X applications.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.557\linewidth}
-         \centering
-         \includegraphics[width=0.9\linewidth]{figs/foliage_pathloss.pdf}
-         \caption{Foliage Environment (Olpin Union)}
-         \label{F6a}
-     \end{subfigure}
-     \begin{subfigure}{0.433\linewidth}
-         \centering
-         \includegraphics[width=0.9\linewidth]{figs/suburban_pathloss.pdf}
-         \caption{Suburban Neighborhood (S Wolcott St)}
-         \label{F6b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The pathloss values superimposed on a Google Hybrid map for foliage environment (the Rx is on a push-cart) and suburban neighborhood (the Rx is again on a push-cart) routes. Here, the heat-map color palette dots denote the Rx positions along the route, while the blue diamond denotes the fixed Tx location atop the William Browning building.}
-     \label{F6}
+    \centering
+    \begin{subfigure}{0.557\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figs/foliage_pathloss.pdf}
+        \caption{Foliage Environment (Olpin Union)}
+        \label{F6a}
+    \end{subfigure}
+    \begin{subfigure}{0.433\linewidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figs/suburban_pathloss.pdf}
+        \caption{Suburban Neighborhood (S Wolcott St)}
+        \label{F6b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{The pathloss values superimposed on a Google Hybrid map for foliage environment (the Rx is on a push-cart) and suburban neighborhood (the Rx is again on a push-cart) routes. Here, the heat-map color palette dots denote the Rx positions along the route, while the blue diamond denotes the fixed Tx location atop the William Browning building.}
+    \label{F6}
 \end{figure*}
 
 \noindent{\textbf{SAGE Algorithm}}: To analyze the multipath propagation characteristics of \SI{28}{\giga\hertz} signals, we employ the SAGE algorithm~\cite{SAGE} to extract the complex attenuation ($\alpha$), delay ($\tau$), Doppler shift ($\nu$), and AoA values ($\phi,\theta$) of the multiple specular paths arriving at the Rx while traversing a particular route onsite. Directly solving for the exact high-resolution maximum likelihood estimate of this parameter vector ($\boldsymbol{\xi}_{l}{=}[\alpha_{l},\tau_{l},\nu_{l},\phi_{l},\theta_{l}]^{\intercal},l{=}1,2,{\dots}$) involves prohibitively large computation times~\cite{SAGE}. Thus, the SAGE algorithm solves for an approximate estimate of $\boldsymbol{\xi}_{l}$ via iterative executions of the E-step which computes the expectation of the log-likelihood given the observations and the previous estimate, and the M-step which computes the current estimate by maximizing over the E-step result. This iterative execution occurs until convergence, i.e., the change in parameter values across consecutive iterations is smaller than a predefined threshold.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.4835\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/pathloss_vs_distance.pdf}
-         \caption{Pathloss vs Tx-Rx Distance}
-         \label{F7a}
-     \end{subfigure}
-     \begin{subfigure}{0.5065\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_distance.pdf}
-         \caption{Spatial Consistency vs Distance}
-         \label{F7b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{An illustration of the measured and extrapolated pathloss vs log-distance behavior of mmWave signals in V$2$X settings, and their comparisons against the $3$GPP TR$38.901$, ITU-R M.$2135$, METIS, and mmMAGIC standards -- with the solid lines denoting our measurements and the dashed lines denoting the corresponding fitted models (a); and a plot depicting the variations in the spatial autocorrelation coefficient under separations in distance (b), i.e., $\rho(\Delta d)$ vs log-distance.}
-     \label{F7}
+    \centering
+    \begin{subfigure}{0.498\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/pathloss_vs_distance.pdf}
+        \caption{Pathloss vs Tx-Rx Distance}
+        \label{F7a}
+    \end{subfigure}
+    \begin{subfigure}{0.492\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_distance.pdf}
+        \caption{Spatial Consistency vs Distance}
+        \label{F7b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{An illustration of the measured and extrapolated pathloss (in dB) vs log-distance (in meters) behavior of mmWave signals in V$2$X settings, and their comparisons against the $3$GPP TR$38.901$, ITU-R M.$2135$, METIS, and mmMAGIC standards -- with the solid lines denoting our measurements and the dashed lines denoting the corresponding fitted models (a); and a plot depicting the variations in the spatial autocorrelation coefficient under separations in distance (b), i.e., $\rho(\Delta d)$ vs log-distance in meters.}
+    \label{F7}
 \end{figure*}
 
 \noindent{\textbf{Spatial Consistency}}: Finally, in this section, to study the spatial decoherence behavior of \SI{28}{\giga\hertz} signals in V$2$X scenarios, we evaluate the spatial autocorrelation coefficient along specific Rx routes under the effects of Tx-Rx distance, alignment accuracy, and relative velocity. Herein, we first describe the mathematical modeling underlying the computation of the spatial autocorrelation coefficient, after which we outline the insights gained from our results on the decorrelation characteristics of \SI{28}{\giga\hertz} signals in V$2$X settings under distance, alignment, and velocity effects.
@@ -463,67 +452,83 @@ For the MPC at delay bin $\tau_{l} \in \boldsymbol{\tau}$, the local amplitude m
 \end{align}
 where for a route configuration index $i \in \mathcal{I}$ with its Tx-Rx distance in distance bin $d_{k} \in \mathbf{d}$, Tx-Rx alignment accuracy in alignment bin $\phi_{m} \in \boldsymbol{\phi}$, and Tx-Rx relative velocity in velocity bin $v_{n} \in \mathbf{v}$, the amplitude sample mean (spatial average) of the MPC at delay bin $\tau_{l} \in \boldsymbol{\tau}$ is defined as $\mu_{i}(\tau_{l}) = \frac{1}{|\mathcal{I}(d_{k}, \phi_{m}, v_{n})|}\sum_{\iota = 1}^{|\mathcal{I}(d_{k}, \phi_{m}, v_{n})|}\ A_{\iota}(\tau_{l})$; and similarly, for a route configuration index $i' \in \mathcal{I}$ with its Tx-Rx distance in distance bin $d_{k'} \in \mathbf{d}$, Tx-Rx alignment accuracy in alignment bin $\phi_{m} \in \boldsymbol{\phi}$, and Tx-Rx relative velocity in velocity bin $v_{n} \in \mathbf{v}$, the amplitude sample mean (spatial average) of the MPC at delay bin $\tau_{l} \in \boldsymbol{\tau}$ is defined as $\mu_{i'}(\tau_{l}) = \frac{1}{|\mathcal{I}(d_{k'}, \phi_{m}, v_{n})|}\sum_{\iota = 1}^{|\mathcal{I}(d_{k'}, \phi_{m}, v_{n})|}\ A_{\iota}(\tau_{l})$. Note that the sets used to compute these amplitude sample means for $i, i' \in \mathcal{I}$ could potentially differ only in their Tx-Rx distance bin, i.e., consistent with the condition~\eqref{Ed}, they belong to the same alignment and velocity bins. In a similar vein, we compute the spatial autocorrelation coefficients under variations in the alignment and velocity separation variables, i.e., $\rho(\Delta \phi)$ and $\rho(\Delta v)$, respectively. Specifically, the index set representing the evaluation condition in Eq.~\ref{SCD} is replaced with $\mathcal{I}(\Delta \phi)$ for $\rho(\Delta \phi)$ and with $\mathcal{I}(\Delta v)$ for $\rho(\Delta v)$; also, the amplitude sample means $\mu_{i}(\tau_{l})$ and $\mu_{i'}(\tau_{l})$ involve index sets that could potentially differ only in their corresponding separation variables, i.e., alignment bins ($\phi_{m}$ and $\phi_{m'}$) or velocity bins ($v_{n}$ and $v_{n'}$), respectively.\\
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.5015\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_alignment.pdf}
-         \caption{Spatial Consistency vs Tx-Rx Alignment Accuracy}
-         \label{F8a}
-     \end{subfigure}
-     \begin{subfigure}{0.4885\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_velocity.pdf}
-         \caption{Spatial Consistency vs Tx-Rx Relative Velocity}
-         \label{F8b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The plots illustrating the behavior of the spatial autocorrelation coefficient under separations in Tx-Rx alignment accuracy and Tx-Rx relative velocity, i.e., $\rho(\Delta \phi)$ vs log-alignment (a) and $\rho(\Delta v)$ vs log-velocity (b).}
-     \label{F8}
+    \centering
+    \begin{subfigure}{0.5015\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_alignment.pdf}
+        \caption{Spatial Consistency vs Tx-Rx Alignment Accuracy}
+        \label{F8a}
+    \end{subfigure}
+    \begin{subfigure}{0.4885\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/spatial_consistency_vs_velocity.pdf}
+        \caption{Spatial Consistency vs Tx-Rx Relative Velocity}
+        \label{F8b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{The plots illustrating the behavior of the spatial autocorrelation coefficient under separations in Tx-Rx alignment accuracy and Tx-Rx relative velocity, i.e., $\rho(\Delta \phi)$ vs log-alignment in degrees (a) and $\rho(\Delta v)$ vs log-velocity in meters/second (b).}
+    \label{F8}
 \end{figure*}
 \indent{As} a result of the framework described above, Fig.~\ref{F7b} illustrates the spatial consistency curves as a function of the separations in distance for the urban campus, suburban neighborhood, and foliage environment routes. We note decreasing correlation trends between the recorded power delay profile samples under increasing distance separation. Similarly, Fig.~\ref{F8a} depicts the variation of the spatial autocorrelation coefficient under increasing levels of misalignment between the Tx and Rx antennas while traversing the urban campus, suburban neighborhood, and foliage environment routes. We observe rapid decorrelation across the evaluated samples even at small amounts of misalignment, highlighting the highly-directional characteristics of our WR-$28$ horn antennas, and illustrating the need for accurate beam-steering in mmWave V$2$X networks. Lastly, Fig.~\ref{F8b} depicts the spatial consistency characteristics of \SI{28}{\giga\hertz} signals under variations in the Tx-Rx relative velocity: here again, we observe considerably high levels of signal decoherence under small variations in the velocity of the Rx relative to the Tx, thereby further validating our claim about the need for a reliable and responsive beam-steering setup in mmWave systems for V$2$X applications. Note that, in Fig.~\ref{F7b}, Fig.~\ref{F8a}, and Fig.~\ref{F8b}, the channel does not get fully decorrelated since in our beam-steered setup, the LoS component always remains significant.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.4815\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/urban_campus_fading_1.pdf}
-         \caption{Urban Campus (President's Circle)}
-         \label{F9a}
-     \end{subfigure}
-     \begin{subfigure}{0.5085\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/urban_campus_fading_2.pdf}
-         \caption{Urban Campus (100 S St)}
-         \label{F9b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The histograms and their corresponding Gaussian fits for the shadow fading effects experienced by mmWave signals along the urban campus routes onsite, viz., President's Circle (a) (Rx is on a minivan) and 100 S St (b) (Rx is on a push-cart).}
-     \label{F9}
+    \centering
+    \begin{subfigure}{0.4815\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/urban_campus_fading_1.pdf}
+        \caption{Urban Campus (President's Circle)}
+        \label{F9a}
+    \end{subfigure}
+    \begin{subfigure}{0.5085\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/urban_campus_fading_2.pdf}
+        \caption{Urban Campus ($100$ S St)}
+        \label{F9b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{The histograms and their corresponding Gaussian fits for the shadow fading effects experienced by mmWave signals along the urban campus routes onsite, viz., President's Circle (a) (Rx is on a minivan) and $100$ S St (b) (Rx is on a push-cart).}
+    \label{F9}
 \end{figure*}
 
-\noindent{\textbf{Shadowing \& Fast Fading}}: The shadow fading plots for the two urban campus routes, viz., President's Circle and 100 S St are depicted in Fig.~\ref{F9a} and Fig.~\ref{F9b}. These plots depict the histograms of the deviations of the measured pathloss values from those provided by the linear models fitted to our measurements in Fig.~\ref{F7a}; upon visualizing these histograms for the two urban campus routes (dominated by tall buildings), we fit Gaussian curves (standard normals) to obtain the log-normal shadow fading distributions typically seen in the state-of-the-art~\cite{DopplerHST}. Herein, as is evident from the structural profiles of the two routes (see Fig.~\ref{F5a} and Fig.~\ref{F5b}), we observe that the urban campus route around 100 S St exhibits a larger shadowing impact ($\sigma = $ \SI{7.55}{\deci\bel}) relative to that seen around President's Circle ($\sigma = $ \SI{4.09}{\deci\bel}). Furthermore, the small-scale fading studies of \SI{28}{\giga\hertz} signals in V$2$X scenarios vis-à-vis the average fade depth and average fade duration metrics, along routes dominated by dynamic blockages (pedestrians and moving/parked vehicles), are illustrated in Fig.~\ref{F10a} and Fig.~\ref{F10b}. The pathgain versus route time plots depicted in these figures enable us to gather insights about the attenuations introduced into the signal path due to obstacles -- specifically, obstacles that move in and move out of the signal path quickly. In V$2$X settings, these dynamic blockages typically include pedestrians and moving/parked vehicles, which cause additional attenuation (captured by the average fade depth metric) for the period over which they enter in and enter out of the signal's path (captured by the average fade duration metric). In the next section, we detail our multipath clustering evaluations which includes cluster inter-arrival times, cluster peak-power distributions, cluster decay characteristics, PDAPs, PDDPs, and empirical validations of mmWave channel models.
+\noindent{\textbf{Shadowing \& Fast Fading}}: The shadow fading plots for the two urban campus routes, viz., President's Circle and $100$ S St are depicted in Fig.~\ref{F9a} and Fig.~\ref{F9b}. These plots depict the histograms of the deviations of the measured pathloss values from those provided by the linear models fitted to our measurements in Fig.~\ref{F7a}; upon visualizing these histograms for the two urban campus routes (dominated by tall buildings), we fit Gaussian curves (standard normals) to obtain the log-normal shadow fading distributions typically seen in the state-of-the-art~\cite{DopplerHST}. Herein, as is evident from the structural profiles of the two routes (see Fig.~\ref{F5a} and Fig.~\ref{F5b}), we observe that the urban campus route around $100$ S St exhibits a larger shadowing impact ($\sigma = $ \SI{7.55}{\deci\bel}) relative to that seen around President's Circle ($\sigma = $ \SI{4.09}{\deci\bel}). Furthermore, the small-scale fading studies of \SI{28}{\giga\hertz} signals in V$2$X scenarios vis-à-vis the average fade depth and average fade duration metrics, along routes dominated by dynamic blockages (pedestrians and moving/parked vehicles), are illustrated in Fig.~\ref{F10a} and Fig.~\ref{F10b}. The pathgain versus route time plots depicted in these figures enable us to gather insights about the attenuations introduced into the signal path due to obstacles -- specifically, obstacles that move in and move out of the signal path quickly. In V$2$X settings, these dynamic blockages typically include pedestrians and moving/parked vehicles, which cause additional attenuation (captured by the average fade depth metric) for the period over which they enter in and enter out of the signal's path (captured by the average fade duration metric). In the next section, we detail our multipath clustering evaluations which includes cluster inter-arrival times, cluster peak-power distributions, cluster decay characteristics, PDAPs, PDDPs, and empirical validations of mmWave channel models.
 \begin{figure*} [t]
-     \centering
-     \begin{subfigure}{0.482\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathgain_vs_time.pdf}
-         \caption{Urban Campus (100 S St)}
-         \label{F10a}
-     \end{subfigure}
-     \begin{subfigure}{0.508\linewidth}
-         \centering
-         \includegraphics[width=1.0\linewidth]{figs/suburban_pathgain_vs_time.pdf}
-         \caption{Suburban Neighborhood (S Wolcott St)}
-         \label{F10b}
-     \end{subfigure}
-     \vspace{-8mm}
-     \caption{The plots illustrating the small-scale fading effects (pathgain vs time) experienced by mmWave signals along routes dominated by dynamic blockages (pedestrians and moving/parked vehicles), i.e., the urban campus route around 100 S St (a) (Rx is on a push-cart) and the suburban neighborhood route around S Wolcott St (b) (Rx is again on a push-cart).}
-     \label{F10}
+    \centering
+    \begin{subfigure}{0.482\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/urban_campus_pathgain_vs_time.pdf}
+        \caption{Urban Campus ($100$ S St)}
+        \label{F10a}
+    \end{subfigure}
+    \begin{subfigure}{0.508\linewidth}
+        \centering
+        \includegraphics[width=1.0\linewidth]{figs/suburban_pathgain_vs_time.pdf}
+        \caption{Suburban Neighborhood (S Wolcott St)}
+        \label{F10b}
+    \end{subfigure}
+    \vspace{-8mm}
+    \caption{The plots illustrating the small-scale fading effects (pathgain vs time) experienced by mmWave signals along routes dominated by dynamic blockages (pedestrians and moving/parked vehicles), i.e., the urban campus route around $100$ S St (a) (Rx is on a push-cart) and the suburban neighborhood route around S Wolcott St (b) (Rx is again on a push-cart).}
+    \label{F10}
 \end{figure*}
 \vspace{-3mm}
 
 % Numerical evaluations II: Multipath clustering and Channel model validations
 \section{Multipath Clustering and Channel Modeling}\label{S5}
-In this section, using the multipath components extracted via the SAGE algorithm~\cite{SAGE}, we discuss multipath clustering studies involving the RMS delay- and direction-spreads, the cluster inter-arrival times, the cluster decay characteristics, and the cluster peak-power distributions. The Kolmogorov-Smirnov statistic enables experimental validations of widely-used mmWave channel models (SV~\cite{Indoor60G}, QD~\cite{QDC_NIST}, D$2$D~\cite{NISTModeling, D2DHumanBlockage}, and stochastic~\cite{Indoor60G}) by providing a measure of goodness between the empirical CDFs and the CDFs expected from these statistical channel models. Besides these multipath clustering analyses, illustrations of PDAPs shed novel insights on the temporal and spatial dispersion attributes of \SI{28}{\giga\hertz} signals; moreover, visualizations of the PDDPs and their associated normalized Doppler spectra facilitate investigations of the Doppler effects on \SI{28}{\giga\hertz} signals, which are particularly obvious in vehicular networks~\cite{DopplerHST}.
+In this section, using the multipath components extracted via the SAGE algorithm~\cite{SAGE}, we discuss multipath clustering studies involving the RMS delay- and direction-spreads, the cluster inter-arrival times, the cluster decay characteristics, and the cluster peak-power distributions. The Kolmogorov-Smirnov statistic enables experimental validations of widely-used mmWave channel models (SV~\cite{Indoor60G}, QD~\cite{QDC_NIST}, and stochastic~\cite{Indoor60G}) by providing a measure of goodness of fit between the empirical CDFs and the CDFs expected from these statistical channel models. Besides these multipath clustering analyses, illustrations of PDAPs shed novel insights on the temporal and spatial dispersion attributes of \SI{28}{\giga\hertz} signals; moreover, visualizations of the PDDPs and their associated normalized Doppler spectra facilitate investigations of the Doppler shift effects on \SI{28}{\giga\hertz} signals, which are particularly prominent in V$2$X communication settings.
+
+Fig.~\ref{F11a} illustrates the RMS delay-spread characteristics of \SI{28}{\giga\hertz} signals, when the Tx is affixed atop the William Browning building and the Rx traverses unplanned vehicular routes around the urban campus, suburban neighborhood, and foliage environments. Herein, the RMS delay-spread is computed according to the following relationship (described in ~\cite{Indoor60G})
+\begin{align}\label{RMS_DS}
+    \sigma_{\tau} = \sqrt{\frac{\sum_{\tau}P_{h}(\tau)\tau^{2}}{\sum_{\tau}P_{h}(\tau)} - \left(\frac{\sum_{\tau}P_{h}(\tau)\tau}{\sum_{\tau}P_{h}(\tau)}\right)^{2}},
+\end{align}
+where $P_{h}(\tau)$ denotes the power-delay profile obtained from the channel impulse response $h(\tau)$ as $P_{h}(\tau){=}|h(\tau)|^{2}$. This figure also illustrates the RMS delay-spread CDFs for the SV, QDC, and stochastic models. Moreover, the Kolmogorov-Smirnov statistic $D_{n}{=}\sup_{x}|F_{n}(x){-}F(x)|$ quantifies the distance between the empirical CDF $F_{n}(x)$ obtained from $n$ independent and identically distributed measurement samples and the CDF of the reference distribution $F(x)$ (i.e., the RMS delay-spread CDFs outlined by the SV, QDC, and stochastic statistical channel models); note that $x$ here corresponds to a metric under analysis in our evaluations (viz., RMS delay-spreads, RMS direction-spreads, cluster inter-arrival times, and cluster peak-powers).
+
+Similarly, Fig.~\ref{F11b} depicts the RMS AoA direction-spread characteristics of \SI{28}{\giga\hertz} signals in our propagation modeling campaign onsite at the NSF POWDER experimental testbed, along unplanned Rx vehicular routes around the urban campus, suburban neighborhood, and foliage environments. The RMS AoA direction-spread is computed as follows (again, described in ~\cite{Indoor60G})
+\begin{align}\label{RMS_DirS}
+    \sigma_{\Omega} = \sqrt{\sum_{l=1}^{L}|\mathbf{e}(\phi_{l}, \theta_{l}) - \boldsymbol{\mu}_{\Omega}|^{2}P(\phi_{l}, \theta_{l})},
+\end{align}
+where $l$ denotes the MPC index ($1$ to $L$), $\phi_{l}$ denotes the azimuth angle-of-arrival for the $l^{\mathrm{th}}$ MPC, $\theta_{l}$ denotes the elevation angle-of-arrival for the $l^{\mathrm{th}}$ MPC, and $P(\phi_{l}, \theta_{l})$ denotes the normalized power spectrum at $\phi_{l}$ and $\theta_{l}$ for the $l^{\mathrm{th}}$ MPC. Fig.~\ref{11b} also illustrates the direction-spread CDFs for the SV, QDC, and stochastic models. Furthermore, as is the case in our RMS delay-spread investigations, we evaluate the Kolmogorov-Smirnov statistic for the RMS AoA direction-spread wherein we calculate the aforementioned statistical distance metric between the empirical CDF of the RMS AoA direction-spread obtained from our measurements and the CDFs of the reference distributions outlined by the SV, QDC, and stochastic mmWave channel models. Next, we analyze the cluster arrival and decay characteristics in addition to the cluster peak-power distributions.
+
+Fig.~\ref{F12a} illustrates the empirical CDF of the cluster inter-arrival times obtained from our onsite measurements at the NSF POWDER experimental testbed, with the Rx traversing unplanned routes around the urban campus, suburban neighborhood, and foliage environments. Additionally, Fig.~\ref{12a} depicts CDFs of the cluster inter-arrival times as detailed by the SV, QDC, and stochastic channel models. Also, Fig.~\ref{12b} depicts the empirical cluster decay characteristics (peak-power as a function of its absolute delay) of mmWave signals in such V$2$X communication scenarios, in addition to a truncated regression curve-fitting model applied to these measurements~\cite{Indoor60G}.
+
+Finally, Fig.~\ref{13a} depicts the PDAPs illustration for the urban campus route ($100$ S St), i.e., for the Rx vehicular route around an urban campus radio environment, Fig.~\ref{13a} shows a heat-map of the azimuth angles-of-arrival versus their corresponding delays, both estimated for the various specular paths via the SAGE algorithm~\cite{SAGE}. Similarly, Fig.~\ref{13b} depicts the PDAPs illustration for the suburban neighborhoods route (S Wolcott St). Additionally, Fig.~\ref{14a} depicts the PDDPs illustration for the urban campus route ($100$ S St), i.e., a heat-map of the Doppler frequency shifts versus their corresponding delays, both estimated for the various specular paths via the SAGE algorithm~\cite{SAGE}. Lastly, Fig.~\ref{14b} illustrates the normalized Doppler spectrum for this urban campus route: a plot of the normalized power (obtained from the amplitude estimates of the MPCs) versus the Doppler frequency shifts, both determined using the SAGE algorithm~\cite{SAGE}.
 \vspace{-3mm}
 
 % Concluding remarks and Future work
