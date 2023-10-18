@@ -7,9 +7,6 @@ Furthermore, it includes spatial decoherence analyses w.r.t Tx-Rx distance, alig
 Additionally, as a part of our evaluations, we incorporate visualizations of the Power Delay Doppler Profiles (PDDPs),
 the Power Delay Angular Profiles (PDAPs), the normalized Doppler spectrum, and the multi-path cluster characteristics.
 
-Lastly, we analyze these results for the Saleh-Valenzuela (SV), Quasi-Deterministic (QD), and stochastic
-channel models to empirically validate the correctness of such widely-used mmWave channel models <PENDING>.
-
 Reference Papers:
 
 @INPROCEEDINGS{SAGE,
@@ -45,26 +42,6 @@ Reference Papers:
   year={2020}, volume={68}, number={7}, pages={5556-5567},
   doi={10.1109/TAP.2020.2975365}}.
 
-@ARTICLE{Channel-Models-I,
-  author={Gustafson, Carl and Haneda, Katsuyuki and Wyne, Shurjeel and Tufvesson, Fredrik},
-  title={On mm-Wave Multipath Clustering and Channel Modeling},
-  journal={IEEE Transactions on Antennas and Propagation},
-  year={2014}, volume={62}, number={3}, pages={1445-1455},
-  doi={10.1109/TAP.2013.2295836}}
-
-@INPROCEEDINGS{Channel-Models-II,
-  author={Gustafson, Carl and Tufvesson, Fredrik and Wyne, Shurjeel and Haneda, Katsuyuki and Molisch, Andreas F.},
-  title={Directional Analysis of Measured 60 GHz Indoor Radio Channels Using SAGE},
-  booktitle={2011 IEEE 73rd Vehicular Technology Conference (VTC Spring)},
-  year={2011}, volume={}, number={}, pages={1-5},
-  doi={10.1109/VETECS.2011.5956639}}
-
-@INPROCEEDINGS{Channel-Models-III,
-  author={Lecci, Mattia and Polese, Michele and Lai, Chiehping and Wang, Jian and Gentile, Camillo and Golmie, et al.},
-  title={Quasi-Deterministic Channel Model for mmWaves: Mathematical Formalization and Validation},
-  booktitle={GLOBECOM 2020 - 2020 IEEE Global Communications Conference},
-  year={2020}, pages={1-6}, doi={10.1109/GLOBECOM42002.2020.9322374}}
-
 Author: Bharath Keshavamurthy <bkeshava@purdue.edu | bkeshav1@asu.edu>
 Organization: School of Electrical and Computer Engineering, Purdue University, West Lafayette, IN
               School of Electrical, Computer and Energy Engineering, Arizona State University, Tempe, AZ
@@ -76,37 +53,34 @@ import os
 import re
 import json
 import plotly
+import requests
 import datetime
 import scipy.io
 import functools
-# import requests
-# import traceback
+import traceback
 import dataclasses
 import numpy as np
 from enum import Enum
 from pyproj import Proj
-# from geopy import distance
-from itertools import pairwise
+from geopy import distance
 import plotly.graph_objs as go
 from json import JSONDecodeError
 from scipy import signal, constants
 from typing import Tuple, List, Dict
 from scipy.interpolate import interp1d
 from dataclasses import dataclass, field
+from itertools import pairwise, combinations
 import sk_dsp_comm.fir_design_helper as fir_d
-# from itertools import pairwise, combinations
 from concurrent.futures import ThreadPoolExecutor
 
 """
 INITIALIZATIONS I: Collections & Utilities
 """
-pi, c = np.pi, constants.c
-# pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
+pi, c, distns, alignments, velocities = np.pi, constants.c, [], [], []
 deg2rad, rad2deg = lambda x: x * (pi / 180.0), lambda x: x * (180.0 / pi)
-decibel_1, linear_1 = lambda x: 10 * np.log10(x), lambda x: 10 ** (x / 10.0)
-# linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
+linear_1, linear_2 = lambda x: 10 ** (x / 10.0), lambda x: 10 ** (x / 20.0)
 rx_gps_events, tx_imu_traces, rx_imu_traces, pdp_segments, pods = [], [], [], [], []
-# decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
+decibel_1, decibel_2, gamma = lambda x: 10 * np.log10(x), lambda x: 20 * np.log10(x), lambda fc, fc_: fc / (fc - fc_)
 
 """
 INITIALIZATIONS II: Enumerations & Dataclasses (Inputs)
@@ -230,8 +204,8 @@ rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
 tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
 rms_delay_spread_png, aoa_rms_dir_spread_png = 'uccc_rms_delay_spread.png', 'uccc_aoa_rms_dir_spread.png'
 pdaps_png, pddps_png, doppler_spectrum_png = 'uccc_pdaps.png', 'uccc_pddps.png', 'uccc_doppler_spectrum.png'
+sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
 pwrs_png, decay_chars_png, inter_arr_times_png = 'uccc_pwrs.png', 'uccc_decay_chars.png', 'uccc_inter_arr_times.png'
-# sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
 
 ''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
@@ -279,12 +253,12 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 
 ''' Generic configurations '''
 tx_fc, rx_fc, wlength = 400e6, 399.95e6, c / 28e9
-# output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
+output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-mpc_delay_bins = np.arange(start=1e-9, stop=1e-6, step=1e-9)
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
-# d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
+d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
+solver, max_iters, eps_abs, eps_rel, verbose = 'SCS', int(1e6), 1e-6, 1e-6, True
 delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 50.0, 0.1, 0.05, 0.05
 n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_m = 0.015, 22.0, 1000, 0.5, 11, 2047
 ant_log_file, pn_reps = 'E:/SPAVE-28G/analyses/antenna_pattern.mat', int(pn_m / pn_l)
@@ -292,8 +266,8 @@ plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdv
 tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 1e-9, 1e-6, -5e3, 5e3, -pi, pi, -pi, pi
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
+sc_dist_step, sc_align_step, sc_vel_step, mpc_delay_bins = 1.0, 0.05, 1.0, np.arange(start=1e-9, stop=1e-6, step=1e-9)
 assert (len(mpc_delay_bins) == max_mpcs, 'The max number of allowed MPCs must be equal to the delay bin quantization!')
-# sc_dist_step, sc_align_step, sc_vel_step, mpc_delay_bins = 1.0, 0.05, 1.0, np.arange(start=1e-9, stop=1e-6, step=1e-9)
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
@@ -326,7 +300,7 @@ class PDPSegment:
     num_bytes: int = num_samples * item_size
     raw_rx_samples: np.array = np.array([], dtype=np.csingle)  # complex I/Q-64
     processed_rx_samples: np.array = np.array([], dtype=np.csingle)  # complex I/Q-64
-    # correlation_peak: float = 0.0  # linear
+    correlation_peak: float = 0.0  # linear
 
 
 @dataclass(order=True)
@@ -337,11 +311,11 @@ class Pod:
     rx_gps_event: GPSEvent = GPSEvent()
     tx_imu_trace: IMUTrace = IMUTrace()
     rx_imu_trace: IMUTrace = IMUTrace()
-    # tx_elevation: float = 0.0  # m
-    # rx_elevation: float = 0.0  # m
-    # tx_rx_alignment: float = 0.0  # deg
-    # tx_rx_distance_2d: float = 0.0  # m
-    # tx_rx_distance_3d: float = 0.0  # m
+    tx_elevation: float = 0.0  # m
+    rx_elevation: float = 0.0  # m
+    tx_rx_alignment: float = 0.0  # deg
+    tx_rx_distance_2d: float = 0.0  # m
+    tx_rx_distance_3d: float = 0.0  # m
     pdp_segment: PDPSegment = PDPSegment()
     n_mpcs: int = max_mpcs
     mpc_parameters: List[MPCParameters] = field(default_factory=lambda: (MPCParameters() for _ in range(max_mpcs)))
@@ -370,17 +344,14 @@ def parse(d: List, dc: dataclass, fn: str) -> None:
         d.append(ddc_transform(json.load(f), dc))
 
 
-"""
 # Yaw angle getter (deg)
 def yaw(m: IMUTrace) -> float:
     return m.yaw_angle
-"""
 
-"""
+
 # Pitch angle getter (deg)
 def pitch(m: IMUTrace) -> float:
     return m.pitch_angle
-"""
 
 
 # Latitude getter (deg)
@@ -398,22 +369,19 @@ def altitude(y: GPSEvent) -> float:
     return y.altitude_ellipsoid.component
 
 
-"""
 # Tx-Rx 2D distance (m)
 def tx_rx_distance_2d(tx: GPSEvent, rx: GPSEvent) -> float:
     coords_tx = (latitude(tx), longitude(tx))
     coords_rx = (latitude(rx), longitude(rx))
     return distance.distance(coords_tx, coords_rx).m
-"""
 
-"""
+
 # Tx-Rx 3D distance (m)
 def tx_rx_distance_3d(tx: GPSEvent, rx: GPSEvent) -> float:
     alt_tx, alt_rx = altitude(tx), altitude(rx)
     return np.sqrt(np.square(tx_rx_distance_2d(tx, rx)) + np.square(alt_tx - alt_rx))
-"""
 
-"""
+
 # General 3D distance (m)
 def distance_3d(y1: GPSEvent, y2: GPSEvent) -> float:
     coords_y1 = (latitude(y1), longitude(y1))
@@ -421,9 +389,8 @@ def distance_3d(y1: GPSEvent, y2: GPSEvent) -> float:
     alt_y1, alt_y2 = altitude(y1), altitude(y2)
     distance_2d = distance.distance(coords_y1, coords_y2).m
     return np.sqrt(np.square(distance_2d) + np.square(alt_y1 - alt_y2))
-"""
 
-"""
+
 # Tx-Rx difference in alignment (deg)
 def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> Tuple:
     y1_lat, y1_lon, y1_alt = latitude(y1), longitude(y1), altitude(y1)
@@ -452,17 +419,15 @@ def d_alignment(y1: GPSEvent, y2: GPSEvent, m: IMUTrace, is_tx=True) -> Tuple:
         pitch_calc *= (pitch_calc * -5.0 if pitch_calc < 0.0 else 5.0) / (pitch_calc * pitch_calc)
 
     return abs(yaw(m) - yaw_calc), abs(pitch(m) - pitch_calc)
-"""
 
-"""
+
 # Tx-Rx overall relative alignment accuracy (deg)
 def tx_rx_alignment(tx: GPSEvent, rx: GPSEvent, m_tx: IMUTrace, m_rx: IMUTrace) -> float:
     m_tx_yaw_, m_tx_pitch_ = d_alignment(tx, rx, m_tx)
     m_rx_yaw_, m_rx_pitch_ = d_alignment(rx, tx, m_rx, False)
     return max(abs(180.0 - m_tx_yaw_ - m_rx_yaw_), abs(180.0 - m_tx_pitch_ - m_rx_pitch_))
-"""
 
-"""
+
 # Tx-Rx relative velocity (ms-1) [N&W hemispheres only]
 # TO-DO: Instead of using lat & long relative movements, use the Tx & Rx headings from the GPS logs.
 def tx_rx_relative_velocity(tx: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> float:
@@ -483,9 +448,8 @@ def tx_rx_relative_velocity(tx: GPSEvent, rx_i: GPSEvent, rx_j: GPSEvent) -> flo
         rx_v *= -1  # Multiply by -1 if the Rx is going towards the Tx...
 
     return rx_v
-"""
 
-"""
+
 # USGS EPQS: Tx/Rx elevation (m)
 def elevation(y: GPSEvent) -> float:
     elev_url, elev_val = '', 0.0
@@ -498,21 +462,20 @@ def elevation(y: GPSEvent) -> float:
             elev_url = base_epqs_url.format(lon, lat)
             elev_val = abs(alt - float(requests.get(elev_url).json()['value']))
         except KeyError as ke:
-            print('SPAVE-28G | Consolidated Processing II | KeyError caught while getting elevation data '
+            print('SPAVE-28G | Consolidated Processing Full | KeyError caught while getting elevation data '
                   'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(ke.__traceback__)))
             continue  # Retry querying the USGS EPQS URL for accurate elevation data...
         except JSONDecodeError as jde_:
-            print('SPAVE-28G | Consolidated Processing II | JSONDecodeError caught while getting elevation data '
+            print('SPAVE-28G | Consolidated Processing Full | JSONDecodeError caught while getting elevation data '
                   'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(jde_.__traceback__)))
             continue  # Retry querying the USGS EPQS URL for accurate elevation data...
         except Exception as e_:
-            print('SPAVE-28G | Consolidated Processing II | Exception caught while getting elevation data '
+            print('SPAVE-28G | Consolidated Processing Full | Exception caught while getting elevation data '
                   'from URL: {} | Retrying... | Traceback: {}'.format(elev_url, traceback.print_tb(e_.__traceback__)))
             continue  # Retry querying the USGS EPQS URL for accurate elevation data...
         break
 
     return elev_val
-"""
 
 
 # Cartesian coordinates to Spherical coordinates (x, y, z) -> (r, phi, theta) radians
@@ -548,11 +511,9 @@ def process_rx_samples(x: np.array) -> Tuple:
     return ne_samps.shape[0], ne_samps
 
 
-"""
 # Correlation peak in the processed rx_samples (linear)
 def correlation_peak(x: np.array) -> float:
     return np.max(np.abs(x))
-"""
 
 
 # RMS delay spread computation (std | s)
@@ -849,10 +810,12 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
         try:
             parse(rx_gps_events, GPSEvent, ''.join([rx_gps_dir, filename]))
         except JSONDecodeError as jde:
-            print('SPAVE-28G | Consolidated Processing II | JSONDecodeError caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'JSONDecodeError caught while parsing {}.'.format(filename))
             continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
         except Exception as e:
-            print('SPAVE-28G | Consolidated Processing II | Exception caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'Exception caught while parsing {}.'.format(filename))
             continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract Tx imu_traces
@@ -864,10 +827,12 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
         try:
             parse(tx_imu_traces, IMUTrace, ''.join([tx_imu_dir, filename]))
         except JSONDecodeError as jde:
-            print('SPAVE-28G | Consolidated Processing II | JSONDecodeError caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'JSONDecodeError caught while parsing {}.'.format(filename))
             continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
         except Exception as e:
-            print('SPAVE-28G | Consolidated Processing II | Exception caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'Exception caught while parsing {}.'.format(filename))
             continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract Rx imu_traces
@@ -879,10 +844,12 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
         try:
             parse(rx_imu_traces, IMUTrace, ''.join([rx_imu_dir, filename]))
         except JSONDecodeError as jde:
-            print('SPAVE-28G | Consolidated Processing II | JSONDecodeError caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'JSONDecodeError caught while parsing {}.'.format(filename))
             continue  # Ignore the JSONDecodeError on this file | Move onto the next file...
         except Exception as e:
-            print('SPAVE-28G | Consolidated Processing II | Exception caught while parsing {}.'.format(filename))
+            print('SPAVE-28G | Consolidated Processing Full | '
+                  'Exception caught while parsing {}.'.format(filename))
             continue  # Ignore the Exception on this file | Move onto the next file...
 
 # Extract timestamp_0 (start_timestamp)
@@ -921,12 +888,8 @@ with open(''.join([comm_dir, parsed_metadata_file])) as file:
 
             pdp_segments.append(PDPSegment(num_samples=num_samples,
                                            seq_number=seq_number + 1, timestamp=str(timestamp),
+                                           correlation_peak=correlation_peak(processed_rx_samples),
                                            raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
-
-            # pdp_segments.append(PDPSegment(num_samples=num_samples,
-            #                                seq_number=seq_number + 1, timestamp=str(timestamp),
-            #                                correlation_peak=correlation_peak(processed_rx_samples),
-            #                                raw_rx_samples=raw_rx_samples, processed_rx_samples=processed_rx_samples))
 
 ''' Match gps_event, imu_trace, and pdp_segment timestamps across both the Tx and the Rx realms '''
 
@@ -947,25 +910,18 @@ for seqnum in range(1, len(rx_gps_events)):
     pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
                     tx_gps_event=tx_gps_event, tx_imu_trace=IMUTrace(),
                     rx_gps_event=rx_gps_event, rx_imu_trace=IMUTrace(),
+                    rms_aoa_dir_spread=rms_aoa_direction_spread(mpc_parameters),
+                    tx_rx_distance_2d=tx_rx_distance_2d(tx_gps_event, rx_gps_event),
+                    tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
                     mpc_parameters=mpc_parameters, rms_delay_spread=rms_delay_spread(mpc_parameters),
-                    rms_aoa_dir_spread=rms_aoa_direction_spread(mpc_parameters), pdp_segment=pdp_segment))
-
-    # pods.append(Pod(seq_number=seq_number, timestamp=timestamp,
-    #                 tx_gps_event=tx_gps_event, tx_imu_trace=IMUTrace(),
-    #                 rx_gps_event=rx_gps_event, rx_imu_trace=IMUTrace(),
-    #                 rms_aoa_dir_spread=rms_aoa_direction_spread(mpc_parameters),
-    #                 tx_rx_distance_2d=tx_rx_distance_2d(tx_gps_event, rx_gps_event),
-    #                 tx_elevation=elevation(tx_gps_event), rx_elevation=elevation(rx_gps_event),
-    #                 mpc_parameters=mpc_parameters, rms_delay_spread=rms_delay_spread(mpc_parameters),
-    #                 tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, IMUTrace(), IMUTrace()),
-    #                 pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event)))
+                    tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, IMUTrace(), IMUTrace()),
+                    pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event)))
 
 """
 CORE VISUALIZATIONS I: Spatial decoherence analyses
                        Refer to the math in the manuscript for the underlying modeling...
 """
 
-"""
 ''' Delay bin quantization '''
 
 tsorted_pods = sorted(pods, key=lambda _pod: _pod.seq_num)
@@ -978,9 +934,7 @@ for db_idx, db_val in enumerate(mpc_delay_bins):
 
         if db_min <= db_pod_val < db_max:
             mpc_amps[db_pod_idx][db_val] = np.sqrt(db_pod_val.profile_point_power)
-"""
 
-"""
 ''' Separation variables bin quantization '''
 
 nnve_proj = lambda _x: _x if _x >= 0 else 0
@@ -995,9 +949,7 @@ pod_distns = [_pod.tx_rx_distance_3d for _pod in tsorted_pods]
 vel_bins = np.arange(start=min(pod_vels), stop=max(pod_vels) + sc_vel_step, step=sc_vel_step)
 distn_bins = np.arange(start=min(pod_distns), stop=max(pod_distns) + sc_dist_step, step=sc_dist_step)
 align_bins = np.arange(start=min(pod_aligns), stop=max(pod_aligns) + sc_align_step, step=sc_align_step)
-"""
 
-"""
 ''' SAC utilities '''
 
 
@@ -1077,9 +1029,8 @@ def s_coeff(eval_set: np.array) -> float:
     s_coeff_num = np.mean(inner_sums_num)
 
     return s_coeff_num / s_coeff_den
-"""
 
-"""
+
 ''' Evaluation conditions '''
 
 
@@ -1123,9 +1074,8 @@ def vel_sep_fn(pod_x: Pod, pod_y: Pod, vl_: float) -> bool:
     vel_y = tx_rx_relative_velocity(pod_y.tx_gps_event, pod_y_.rx_gps_event, pod_y.rx_gps_event)
 
     return bool_1 and bool_2 and bool_3 and abs(vel_x - vel_y) == vl_
-"""
 
-"""
+
 ''' Computing SACs for the separation variables '''
 
 for dn in np.arange(start=0.0, stop=d_max, step=d_step):
@@ -1164,10 +1114,9 @@ scd_url = plotly.plotly.plot(dict(data=[scd_trace], layout=scd_layout), filename
 scv_url = plotly.plotly.plot(dict(data=[scv_trace], layout=scv_layout), filename=sc_velocity_png)
 sca_url = plotly.plotly.plot(dict(data=[sca_trace], layout=sca_layout), filename=sc_alignment_png)
 
-print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Distance: {}.'.format(scd_url))
-print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Velocity: {}.'.format(scv_url))
-print('SPAVE-28G | Consolidated Processing II | Spatial Consistency Analysis vis-à-vis Alignment: {}.'.format(sca_url))
-"""
+print('SPAVE-28G | Consolidated Processing Full | Spatial Consistency Analysis vis-à-vis Distance: {}.'.format(scd_url))
+print('SPAVE-28G | Consolidated Processing Full | Spatial Consistency Analysis vis-à-vis Velocity: {}.'.format(scv_url))
+print('SPAVE-28G | Consolidated Processing Full | Spatial Consistency Analysis vis-à-vis Alignmnt: {}.'.format(sca_url))
 
 """
 CORE VISUALIZATIONS II: RMS delay spread and RMS direction spread
@@ -1190,17 +1139,15 @@ rms_aoa_dirs_layout = dict(yaxis=dict(title='CDF Probability'),
                            xaxis=dict(title='RMS AoA Direction Spread'),
                            title='RMS AoA Direction Spreads Cumulative Distribution Function')
 
-rms_ds_trace = go.Scatter(x=rms_delay_spread_x, mode='lines+markers',
-                          y=signal.savgol_filter(rms_delay_spread_ecdf, sg_wsize, sg_poly_order))
-rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_x, mode='lines+markers',
-                                y=signal.savgol_filter(rms_aoa_dir_spread_ecdf, sg_wsize, sg_poly_order))
+rms_ds_trace = go.Scatter(x=rms_delay_spread_x, y=rms_delay_spread_ecdf, mode='lines+markers')
+rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_x, y=rms_aoa_dir_spread_ecdf, mode='lines+markers')
 
 rms_aoa_dirs_url = plotly.plotly.plot(dict(data=[rms_aoa_dirs_trace],
                                            layout=rms_aoa_dirs_layout), filename=aoa_rms_dir_spread_png)
 rms_ds_url = plotly.plotly.plot(dict(data=[rms_ds_trace], layout=rms_ds_layout), filename=rms_delay_spread_png)
 
-print('SPAVE-28G | Consolidated Processing II | RMS Delay Spread CDF: {}.'.format(rms_ds_url))
-print('SPAVE-28G | Consolidated Processing II | RMS AoA Direction Spread CDF: {}.'.format(rms_aoa_dirs_url))
+print('SPAVE-28G | Consolidated Processing Full | RMS Delay Spread CDF: {}.'.format(rms_ds_url))
+print('SPAVE-28G | Consolidated Processing Full | RMS AoA Direction Spread CDF: {}.'.format(rms_aoa_dirs_url))
 
 """
 CORE VISUALIZATIONS III: Cluster inter-arrival times, Cluster decay characteristics, and Cluster peak-power distribution
@@ -1231,13 +1178,10 @@ inter_arr_times_layout = dict(yaxis=dict(title='CDF Probability'),
 pwrs_layout = dict(yaxis=dict(title='CDF Probability'),
                    xaxis=dict(title='Cluster Peak-Power in dB'), title='Cluster Peak-Power Distribution')
 
-pwrs_trace = go.Scatter(x=pwrs_x, mode='lines+markers',
-                        y=signal.savgol_filter(pwrs_ecdf, sg_wsize, sg_poly_order))
+pwrs_trace = go.Scatter(x=pwrs_x, y=pwrs_ecdf, mode='lines+markers')
 decay_chars_trace = go.Scatter(x=[__v[0] for _v in decay_chars for __v in _v],
-                               y=signal.savgol_filter([__v[1] for _v in decay_chars for __v in _v],
-                                                      sg_wsize, sg_poly_order), mode='lines+markers')
-inter_arr_times_trace = go.Scatter(x=inter_arr_times_x, mode='lines+markers',
-                                   y=signal.savgol_filter(inter_arr_times_ecdf, sg_wsize, sg_poly_order))
+                               y=[__v[1] for _v in decay_chars for __v in _v], mode='lines+markers')
+inter_arr_times_trace = go.Scatter(x=inter_arr_times_x, y=inter_arr_times_ecdf, mode='lines+markers')
 
 pwrs_url = plotly.plotly.plot(dict(data=[pwrs_trace], layout=pwrs_layout), filename=pwrs_png)
 decay_chars_url = plotly.plotly.plot(dict(data=[decay_chars_trace],
@@ -1245,9 +1189,9 @@ decay_chars_url = plotly.plotly.plot(dict(data=[decay_chars_trace],
 inter_arr_times_url = plotly.plotly.plot(dict(data=[inter_arr_times_trace],
                                               layout=inter_arr_times_layout), filename=inter_arr_times_png)
 
-print('SPAVE-28G | Consolidated Processing II | Cluster Peak-Power Distribution: {}.'.format(pwrs_url))
-print('SPAVE-28G | Consolidated Processing II | Cluster Decay Characteristics: {}.'.format(decay_chars_url))
-print('SPAVE-28G | Consolidated Processing II | Cluster Inter-Arrival Times CDF: {}.'.format(inter_arr_times_url))
+print('SPAVE-28G | Consolidated Processing Full | Cluster Peak-Power Distribution: {}.'.format(pwrs_url))
+print('SPAVE-28G | Consolidated Processing Full | Cluster Decay Characteristics: {}.'.format(decay_chars_url))
+print('SPAVE-28G | Consolidated Processing Full | Cluster Inter-Arrival Times CDF: {}.'.format(inter_arr_times_url))
 
 """
 CORE VISUALIZATIONS-IV: Power Delay Angular Profiles (PDAPs), Power Delay Doppler Profiles (PDDPs), and Doppler spectrum
@@ -1285,6 +1229,6 @@ pddps_url = plotly.plotly.plot(dict(data=[pddps_trace], layout=pddps_layout), fi
 doppler_spectrum_url = plotly.plotly.plot(dict(data=[doppler_spectrum_trace],
                                                layout=doppler_spectrum_layout), filename=doppler_spectrum_png)
 
-print('SPAVE-28G | Consolidated Processing II | Doppler Spectrum {}.'.format(doppler_spectrum_url))
-print('SPAVE-28G | Consolidated Processing II | Power Delay Angular Profiles: {}.'.format(pdaps_url))
-print('SPAVE-28G | Consolidated Processing II | Power Delay Doppler Profiles: {}.'.format(pddps_url))
+print('SPAVE-28G | Consolidated Processing Full | Doppler Spectrum {}.'.format(doppler_spectrum_url))
+print('SPAVE-28G | Consolidated Processing Full | Power Delay Angular Profiles: {}.'.format(pdaps_url))
+print('SPAVE-28G | Consolidated Processing Full | Power Delay Doppler Profiles: {}.'.format(pddps_url))
