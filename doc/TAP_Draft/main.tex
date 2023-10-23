@@ -255,7 +255,7 @@ Finally, examining the recent state-of-the-art on mmWave multipath clustering an
 \end{itemize}
 
 The rest of the paper is structured as follows: Sec.~\ref{S2} elucidates the end-to-end design of our fully-autonomous robotic beam-steering platform, including the sliding-correlator channel sounder; Sec.~\ref{S3} discusses our measurement and post-processing activities on the NSF POWDER testbed; Sec.~\ref{S4} describes our numerical evaluations and the insights gained from pathloss and spatial consistency studies; Sec.~\ref{S5} details our multipath clustering analyses and the subsequent empirical validations of popular mmWave channel models; finally, Sec.~\ref{S6} lists our conclusions.
-\vspace{-9mm}
+\vspace{-10mm}
 
 % System design description
 \section{Measurement System: Design Description}\label{S2}
@@ -272,7 +272,7 @@ With the objective of facilitating uninterrupted measurements for \SI{28}{\giga\
 \begin{figure*} [t]
     \centering
     \includegraphics[width=1.0\linewidth]{figs/tx_schematic.png}
-    \vspace{-6mm}
+    \vspace{-8mm}
     \caption{The Tx circuit schematic with an up-converter, a WR-$28$ horn antenna, and other commercially available components.}
     \label{F2a}
     \vspace{-6mm}
@@ -280,7 +280,7 @@ With the objective of facilitating uninterrupted measurements for \SI{28}{\giga\
 \begin{figure*} [t]
     \centering
     \includegraphics[width=1.0\linewidth]{figs/rx_schematic.png}
-    \vspace{-6mm}
+    \vspace{-8mm}
     \caption{The Rx circuit schematic with a down-converter, a WR-$28$ horn antenna, and other commercially available components.}
     \label{F2b}
 \end{figure*}
@@ -514,13 +514,14 @@ where for a route configuration index $i \in \mathcal{I}$ with its Tx-Rx distanc
 \section{Multipath Clustering and Channel Modeling}\label{S5}
 In this section, using the multipath components extracted via the SAGE algorithm~\cite{SAGE}, we discuss multipath clustering studies involving the RMS delay- and direction-spreads, the cluster inter-arrival times, the cluster decay characteristics, and the cluster peak-power distributions. The Kolmogorov-Smirnov statistic enables experimental validations of widely-used mmWave channel models (SV~\cite{Indoor60G}, QD~\cite{QDC_NIST}, and stochastic~\cite{Indoor60G}) by providing a measure of goodness of fit between the empirical CDFs and the CDFs expected from these statistical channel models. Besides these multipath clustering analyses, illustrations of PDAPs shed novel insights on the temporal and spatial dispersion attributes of \SI{28}{\giga\hertz} signals; moreover, visualizations of the PDDPs and their associated normalized Doppler spectra facilitate investigations of the Doppler shift effects on \SI{28}{\giga\hertz} signals, which are particularly prominent in V$2$X communication settings.
 
-Fig.~\ref{F11a} illustrates the RMS delay-spread characteristics of \SI{28}{\giga\hertz} signals, when the Tx is affixed atop the William Browning building and the Rx traverses unplanned vehicular routes around the urban campus, suburban neighborhood, and foliage environments. Herein, the RMS delay-spread is computed according to the following relationship (described in ~\cite{Indoor60G})
+Fig.~\ref{F11a} illustrates the RMS delay-spread characteristics of \SI{28}{\giga\hertz} signals, when the the Rx traverses unplanned vehicular routes around the urban campus, suburban neighborhood, and foliage environments. Herein, the RMS delay-spread is computed as follows (described in~\cite{Indoor60G})
+
 \begin{align}\label{RMS_DS}
     \sigma_{\tau} = \sqrt{\frac{\sum_{\tau}P_{h}(\tau)\tau^{2}}{\sum_{\tau}P_{h}(\tau)} - \left(\frac{\sum_{\tau}P_{h}(\tau)\tau}{\sum_{\tau}P_{h}(\tau)}\right)^{2}},
 \end{align}
 where $P_{h}(\tau)$ denotes the power-delay profile obtained from the channel impulse response $h(\tau)$ as $P_{h}(\tau){=}|h(\tau)|^{2}$. This figure also illustrates the RMS delay-spread CDFs for the SV, QDC, and stochastic models. Moreover, the Kolmogorov-Smirnov statistic $D_{n}{=}\sup_{x}|F_{n}(x){-}F(x)|$ quantifies the distance between the empirical CDF $F_{n}(x)$ obtained from $n$ independent and identically distributed measurement samples and the CDF of the reference distribution $F(x)$ (i.e., the RMS delay-spread CDFs outlined by the SV, QDC, and stochastic statistical channel models); note that $x$ here corresponds to a metric under analysis in our evaluations (viz., RMS delay-spreads, RMS direction-spreads, cluster inter-arrival times, and cluster peak-powers).
 
-Similarly, Fig.~\ref{F11b} depicts the RMS AoA direction-spread characteristics of \SI{28}{\giga\hertz} signals in our propagation modeling campaign onsite at the NSF POWDER experimental testbed, along unplanned Rx vehicular routes around the urban campus, suburban neighborhood, and foliage environments. The RMS AoA direction-spread is computed as follows (again, described in ~\cite{Indoor60G})
+Similarly, Fig.~\ref{F11b} depicts the RMS AoA direction-spread characteristics of \SI{28}{\giga\hertz} signals in our propagation modeling campaign onsite at the NSF POWDER experimental testbed, along unplanned Rx vehicular routes around the urban campus, suburban neighborhood, and foliage environments. The RMS AoA direction-spread is computed as follows (again, described in~\cite{Indoor60G})
 \begin{align}\label{RMS_DirS}
     \sigma_{\Omega} = \sqrt{\sum_{l=1}^{L}|\mathbf{e}(\phi_{l}, \theta_{l}) - \boldsymbol{\mu}_{\Omega}|^{2}P(\phi_{l}, \theta_{l})},
 \end{align}

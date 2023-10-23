@@ -132,52 +132,52 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-# vel_rxp_png, vel_align_png = 'uc_rxp_vel.png', 'uc_align_vel.png'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
 # rx_imu_dir = 'E`:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'uc_rxp_vel_1.png', 'uc_rxp_vel_2.png', 'uc_align_vel.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# vel_rxp_png, vel_align_png = 'ucc_rxp_vel.png', 'ucc_align_vel.png'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'ucc_rxp_vel_1.png', 'ucc_rxp_vel_2.png', 'ucc_align_vel.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
 comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
 rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
 rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-vel_rxp_png, vel_align_png = 'uccc_rxp_vel.png', 'uccc_align_vel.png'
 tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
+vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'uccc_rxp_vel_1.png', 'uccc_rxp_vel_2.png', 'uccc_align_vel.png'
 
 ''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
-# vel_rxp_png, vel_align_png = 'ug_rxp_vel.png', 'ug_align_vel.png'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'ug_rxp_vel_1.png', 'ug_rxp_vel_2.png', 'ug_align_vel.png'
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# vel_rxp_png, vel_align_png = 'us_rxp_vel.png', 'us_align_vel.png'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'us_rxp_vel_1.png', 'us_rxp_vel_2.png', 'us_align_vel.png'
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# vel_rxp_png, vel_align_png = 'sf_rxp_vel.png', 'sf_align_vel.png'
 # comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'sf_rxp_vel_1.png', 'sf_rxp_vel_2.png', 'sf_align_vel.png'
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# vel_rxp_png, vel_align_png = 'uv_rxp_vel.png', 'uv_align_vel.png'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
+# vel_rxp_png_1, vel_rxp_png_2, vel_align_png = 'uv_rxp_vel_1.png', 'uv_rxp_vel_2.png', 'uv_align_vel.png'
 
 ''' Tx location fixed on the rooftop of the William Browning Building in SLC, UT '''
 tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
@@ -542,18 +542,19 @@ for seqnum in range(1, len(rx_gps_events)):
                     pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event)))
 
 """
-CORE VISUALIZATIONS: Alignment accuracy and Rx power vs Relative velocity
+CORE VISUALIZATIONS: Alignment accuracy, Rx power, and Rx power gap vs Relative velocity
 """
 
 idxs = [_i for _i in range(len(pods))]
 pod = max(pods, key=lambda _pod: _pod.pdp_segment.correlation_peak)
+rxp_0 = compute_rx_power(pod.pdp_segment.num_samples, pod.pdp_segment.processed_rx_samples)
 
 an_vals = np.arange(start=0.0, stop=a_max, step=a_step)
 for vn in np.arange(start=0.0, stop=v_max, step=v_step):
     i_ = min(idxs, key=lambda idx: abs(vn - tx_rx_relative_velocity(pod.tx_gps_event,
                                                                     pod.rx_gps_event, pods[idx].rx_gps_event)))
 
-    # Rx power vs Relative velocity
+    # Rx power vs Relative velocity (used for both raw and gap analyses)
     v_n_samples, v_proc_samples = pods[i_].pdp_segment.num_samples, pods[i_].pdp_segment.processed_rx_samples
     vel_rxps.append((vn, compute_rx_power(v_n_samples, v_proc_samples)))
 
@@ -561,10 +562,16 @@ for vn in np.arange(start=0.0, stop=v_max, step=v_step):
     v_an_val = min(an_vals, key=lambda val: abs(val - abs(pod.tx_rx_alignment - pods[i_].tx_rx_alignment)))
     vel_alignments.append((vn, v_an_val))
 
-vel_rxp_layout = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
-                      title='Rx Power (in dB)', yaxis=dict(title='Rx Power vs Tx-Rx Relative Velocity'))
-vel_rxp_trace = go.Scatter(x=[vel_rxp[0] for vel_rxp in vel_rxps], mode='lines+markers',
-                           y=signal.savgol_filter([vel_rxp[1] for vel_rxp in vel_rxps], sg_wsize, sg_poly_order))
+vel_rxp_layout_1 = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
+                        title='Rx Power (in dB)', yaxis=dict(title='Rx Power vs Tx-Rx Relative Velocity'))
+vel_rxp_trace_1 = go.Scatter(x=[vel_rxp[0] for vel_rxp in vel_rxps], mode='lines+markers',
+                             y=signal.savgol_filter([vel_rxp[1] for vel_rxp in vel_rxps], sg_wsize, sg_poly_order))
+
+vel_rxp_layout_2 = dict(xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
+                        title='Rx Power Gap (in dB)', yaxis=dict(title='Rx Power Gap vs Tx-Rx Relative Velocity'))
+vel_rxp_trace_2 = go.Scatter(x=[vel_rxp[0] for vel_rxp in vel_rxps],
+                             y=signal.savgol_filter([rxp_0 - vel_rxp[1] for vel_rxp in vel_rxps],
+                                                    sg_wsize, sg_poly_order), mode='lines+markers')
 
 vel_align_layout = dict(title='Tx-Rx Alignment Accuracy (in degrees)',
                         xaxis=dict(title='Tx-Rx Relative Velocity (in m/s)'),
@@ -573,8 +580,10 @@ vel_align_trace = go.Scatter(x=[vel_align[0] for vel_align in vel_alignments],
                              y=signal.savgol_filter([vel_align[1] for vel_align in vel_alignments],
                                                     sg_wsize, sg_poly_order), mode='lines+markers')
 
-vel_rxp_url = plotly.plotly.plot(dict(data=[vel_rxp_trace], layout=vel_rxp_layout), filename=vel_rxp_png)
+vel_rxp_url_1 = plotly.plotly.plot(dict(data=[vel_rxp_trace_1], layout=vel_rxp_layout_1), filename=vel_rxp_png_1)
+vel_rxp_url_2 = plotly.plotly.plot(dict(data=[vel_rxp_trace_2], layout=vel_rxp_layout_2), filename=vel_rxp_png_2)
 vel_align_url = plotly.plotly.plot(dict(data=[vel_align_trace], layout=vel_align_layout), filename=vel_align_png)
 
-print('SPAVE-28G | Consolidated Processing Vel | Rx Power vs Relative Velocity: {}.'.format(vel_rxp_url))
+print('SPAVE-28G | Consolidated Processing Vel | Rx Power vs Relative Velocity: {}.'.format(vel_rxp_url_1))
+print('SPAVE-28G | Consolidated Processing Vel | Rx Power Gap vs Relative Velocity: {}.'.format(vel_rxp_url_2))
 print('SPAVE-28G | Consolidated Processing Vel | Alignment Accuracy vs Relative Velocity: {}.'.format(vel_align_url))
