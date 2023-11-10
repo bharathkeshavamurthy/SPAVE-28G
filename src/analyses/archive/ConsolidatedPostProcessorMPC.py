@@ -228,17 +228,17 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 ''' Generic configurations '''
 tx_fc, rx_fc, wlength = 400e6, 399.95e6, c / 28e9
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-mpc_delay_bins = np.arange(start=1e-9, stop=1e-6, step=1e-9)
+mpc_delay_bins = np.arange(start=0, stop=1e-6, step=1e-9)
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
-delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 50.0, 0.1, 0.05, 0.05
+delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 50.0, 0.1, 0.1, 0.1
 n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_m = 0.015, 22.0, 1000, 0.5, 11, 2047
 ant_log_file, pn_reps = 'E:/SPAVE-28G/analyses/antenna_pattern.mat', int(pn_m / pn_l)
 plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdvH8YuKmjEF')
-tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 1e-9, 1e-6, -5e3, 5e3, -pi, pi, -pi, pi
+tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 0, 1e-6, -5e3, 5e3, -pi, pi, -pi, pi
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
-assert (len(mpc_delay_bins) == max_mpcs, 'The max number of allowed MPCs must be equal to the delay bin quantization!')
+assert len(mpc_delay_bins) == max_mpcs, 'The max number of allowed MPCs must be equal to the delay bin quantization!'
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}
 
 """
@@ -542,7 +542,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
     def tau_nu_mstep(l_idx: int) -> Tuple:
         args, estep_comps, tau_step, nu_step = [], estep(l_idx, y_f), delay_tol, doppler_tol
 
-        for tau_var in np.arange(start=tau_min, stop=tau_max + tau_step, step=tau_step):
+        for tau_var in np.arange(start=tau_min, stop=tau_max, step=tau_step):
             for nu_var in np.arange(start=nu_min, stop=nu_max + nu_step, step=nu_step):
                 sig_comp = signal_component(tau_var, nu_var)[1]
                 sig_comps = np.array([sig_comp for _ in fs], dtype=np.csingle)
@@ -563,7 +563,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
         for phi_var in np.arange(start=phi_min, stop=phi_max + phi_step, step=phi_step):
             for theta_var in np.arange(start=the_min, stop=the_max + theta_step, step=theta_step):
-                steering_comp = compute_steering(phi_var.value, theta_var.value)
+                steering_comp = compute_steering(phi_var, theta_var)
                 sig_comps = steering_comp * alpha_l * np.array([sig_comp for _ in fs], dtype=np.csingle)
 
                 numerator = np.square(np.abs(sig_comps.conj().T @ w_matrix @ estep_comps))
