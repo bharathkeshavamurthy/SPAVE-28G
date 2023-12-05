@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />
@@ -14,9 +16,6 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +47,7 @@
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/sounder/Sounder.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/sounder/Synchronizer.py" root0="FORCE_HIGHLIGHTING" />
@@ -90,7 +90,7 @@
       <recent name="E:\Workspace\SPAVE-28G\src\analyses\archive" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ConsolidatedPostProcessorVel">
+  <component name="RunManager" selected="Python.ConsolidatedPostProcessorTest">
     <configuration name="ConsolidatedPostProcessorI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="SPAVE-28G" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -112,7 +112,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ConsolidatedPostProcessorII" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="ConsolidatedPostProcessorTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="SPAVE-28G" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -120,11 +120,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/analyses" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/analyses/archive" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -198,11 +198,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.ConsolidatedPostProcessorVel" />
         <item itemvalue="Python.SPAVE_28G_PLD_Playground" />
         <item itemvalue="Python.METIS_PLD_Playground" />
+        <item itemvalue="Python.ConsolidatedPostProcessorVel" />
+        <item itemvalue="Python.ConsolidatedPostProcessorTest" />
         <item itemvalue="Python.ConsolidatedPostProcessorI" />
-        <item itemvalue="Python.ConsolidatedPostProcessorII" />
       </list>
     </recent_temporary>
   </component>
@@ -251,5 +251,21 @@
       <path value="$PROJECT_DIR$/related/faros-renew" />
       <path value="$PROJECT_DIR$/related/faros-simple" />
     </ignored-roots>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py</url>
+          <line>1190</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py</url>
+          <line>907</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -3,7 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/src" />
     <content url="file://$MODULE_DIR$/test" />
-    <orderEntry type="jdk" jdkName="Python 3.9 (ssd_venv)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.10 (SPAVE-28G)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
