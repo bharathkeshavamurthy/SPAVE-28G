@@ -72,6 +72,18 @@ Organization: School of Electrical and Computer Engineering, Purdue University, 
 Copyright (c) 2023. All Rights Reserved.
 """
 
+"""
+INITIAL SETUP
+"""
+
+import warnings
+
+# Ignore the Plotly Utils warning...
+warnings.filterwarnings('ignore')
+
+"""
+IMPORTS
+"""
 import os
 import re
 import json
@@ -281,15 +293,15 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 tx_fc, rx_fc, wlength = 400e6, 399.95e6, c / 28e9
 # output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
-mpc_delay_bins = np.arange(start=0, stop=1e-6, step=1e-9)
+mpc_delay_bins = np.arange(start=0, stop=400e-9, step=20e-9)
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
 # d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
-delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 1e-9, 50.0, 0.1, 0.1, 0.1
-n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_m = 0.015, 22.0, 1000, 0.5, 11, 2047
+delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 20e-9, 1e3, 0.5, 0.5, 0.5
+n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_m = 0.015, 22.0, 20, 0.5, 11, 2047
 ant_log_file, pn_reps = 'E:/SPAVE-28G/analyses/antenna_pattern.mat', int(pn_m / pn_l)
 plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdvH8YuKmjEF')
-tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 0, 1e-6, -5e3, 5e3, -pi, pi, -pi, pi
+tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 0, 400e-9, -5e3, 5e3, -pi, pi, -pi, pi
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 assert len(mpc_delay_bins) == max_mpcs, 'The max number of allowed MPCs must be equal to the delay bin quantization!'
@@ -359,6 +371,7 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
     d_l, d_f = {}, {f.name: f.type for f in dataclasses.fields(dc)}
 
     for k, v in d.items():
+        # noinspection PyUnresolvedReferences
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)
@@ -624,7 +637,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 
     # Sinc function
     def sinc(z: float) -> float:
-        return np.sin(pi * z) / (pi * z)
+        return np.sin(pi * z) / (pi * z) if z != 0 else 1
 
     # Complex gaussian noise component post-convolution in the frequency domain $n'(f)$
     def noise_component() -> Tuple:
@@ -783,7 +796,7 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
         numerator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, estep_comps])
         denominator = functools.reduce(np.matmul, [sig_comps.conj().T, w_matrix, sig_comps])
 
-        return numerator / denominator
+        return numerator / denominator if denominator != 0 else 0
 
     # Convergence check
     def is_converged(l_idx) -> bool:
@@ -835,6 +848,7 @@ CORE OPERATIONS: Parsing the GPS, IMU, and PDP logs | SAGE estimation | Spatial 
 """
 
 # Antenna patterns
+# noinspection PyUnresolvedReferences
 log = scipy.io.loadmat(ant_log_file)
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
 az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
