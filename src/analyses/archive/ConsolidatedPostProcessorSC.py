@@ -424,8 +424,8 @@ def s_coeff(pdp: PDPSegment, pdp_: PDPSegment) -> float:
 CORE OPERATIONS: Parsing the GPS, IMU, and PDP logs | SAGE estimation | Spatial consistency analyses
 """
 
-# Antenna patterns
-log = scipy.io.loadmat(ant_log_file)
+# noinspection PyUnresolvedReferences
+log = scipy.io.loadmat(ant_log_file)  # Antenna patterns
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
 az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
 el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])

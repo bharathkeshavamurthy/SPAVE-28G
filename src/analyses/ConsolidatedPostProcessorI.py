@@ -345,6 +345,7 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
     d_l, d_f = {}, {f.name: f.type for f in dataclasses.fields(dc)}
 
     for k, v in d.items():
+        # noinspection PyUnresolvedReferences
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)
@@ -656,6 +657,7 @@ cali_fit = lambda mpwr: calc_pwrs_[min([_ for _ in range(len(meas_pwrs_))], key=
 CORE OPERATIONS II: Antenna patterns
 """
 
+# noinspection PyUnresolvedReferences
 log = scipy.io.loadmat(ant_log_file)
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
 az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])

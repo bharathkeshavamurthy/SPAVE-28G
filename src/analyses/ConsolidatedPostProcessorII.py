@@ -7,9 +7,6 @@ Furthermore, it includes spatial decoherence analyses w.r.t Tx-Rx distance, alig
 Additionally, as a part of our evaluations, we incorporate visualizations of the Power Delay Doppler Profiles (PDDPs),
 the Power Delay Angular Profiles (PDAPs), the normalized Doppler spectrum, and the multi-path cluster characteristics.
 
-Lastly, we analyze these results for the Saleh-Valenzuela (SV), Quasi-Deterministic (QD), and stochastic
-channel models to empirically validate the correctness of such widely-used mmWave channel models <PENDING>.
-
 Reference Papers:
 
 @INPROCEEDINGS{SAGE,

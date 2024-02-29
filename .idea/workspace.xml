@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+    <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="IEEE TAP 2024: Setting the Post-Processors up for MPC clustering and SV/QDC/Stochastic comparisons...">
+      <change beforePath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SPAVE-28G.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />
@@ -15,6 +17,11 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +82,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/Workspace/Hermes&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Workspace/ACCUSTOM&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
@@ -89,123 +96,12 @@
       <recent name="E:\Workspace\SPAVE-28G\src\analyses\archive" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.ConsolidatedPostProcessorTest">
-    <configuration name="ConsolidatedPostProcessorI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="SPAVE-28G" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/analyses" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorI.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="ConsolidatedPostProcessorTest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="SPAVE-28G" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/analyses/archive" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="ConsolidatedPostProcessorVel" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="SPAVE-28G" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/analyses/archive" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="METIS_PLD_Playground" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="SPAVE-28G" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test/analyses" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/analyses/METIS_PLD_Playground.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="SPAVE_28G_PLD_Playground" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="SPAVE-28G" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test/analyses" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/analyses/SPAVE_28G_PLD_Playground.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Python.SPAVE_28G_PLD_Playground" />
-        <item itemvalue="Python.METIS_PLD_Playground" />
-        <item itemvalue="Python.ConsolidatedPostProcessorVel" />
-        <item itemvalue="Python.ConsolidatedPostProcessorTest" />
-        <item itemvalue="Python.ConsolidatedPostProcessorI" />
-      </list>
-    </recent_temporary>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\kesha\AppData\Roaming\Subversion</configuration>
+    <option name="sshConnectionType" value="PRIVATE_KEY" />
+    <option name="sshPrivateKeyPath" value="C:\Users\kesha\.ssh\id_rsa" />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="" />
@@ -214,6 +110,15 @@
       <option name="presentableId" value="Default" />
       <updated>1657922705631</updated>
     </task>
+    <task id="LOCAL-00001" summary="IEEE TAP 2024: Setting the Post-Processors up for MPC clustering and SV/QDC/Stochastic comparisons...">
+      <option name="closed" value="true" />
+      <created>1703052725584</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1703052725584</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -250,21 +155,7 @@
       <path value="$PROJECT_DIR$/related/faros-renew" />
       <path value="$PROJECT_DIR$/related/faros-simple" />
     </ignored-roots>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py</url>
-          <line>1190</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py</url>
-          <line>907</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="IEEE TAP 2024: Setting the Post-Processors up for MPC clustering and SV/QDC/Stochastic comparisons..." />
+    <option name="LAST_COMMIT_MESSAGE" value="IEEE TAP 2024: Setting the Post-Processors up for MPC clustering and SV/QDC/Stochastic comparisons..." />
   </component>
 </project>

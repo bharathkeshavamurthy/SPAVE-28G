@@ -333,6 +333,7 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
     d_l, d_f = {}, {f.name: f.type for f in dataclasses.fields(dc)}
 
     for k, v in d.items():
+        # noinspection PyUnresolvedReferences
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)
@@ -795,8 +796,8 @@ def estimate_mpc_parameters(tx: GPSEvent, rx: GPSEvent, n: int, x: np.array) -> 
 CORE OPERATIONS: Parsing the GPS, IMU, and PDP logs | SAGE estimation | Spatial consistency analyses
 """
 
-# Antenna patterns
-log = scipy.io.loadmat(ant_log_file)
+# noinspection PyUnresolvedReferences
+log = scipy.io.loadmat(ant_log_file)  # Antenna patterns
 az_log, el_log = log['pat28GAzNorm'], log['pat28GElNorm']
 az_angles, az_amps = np.squeeze(az_log['azs'][0][0]), np.squeeze(az_log['amps'][0][0])
 el_angles, el_amps = np.squeeze(el_log['els'][0][0]), np.squeeze(el_log['amps'][0][0])
@@ -930,17 +931,19 @@ mpc_amps = [{_db: 0.0 for _db in mpc_delay_bins} for _pod in tsorted_pods]
 for db_idx, db_val in enumerate(mpc_delay_bins):
 
     for db_pod_idx, db_pod_val in enumerate(tsorted_pods):
-        db_min, db_max = 0 if db_idx == 0 else db_idx - 1, db_val
+        db_min, db_max = 0 if db_idx == 0 else mpc_delay_bins[db_idx - 1], db_val
 
-        if db_min <= db_pod_val < db_max:
-            mpc_amps[db_pod_idx][db_val] = np.sqrt(db_pod_val.profile_point_power)
+        f_mp_comp = min(db_pod_val.mpc_parameters, key=lambda _mp_comp: abs(_mp_comp.delay - db_min)
+                                                                        + abs(_mp_comp.delay - db_max))
+
+        mpc_amps[db_pod_idx][db_val] = np.sqrt(f_mp_comp.profile_point_power)
 
 ''' Separation variables bin quantization '''
 
 nnve_proj = lambda _x: _x if _x >= 0 else 0
 rel_vel = lambda _pod: tx_rx_relative_velocity(_pod.tx_gps_event,
-                                               tsorted_pods[_pod.seq_number - 2].rx_gps_event,
-                                               _pod.rx_gps_event) if _pod.seq_number != 1 else 0
+                                               tsorted_pods[_pod.seq_number - 1].rx_gps_event,
+                                               _pod.rx_gps_event) if _pod.seq_number != 0 else 0
 
 pod_vels = [rel_vel(_pod) for _pod in tsorted_pods]
 pod_aligns = [_pod.tx_rx_alignment for _pod in tsorted_pods]
@@ -956,7 +959,7 @@ align_bins = np.arange(start=min(pod_aligns), stop=max(pod_aligns) + sc_align_st
 # Map distance to a distance bin
 def find_distn_bin(distn: float) -> float:
     for dn_idx, dn_val in enumerate(distn_bins):
-        dn_min, dn_max = 0 if dn_idx == 0 else dn_idx - 1, dn_val
+        dn_min, dn_max = 0 if dn_idx == 0 else distn_bins[dn_idx - 1], dn_val
         if dn_min <= distn < dn_max:
             return dn_val
 
@@ -964,7 +967,7 @@ def find_distn_bin(distn: float) -> float:
 # Map alignment to an alignment bin
 def find_align_bin(align: float) -> float:
     for an_idx, an_val in enumerate(align_bins):
-        an_min, an_max = 0 if an_idx == 0 else an_idx - 1, an_val
+        an_min, an_max = 0 if an_idx == 0 else align_bins[an_idx - 1], an_val
         if an_min <= align < an_max:
             return an_val
 
@@ -972,7 +975,7 @@ def find_align_bin(align: float) -> float:
 # Map velocity to a velocity bin
 def find_vel_bin(vel: float) -> float:
     for vl_idx, vl_val in enumerate(vel_bins):
-        vl_min, vl_max = 0 if vl_idx == 0 else vl_idx - 1, vl_val
+        vl_min, vl_max = 0 if vl_idx == 0 else vel_bins[vl_idx - 1], vl_val
         if vl_min <= vel < vl_max:
             return vl_val
 
