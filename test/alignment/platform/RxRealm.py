@@ -35,6 +35,7 @@ def start():
     uc = Serial(port='COM10', baudrate=115200, timeout=1000.0)
     while j < len(yaw_angles):
         try:
+            # noinspection PyUnresolvedReferences
             if uc.isOpen():
                 if init:
                     uc.write(bytes('$$$', encoding='UTF-8'))

@@ -1252,8 +1252,8 @@ def principal_axes_positioning(realm_type: RealmTypes, serial_comm_config: Seria
                     pitch_angle, pitch_angle)
             # Log the yaw and pitch corrections by creating an IMUTrace instance
             seq_number += 1
-            yaw_angle = numpy.round_(yaw_angle, 3)
-            pitch_angle = numpy.round_(pitch_angle, 3)
+            yaw_angle = numpy.round(yaw_angle, 3)
+            pitch_angle = numpy.round(pitch_angle, 3)
             imu_trace = IMUTrace(seq_number=seq_number, timestamp=str(datetime.utcnow()),
                                  yaw_angle=yaw_angle, pitch_angle=pitch_angle)
             json_repr_for_traces(imu_trace, seq_number, 'imu')
