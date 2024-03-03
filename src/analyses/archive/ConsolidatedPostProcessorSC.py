@@ -150,7 +150,7 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-# rx_imu_dir = 'E`:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
 # tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
