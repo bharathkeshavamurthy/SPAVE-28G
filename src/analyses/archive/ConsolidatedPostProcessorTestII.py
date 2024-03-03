@@ -226,10 +226,10 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # pwrs_png, decay_chars_png, inter_arr_times_png = 'uc_pwrs.png', 'uc_decay_chars.png', 'uc_inter_arr_times.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 10
+comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
+rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
+rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
+tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'ucc_rms_delay_spread.png', 'ucc_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'ucc_pdaps.png', 'ucc_pddps.png', 'ucc_doppler_spectrum.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
@@ -239,7 +239,7 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 10
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uccc_rms_delay_spread.png', 'uccc_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'uccc_pdaps.png', 'uccc_pddps.png', 'uccc_doppler_spectrum.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
@@ -249,7 +249,7 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 5
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'ug_rms_delay_spread.png', 'ug_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'ug_pdaps.png', 'ug_pddps.png', 'ug_doppler_spectrum.png'
 # pwrs_png, decay_chars_png, inter_arr_times_png = 'ug_pwrs.png', 'ug_decay_chars.png', 'ug_inter_arr_times.png'
@@ -259,7 +259,7 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 10
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'us_rms_delay_spread.png', 'us_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'us_pdaps.png', 'us_pddps.png', 'us_doppler_spectrum.png'
 # pwrs_png, decay_chars_png, inter_arr_times_png = 'us_pwrs.png', 'us_decay_chars.png', 'us_inter_arr_times.png'
@@ -269,17 +269,17 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 # comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
 # rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
 # rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 5
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'sf_rms_delay_spread.png', 'sf_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'sf_pdaps.png', 'sf_pddps.png', 'sf_doppler_spectrum.png'
 # pwrs_png, decay_chars_png, inter_arr_times_png = 'sf_pwrs.png', 'sf_decay_chars.png', 'sf_inter_arr_times.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
-comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 5
+# comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
+# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
+# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'uv_rms_delay_spread.png', 'uv_aoa_rms_dir_spread.png'
 # pdaps_png, pddps_png, doppler_spectrum_png = 'uv_pdaps.png', 'uv_pddps.png', 'uv_doppler_spectrum.png'
 # pwrs_png, decay_chars_png, inter_arr_times_png = 'uv_pwrs.png', 'uv_decay_chars.png', 'uv_inter_arr_times.png'
@@ -299,7 +299,7 @@ ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 # d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
 min_threshold, sample_rate, datetime_format, w_sage = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f', 5000
 # plotly.tools.set_credentials_file(username='total.academe', api_key='0H3Dx43A6wrbi7tY8ucl')
-delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 12.5e-9, 1.25e3, 1.25, 0.25 * pi, 0.25 * pi
+delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 12.5e-9, 1.25e3, 1.25, 0.0625 * pi, 0.0625 * pi
 tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 0, 100e-9, -5e3, 5e3, -pi, pi, -pi, pi
 n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_reps, eval_cnt, iter_max = 0.015, 22.0, 9, 0.5, 11, 11, 5, 5
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
@@ -1003,13 +1003,10 @@ for seqnum in seqnums:
     #                 tx_rx_alignment=tx_rx_alignment(tx_gps_event, rx_gps_event, IMUTrace(), IMUTrace()),
     #                 pdp_segment=pdp_segment, tx_rx_distance_3d=tx_rx_distance_3d(tx_gps_event, rx_gps_event)))
 
-    for mpc_parameter in mpc_parameters:
-        print(f'MPC: {mpc_parameter.path_number} | '
-              f'Delay: {mpc_parameter.delay / 1e-9} ns | '
-              f'Doppler shift: {mpc_parameter.doppler_shift / 1e3} kHz | '
-              f'AoA Azimuth: {mpc_parameter.aoa_azimuth * (180 / pi)} deg | '
-              f'AoA Elevation: {mpc_parameter.aoa_elevation * (180 / pi)} deg | '
-              f'Peak Power: {decibel_1(mpc_parameter.profile_point_power)} decibels!')
+    for path_number, mpc_parameter in enumerate(sorted(mpc_parameters, key=lambda _param: _param.delay)):
+        print(f'MPC Sorted Path Index: {path_number} | Component Delay: {mpc_parameter.delay / 1e-9} ns | '
+              f'Doppler: {mpc_parameter.doppler_shift / 1e3} kHz | Az: {mpc_parameter.aoa_azimuth * (180 / pi)} dg | '
+              f'El: {mpc_parameter.aoa_elevation * (180 / pi)} dg | {decibel_1(np.abs(mpc_parameter.attenuation))} dB!')
 
     print(f'SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: {seqnum}!')
 
