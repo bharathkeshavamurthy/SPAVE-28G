@@ -298,6 +298,7 @@ def ddc_transform(d: Dict, dc: dataclass) -> dataclass:
     d_l, d_f = {}, {f.name: f.type for f in dataclasses.fields(dc)}
 
     for k, v in d.items():
+        # noinspection PyUnresolvedReferences
         d_l[k] = (lambda: v, lambda: ddc_transform(v, Member))[d_f[k] == Member]()
 
     return dc(**d_l)

@@ -5,9 +5,10 @@ import numpy as np
 from gnuradio import gr, blocks
 from gnuradio.blocks import parse_file_metadata
 
-filename ='samples_with_metadata.log'
+filename = 'samples_with_metadata.log'
 max_data_segments_to_read = 7344
 print_output = True
+
 fh = open(filename, "rb")
 for ii in range(max_data_segments_to_read):
     header_str = fh.read(171)

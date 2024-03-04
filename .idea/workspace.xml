@@ -14,6 +14,10 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/GNURadioFileMetadataParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/GNURadioFileMetadataParser.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,12 +49,19 @@
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorFull.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorTest.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/sounder/Sounder.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/sounder/Synchronizer.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/test/alignment/platform/RxRealm.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/test/alignment/platform/TxRealm.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/3GPP_PLD_Playground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/CurveFitting.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/ITUR_PLD_Playground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/METIS_PLD_Playground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/MM_MAGIC_PLD_Playground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/MapPlayground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/Playground.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/test/analyses/src/SPAVE_28G_PLD_Playground.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
