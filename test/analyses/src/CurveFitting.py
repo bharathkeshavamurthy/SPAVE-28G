@@ -15,7 +15,6 @@ from typing import Tuple
 from scipy.optimize import curve_fit
 
 
-# Fit a linear curve to data to be plotted on a figure with the X-axis in log-scale
 def linear_fit(filename: str, sheetname: str = 'Pathlosses',
                xlengine: str = 'openpyxl', xcolname: str = 'Distance', ycolname: str = 'Pathloss') -> Tuple:
     """
@@ -78,9 +77,3 @@ def exponential_fit(filename: str, sheetname: str = 'Spatial_Correlation_Coeffic
     x, y = df[xcolname], df[ycolname]
     # print(f'x_min: {np.min(x)} | x_max: {np.max(x)} | Fit Parameters: {curve_fit(func, x, y)}')
     return np.min(x), np.max(x), curve_fit(func, x, y)
-
-# linear_fit('E:/SPAVE-28G/analyses/all-routes-numerical-evaluations/results/urban-vegetation/pld_fitting.xlsx',
-#            'Pathlosses', 'openpyxl', 'Distance', 'SPAVE_28G')
-
-# exponential_fit('E:/SPAVE-28G/analyses/all-routes-numerical-evaluations/results/urban-vegetation/scd_fitting.xlsx',
-#                 'Spatial_Correlation_Coefficient', 'openpyxl', 'Distance', 'Spatial Autocorrelation Coefficient')

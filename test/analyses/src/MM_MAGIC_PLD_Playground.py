@@ -21,7 +21,7 @@ def pathloss_umi_mm_magic():
         pls.append(max(pl_los, pl_nlos) if pl_los != 0.0 or pl_nlos != 0.0 else np.nan)
 
     df = pd.DataFrame(pls)
-    df.to_excel('E:/SPAVE-28G/analyses/all-routes-numerical-evaluations/mm_magic_pld.xlsx', index=False)
+    df.to_excel('<output_file_location>', index=False)
 
 
 pathloss_umi_mm_magic()

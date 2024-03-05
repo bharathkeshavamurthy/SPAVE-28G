@@ -24,7 +24,7 @@ def distance_3d(rx_lat, rx_lon):
 
 
 dists, dist_pl_dict = [], {}
-df = pd.read_csv('E:/SPAVE-28G/analyses/all-routes-numerical-evaluations/urban_pl_df_aggregated.csv')
+df = pd.read_csv('<urban_pl_df_aggregated_dataframe_location>')
 
 for idx, row in df.iterrows():
     lat, lon, pl = row['latitude'], row['longitude'], row['pathloss']
@@ -36,4 +36,5 @@ for idx, row in df.iterrows():
 
 o_df = pd.DataFrame(dist_pl_dict.items(), columns=['Distance', 'Pathloss'])
 o_df.sort_values('Distance', inplace=True)
-o_df.to_excel('E:/SPAVE-28G/analyses/all-routes-numerical-evaluations/urban_pl_df_aggregated.xlsx')
+
+o_df.to_excel('<urban_pl_df_aggregated_excel_file_location>')

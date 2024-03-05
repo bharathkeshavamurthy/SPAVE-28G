@@ -1,0 +1,165 @@
+URBAN VEGETATION MPC ANALYSES LOGS
+
+PS C:\Users\bkeshav1\Workspaces\SPAVE-28G\src\analyses\archive> C:\Users\bkeshav1\Workspaces\venv\Scripts\python.exe ConsolidatedPostProcessorTestII.py
+SPAVE-28G | Consolidated Processing II | Reading power delay profiles and their associated metadata!
+SPAVE-28G | Consolidated Processing II | Finished reading power delay profiles and their associated metadata!
+
+SPAVE-28G | Consolidated Processing II | Started processing event-trace-measurement sequence: 137!
+SPAVE-28G | Consolidated Processing II | Estimating multipath components and their associated parameters!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished est. multipath compnts and their associated parameters!
+MPC Sorted Path Index: 0 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 1 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 2 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 3 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 4 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 5 | Component Delay: 12.499999999999998 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -125.10066986083984 dB!
+MPC Sorted Path Index: 6 | Component Delay: 49.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: 0.0 dg | -119.4886589050293 dB!
+MPC Sorted Path Index: 7 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -43.102312088012695 dB!
+MPC Sorted Path Index: 8 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: 0.0 dg | -117.63916969299316 dB!
+SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: 137!
+
+SPAVE-28G | Consolidated Processing II | Started processing event-trace-measurement sequence: 54!
+SPAVE-28G | Consolidated Processing II | Estimating multipath components and their associated parameters!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished est. multipath compnts and their associated parameters!
+MPC Sorted Path Index: 0 | Component Delay: 24.999999999999996 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -121.25231742858887 dB!
+MPC Sorted Path Index: 1 | Component Delay: 24.999999999999996 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -121.25231742858887 dB!
+MPC Sorted Path Index: 2 | Component Delay: 24.999999999999996 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -121.25231742858887 dB!
+MPC Sorted Path Index: 3 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -118.71773719787598 dB!
+MPC Sorted Path Index: 4 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -118.71773719787598 dB!
+MPC Sorted Path Index: 5 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -118.71773719787598 dB!
+MPC Sorted Path Index: 6 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -118.71773719787598 dB!
+MPC Sorted Path Index: 7 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -118.71773719787598 dB!
+MPC Sorted Path Index: 8 | Component Delay: 99.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -47.769222259521484 dB!
+SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: 54!
+
+SPAVE-28G | Consolidated Processing II | Started processing event-trace-measurement sequence: 145!
+SPAVE-28G | Consolidated Processing II | Estimating multipath components and their associated parameters!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished est. multipath compnts and their associated parameters!
+MPC Sorted Path Index: 0 | Component Delay: 37.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -45.862135887145996 dB!
+MPC Sorted Path Index: 1 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -119.00390625 dB!
+MPC Sorted Path Index: 2 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -45.0 dg | -119.00390625 dB!
+MPC Sorted Path Index: 3 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -121.00913047790527 dB!
+MPC Sorted Path Index: 4 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -121.00913047790527 dB!
+MPC Sorted Path Index: 5 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -121.00913047790527 dB!
+MPC Sorted Path Index: 6 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: 0.0 dg | -121.00913047790527 dB!
+MPC Sorted Path Index: 7 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -121.00913047790527 dB!
+MPC Sorted Path Index: 8 | Component Delay: 87.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | -116.86110496520996 dB!
+SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: 145!
+
+SPAVE-28G | Consolidated Processing II | Started processing event-trace-measurement sequence: 159!
+SPAVE-28G | Consolidated Processing II | Estimating multipath components and their associated parameters!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished est. multipath compnts and their associated parameters!
+MPC Sorted Path Index: 0 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -45.083770751953125 dB!
+MPC Sorted Path Index: 1 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -125.38125038146973 dB!
+MPC Sorted Path Index: 2 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -125.38125038146973 dB!
+MPC Sorted Path Index: 3 | Component Delay: 62.49999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -125.38125038146973 dB!
+MPC Sorted Path Index: 4 | Component Delay: 74.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -90.0 dg | -129.78765487670898 dB!
+MPC Sorted Path Index: 5 | Component Delay: 74.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -45.0 dg | -129.78765487670898 dB!
+MPC Sorted Path Index: 6 | Component Delay: 74.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -45.0 dg | -129.78765487670898 dB!
+MPC Sorted Path Index: 7 | Component Delay: 99.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -135.0 dg | -122.35921859741211 dB!
+MPC Sorted Path Index: 8 | Component Delay: 99.99999999999999 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -45.0 dg | -122.4405574798584 dB!
+SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: 159!
+
+SPAVE-28G | Consolidated Processing II | Started processing event-trace-measurement sequence: 75!
+SPAVE-28G | Consolidated Processing II | Estimating multipath components and their associated parameters!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 0!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 1!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 2!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 3!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 4!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 5!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 6!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 7!
+SPAVE-28G | Consolidated Processing II | Determining the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished det. the parameters associated with MPC: 8!
+SPAVE-28G | Consolidated Processing II | Finished est. multipath compnts and their associated parameters!
+MPC Sorted Path Index: 0 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 1 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 2 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 3 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 4 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 5 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 6 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 7 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+MPC Sorted Path Index: 8 | Component Delay: 0.0 ns | Doppler: -5.0 kHz | Az: -180.0 dg | El: -180.0 dg | nan dB!
+SPAVE-28G | Consolidated Processing II | Finished processing event-trace-measurement sequence: 75!

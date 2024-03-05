@@ -189,10 +189,10 @@ map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7650), longit
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
 
 color_bar_width, color_bar_height, color_bar_orientation = 100, 2600, 'vertical'
+google_maps_api_key, map_type, timeout = '<google_maps_api_key>', 'hybrid', 6000
 rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
 color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 160, 1.0, 'blue', 40, 1.0
-google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 6000
 
 tx = GPSEvent(latitude=Member(component=40.766173670),
               longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
@@ -220,8 +220,8 @@ pl_google_maps_options = GMapOptions(map_type=map_type, zoom=map_zoom_level, til
 
 pl_kw, rx_kw, lat_kw, lon_kw = 'pathloss', 'rx-power', 'latitude', 'longitude'
 
-rx_df = pd.read_csv('C:/Users/bkeshav1/Downloads/dataframes/urban_campus_II_rx_df.csv')
-pl_df = pd.read_csv('C:/Users/bkeshav1/Downloads/dataframes/urban_campus_II_pl_df.csv')
+rx_df = pd.read_csv('<rx_power_dataframe_location>')
+pl_df = pd.read_csv('<pathloss_dataframe_location>')
 
 rx_color_mapper = LinearColorMapper(high=rx_df[rx_kw].min() - rx_offset,
                                     low=rx_df[rx_kw].max() + rx_offset, palette=color_palette)
@@ -272,8 +272,8 @@ rx_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
 pl_figure.circle(lon_kw, lat_kw, size=rx_pins_size, alpha=rx_pins_alpha,
                  color={'field': pl_kw, 'transform': pl_color_mapper}, source=ColumnDataSource(pl_df))
 
-rx_fig_loc = ''.join(['E:/Workspace/SPAVE-28G/test/analyses/', pwr_png])
-pl_fig_loc = ''.join(['E:/Workspace/SPAVE-28G/test/analyses/', pl_png])
+rx_fig_loc = ''.join(['<rx_power_figure_location>', pwr_png])
+pl_fig_loc = ''.join(['<pathloss_figure_location>', pl_png])
 
 show(rx_figure)
 # show(pl_figure)

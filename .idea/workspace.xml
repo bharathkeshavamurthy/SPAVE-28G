@@ -14,10 +14,15 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorMPC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorSC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/ConsolidatedPostProcessorVel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/GNURadioFileMetadataParser.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/GNURadioFileMetadataParser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/analyses/archive/FinalEvaluations.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/FinalEvaluations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/3GPP_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/3GPP_PLD_Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/CurveFitting.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/CurveFitting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/ITUR_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ITUR_PLD_Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/METIS_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/METIS_PLD_Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/MM_MAGIC_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/MM_MAGIC_PLD_Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/MapPlayground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/MapPlayground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/src/SPAVE_28G_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/SPAVE_28G_PLD_Playground.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

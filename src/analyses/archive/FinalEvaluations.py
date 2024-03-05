@@ -4,16 +4,15 @@ Final evaluations from MPC analyses logs
 
 import plotly
 import numpy as np
-# from scipy import signal
-from itertools import pairwise
+from scipy import interpolate
 import plotly.graph_objs as go
+from itertools import pairwise
 from scipy.optimize import curve_fit
 
 """
 CONFIGURATIONS
 """
-# sg_wsize, sg_poly_order = 15, 3
-plotly.tools.set_credentials_file(username='total.academe', api_key='0H3Dx43A6wrbi7tY8ucl')
+plotly.tools.set_credentials_file(username='<user_name>', api_key='<api_key>')
 
 """
 UTILITIES
@@ -32,7 +31,14 @@ def ecdf(x):
 
 def stochastic_fit(x, y):
     def func(_x, _ld):
-        return 1 - np.exp(-_ld * _x)
+        return 1 - np.exp(-1 * _ld * _x)
+
+    return curve_fit(func, x, y)
+
+
+def decay_fit(x, y):
+    def func(_x, _a, _b, _c):
+        return _a + (_b * np.exp(-1 * _c * _x))
 
     return curve_fit(func, x, y)
 
@@ -77,7 +83,8 @@ DATA
 URBAN
 '''
 
-environment = 'Urban'
+environment, rms_ds_threshold, rms_ds_step, rms_dirs_threshold, rms_dirs_step = 'Urban', 1e-3, 1e-3, 1e-4, 1e-4
+inter_arr_times_threshold, inter_arr_times_step, decay_chars_step = 0, 0.01, 1.25
 
 delays = {0: [0, 12.5, 12.5, 12.5, 25, 25, 87.5, 100, 100],
           1: [25, 37.5, 100, 100, 100, 100, 100, 100, 100],
@@ -148,7 +155,8 @@ SUBURBAN
 '''
 
 '''
-environment = 'SUBURBAN'
+environment, rms_ds_threshold, rms_ds_step, rms_dirs_threshold, rms_dirs_step = 'Suburban', 1e-3, 1e-3, 1e-4, 1e-4
+inter_arr_times_threshold, inter_arr_times_step, decay_chars_step = 0, 0.01, 1.25
 
 delays = {0: [0, 0, 25, 25, 25, 25, 25, 25, 50],
           1: [0, 25, 25, 25, 25, 75, 75, 100, 100],
@@ -180,31 +188,28 @@ FOLIAGE
 '''
 
 '''
-environment = 'Foliage'
+environment, rms_ds_threshold, rms_ds_step, rms_dirs_threshold, rms_dirs_step = 'Foliage', 1e-3, 1e-3, 1e-4, 1e-4
+inter_arr_times_threshold, inter_arr_times_step, decay_chars_step = 0, 0.01, 1.25
 
 delays = {0: [12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 50, 62.5, 62.5],
           1: [25, 25, 25, 37.5, 37.5, 37.5, 37.5, 37.5, 100],
           2: [37.5, 62.5, 62.5, 87.5, 87.5, 87.5, 87.5, 87.5, 87.5],
-          3: [62.5, 62.5, 62.5, 62.5, 75, 75, 75, 100, 100],
-          4: [0, 0, 0, 0, 0, 0, 0, 0, 0]}  # in ns
+          3: [62.5, 62.5, 62.5, 62.5, 75, 75, 75, 100, 100]}  # in ns
 
 amplts = {0: [-125.1, -125.1, -125.1, -125.1, -125.1, -125.1, -119.49, -43.1, -117.64],
           1: [-121.25, -121.25, -121.25, -118.72, -118.72, -118.72, -118.72, -118.72, -47.77],
           2: [-45.86, -119, -11, -121, -121, -121, -121, -121, -116.86],
-          3: [-45.08, -125.38, -125.38, -125.38, -129.79, -129.79, -129.79, -122.36, -122.44],
-          4: [0, 0, 0, 0, 0, 0, 0, 0, 0]}  # in dB
+          3: [-45.08, -125.38, -125.38, -125.38, -129.79, -129.79, -129.79, -122.36, -122.44]}  # in dB
 
 aoa_azs = {0: [-180, -180, -180, -180, -180, -180, -180, -180, -180],
            1: [-180, -180, -180, -180, -180, -180, -180, -180, -180],
            2: [-180, -180, -180, -180, -180, -180, -180, -180, -180],
-           3: [-180, -180, -180, -180, -180, -180, -180, -180, -180],
-           4: [-180, -180, -180, -180, -180, -180, -180, -180, -180]}  # in deg
+           3: [-180, -180, -180, -180, -180, -180, -180, -180, -180]}  # in deg
 
 aoa_els = {0: [-78.75, -67.5, -78.75, -112.5, -33.75, -112.5, -33.75, -168.75, -123.75],
            1: [-135, 0, -101.25, -33.75, -112.5, -146.25, -135, -180, -135],
            2: [-157.5, -157.5, -67.5, -180, -123.75, -123.75, -135, -56.25, -135],
-           3: [-90, -180, -180, -45, -180, -101.25, -56.25, -146.25, -56.25],
-           4: [-168.75, -33.75, -45, -180, -22.5, -33.75, -112.5, -11.25, -22.5]}  # in deg
+           3: [-90, -180, -180, -45, -180, -101.25, -56.25, -146.25, -56.25]}  # in deg
 '''
 
 """ 
@@ -218,17 +223,22 @@ RMS Delay Spreads
 rms_delay_spreads = np.array([rms_delay_spread(
     [linear_1(_x) for _x in amplts[_k]], [_x * 1e-9 for _x in delays[_k]]) / 1e-9 for _k in delays.keys()])
 
-rms_delay_spread_x, rms_delay_spread_ecdf = ecdf(rms_delay_spreads)
-stochastic_rms_delay_spread_param = stochastic_fit(rms_delay_spread_x, rms_delay_spread_ecdf)
+rms_delay_spread_x, rms_delay_spread_ecdf = ecdf(rms_delay_spreads[rms_delay_spreads >= rms_ds_threshold])
+rms_delay_spread_x_ = np.arange(start=min(rms_delay_spread_x), stop=max(rms_delay_spread_x), step=rms_ds_step)
+
+rms_ds_interp1d_func = interpolate.interp1d(rms_delay_spread_x, rms_delay_spread_ecdf)
+rms_delay_spread_ecdf_ = rms_ds_interp1d_func(rms_delay_spread_x_)
+
+stochastic_rms_delay_spread_param = stochastic_fit(rms_delay_spread_x_, rms_delay_spread_ecdf_)[0][0]
 
 rms_ds_layout = dict(yaxis=dict(title='CDF Probability'),
                      xaxis=dict(title='RMS Delay Spread in ns', type='log'),
                      title=f'{environment}: RMS Delay Spreads Cumulative Distribution Function')
 
 stochastic_rms_ds_trace = go.Scatter(
-    x=rms_delay_spread_x, mode='lines+markers', name='Stochastic',
-    y=[1 - np.exp(-1 * stochastic_rms_delay_spread_param * _x) for _x in rms_delay_spread_x])
-rms_ds_trace = go.Scatter(x=rms_delay_spread_x, y=rms_delay_spread_ecdf, mode='lines+markers', name='Meas')
+    x=rms_delay_spread_x_, mode='lines+markers', name='Stochastic',
+    y=[1 - np.exp(-1 * stochastic_rms_delay_spread_param * _x) for _x in rms_delay_spread_x_])
+rms_ds_trace = go.Scatter(x=rms_delay_spread_x_, y=rms_delay_spread_ecdf_, mode='lines+markers', name='Meas')
 
 rms_ds_url = plotly.plotly.plot(dict(data=[rms_ds_trace, stochastic_rms_ds_trace], layout=rms_ds_layout))
 
@@ -241,20 +251,25 @@ RMS AoA Direction Spreads
 rms_aoa_dir_spreads = np.array([rms_aoa_direction_spread([linear_1(_x) for _x in amplts[_k]], [
     deg2rad(_x) for _x in aoa_azs[_k]], [deg2rad(_x) for _x in aoa_els[_k]]) for _k in amplts.keys()])
 
-rms_aoa_dir_spread_x, rms_aoa_dir_spread_ecdf = ecdf(rms_aoa_dir_spreads)
-stochastic_rms_aoa_dir_spread_param = stochastic_fit(rms_aoa_dir_spread_x, rms_aoa_dir_spread_ecdf)
+rms_aoa_dir_spread_x, rms_aoa_dir_spread_ecdf = ecdf(rms_aoa_dir_spreads[rms_aoa_dir_spreads >= rms_dirs_threshold])
+rms_aoa_dir_spread_x_ = np.arange(start=min(rms_aoa_dir_spread_x), stop=max(rms_aoa_dir_spread_x), step=rms_dirs_step)
+
+rms_dirs_interp1d_func = interpolate.interp1d(rms_aoa_dir_spread_x, rms_aoa_dir_spread_ecdf)
+rms_aoa_dir_spread_ecdf_ = rms_dirs_interp1d_func(rms_aoa_dir_spread_x_)
+
+stochastic_rms_aoa_dir_spread_param = stochastic_fit(rms_aoa_dir_spread_x_, rms_aoa_dir_spread_ecdf_)[0][0]
 
 rms_aoa_dirs_layout = dict(yaxis=dict(title='CDF Probability'),
                            xaxis=dict(title='RMS AoA Direction Spread'),
                            title=f'{environment}: RMS AoA Direction Spreads Cumulative Distribution Function')
 
 stochastic_rms_aoa_dirs_trace = go.Scatter(
-    x=rms_aoa_dir_spread_x, mode='lines+markers', name='Stochastic',
-    y=[1 - np.exp(-1 * stochastic_rms_aoa_dir_spread_param * _x) for _x in rms_aoa_dir_spread_x])
-rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_x, y=rms_aoa_dir_spread_ecdf, mode='lines+markers', name='Meas')
+    x=rms_aoa_dir_spread_x_, mode='lines+markers', name='Stochastic',
+    y=[1 - np.exp(-1 * stochastic_rms_aoa_dir_spread_param * _x) for _x in rms_aoa_dir_spread_x_])
+rms_aoa_dirs_trace = go.Scatter(x=rms_aoa_dir_spread_x_, y=rms_aoa_dir_spread_ecdf_, mode='lines+markers', name='Meas')
 
-rms_aoa_dirs_url = plotly.plotly.plot(dict(data=[rms_aoa_dirs_trace,
-                                                 stochastic_rms_aoa_dirs_trace], layout=rms_aoa_dirs_layout))
+rms_aoa_dirs_url = plotly.plotly.plot(dict(layout=rms_aoa_dirs_layout,
+                                           data=[rms_aoa_dirs_trace, stochastic_rms_aoa_dirs_trace]))
 
 print(f'SPAVE-28G | Final Evaluations | {environment} | RMS AoA Direction Spread CDF: {rms_aoa_dirs_url}!')
 
@@ -263,19 +278,24 @@ Inter-Arrival Times
 '''
 
 all_delays = [_d for _k in delays.keys() for _d in delays[_k]]
-inter_arr_times = np.array([_y - _x for _x, _y in pairwise(sorted(all_delays))])
+inter_arr_times = np.sort(np.array([_y - _x for _x, _y in pairwise(all_delays)]))
 
-inter_arr_times_x, inter_arr_times_ecdf = ecdf(inter_arr_times)
-stochastic_inter_arr_times_param = stochastic_fit(inter_arr_times_x, inter_arr_times_ecdf)
+inter_arr_times_x, inter_arr_times_ecdf = ecdf(inter_arr_times[inter_arr_times >= inter_arr_times_threshold])
+inter_arr_times_x_ = np.arange(start=min(inter_arr_times_x), stop=max(inter_arr_times_x), step=inter_arr_times_step)
+
+inter_arr_times_interp1d_func = interpolate.interp1d(inter_arr_times_x, inter_arr_times_ecdf)
+inter_arr_times_ecdf_ = inter_arr_times_interp1d_func(inter_arr_times_x_)
+
+stochastic_inter_arr_times_param = stochastic_fit(inter_arr_times_x_, inter_arr_times_ecdf_)[0][0]
 
 inter_arr_times_layout = dict(yaxis=dict(title='CDF Probability'),
                               xaxis=dict(title='Inter-Arrival Times in ns', type='log'),
                               title=f'{environment}: Inter-Arrival Times Cumulative Distribution Function')
 
 stochastic_inter_arr_times_trace = go.Scatter(
-    x=inter_arr_times_x, mode='lines+markers', name='Stochastic',
-    y=[1 - np.exp(-1 * stochastic_inter_arr_times_param * _x_val) for _x_val in inter_arr_times_x])
-inter_arr_times_trace = go.Scatter(x=inter_arr_times_x, y=inter_arr_times_ecdf, mode='lines+markers', name='Meas')
+    x=inter_arr_times_x_, mode='lines+markers', name='Stochastic',
+    y=[1 - np.exp(-1 * stochastic_inter_arr_times_param * _x_val) for _x_val in inter_arr_times_x_])
+inter_arr_times_trace = go.Scatter(x=inter_arr_times_x_, y=inter_arr_times_ecdf_, mode='lines+markers', name='Meas')
 
 inter_arr_times_url = plotly.plotly.plot(dict(layout=inter_arr_times_layout,
                                               data=[inter_arr_times_trace, stochastic_inter_arr_times_trace]))
@@ -286,14 +306,19 @@ print(f'SPAVE-28G | Final Evaluations | {environment} | Inter-Arrival Times CDF:
 Decay Characteristics
 '''
 
-all_delays = sorted([_d for _k in delays.keys() for _d in delays[_k]], reverse=True)
+all_delays = sorted([_d for _k in delays.keys() for _d in delays[_k]])
 all_amplts = sorted([_a for _k in amplts.keys() for _a in amplts[_k]], reverse=True)
 
+all_delays_ = np.arange(start=min(all_delays), stop=max(all_delays), step=decay_chars_step)
+decay_chars_interp1d_func = interpolate.interp1d(all_delays, all_amplts)
+all_amplts_ = decay_chars_interp1d_func(all_delays_)
+
 decay_chars_layout = dict(yaxis=dict(title='Peak Component Power in dB'),
-                          xaxis=dict(title='Component Delay Value in ns', type='log'),
+                          xaxis=dict(title='Component Delay Value in ns'),
                           title=f'{environment}: MPC Delay Characteristics | Peak Component Power vs Delay')
 
-decay_chars_trace = go.Scatter(x=all_delays, y=all_amplts, mode='markers')
+decay_chars_trace = go.Scatter(x=all_delays_, y=all_amplts_, mode='lines+markers')
+
 decay_chars_url = plotly.plotly.plot(dict(data=[decay_chars_trace], layout=decay_chars_layout))
 
 print(f'SPAVE-28G | Final Evaluations | {environment} | Decay Characteristics Plot: {decay_chars_url}!')
