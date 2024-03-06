@@ -148,53 +148,53 @@ CONFIGURATIONS: A few route-specific Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1
+# comm_dir = '<dataset_directory>/urban-campus-I/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/urban-campus-I/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/urban-campus-I/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-campus-I/tx-realm/imu/', 1
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uc_sc_dist.png', 'uc_sc_alignment.png', 'uc_sc_vel.png'
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5
+# comm_dir = '<dataset_directory>/urban-campus-II/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/urban-campus-II/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/urban-campus-II/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-campus-II/tx-realm/imu/', 5
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'ucc_sc_dist.png', 'ucc_sc_alignment.png', 'ucc_sc_vel.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
-rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5
+comm_dir = '<dataset_directory>/urban-campus-III/rx-realm/pdp/'
+rx_gps_dir = '<dataset_directory>/urban-campus-III/rx-realm/gps/'
+rx_imu_dir = '<dataset_directory>/urban-campus-III/rx-realm/imu/'
+tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-campus-III/tx-realm/imu/', 5
 sc_distance_png, sc_alignment_png, sc_velocity_png = 'uccc_sc_dist.png', 'uccc_sc_alignment.png', 'uccc_sc_vel.png'
 
 ''' urban-garage route (fully-autonomous) (NW Garage on 1460 E St) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1
+# comm_dir = '<dataset_directory>/urban-garage/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/urban-garage/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/urban-garage/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-garage/tx-realm/imu/', 1
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'ug_sc_distance.png', 'ug_sc_alignment.png', 'ug_sc_velocity.png'
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5
+# comm_dir = '<dataset_directory>/urban-stadium/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/urban-stadium/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/urban-stadium/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-stadium/tx-realm/imu/', 5
 # rms_delay_spread_png, aoa_rms_dir_spread_png = 'us_rms_delay_spread.png', 'us_aoa_rms_dir_spread.png'
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'us_sc_distance.png', 'us_sc_alignment.png', 'us_sc_velocity.png'
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1
+# comm_dir = '<dataset_directory>/suburban-fraternities/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/suburban-fraternities/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/suburban-fraternities/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/suburban-fraternities/tx-realm/imu/', 1
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'sf_sc_distance.png', 'sf_sc_alignment.png', 'sf_sc_velocity.png'
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# rx_gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-# tx_imu_dir, tx_imu_skip_step = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1
+# comm_dir = '<dataset_directory>/urban-vegetation/rx-realm/pdp/'
+# rx_gps_dir = '<dataset_directory>/urban-vegetation/rx-realm/gps/'
+# rx_imu_dir = '<dataset_directory>/urban-vegetation/rx-realm/imu/'
+# tx_imu_dir, tx_imu_skip_step = '<dataset_directory>/urban-vegetation/tx-realm/imu/', 1
 # sc_distance_png, sc_alignment_png, sc_velocity_png = 'uv_sc_distance.png', 'uv_sc_alignment.png', 'uv_sc_velocity.png'
 
 ''' Tx location fixed on the rooftop of the William Browning Building in SLC, UT '''
@@ -202,11 +202,11 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
                         longitude=Member(component=-111.847939330), altitude_ellipsoid=Member(component=1459.1210))
 
 ''' Generic configurations '''
-ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
+ant_log_file = '<dataset_directory>/antenna_pattern.mat'
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
+plotly.tools.set_credentials_file(username='<user_name>', api_key='<api_key')
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
 d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
-plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdvH8YuKmjEF')
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
 prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripple': 0.01, 'stopband_attenuation': 80.0}

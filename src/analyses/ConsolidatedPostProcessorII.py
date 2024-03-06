@@ -290,14 +290,14 @@ tx_gps_event = GPSEvent(latitude=Member(component=40.766173670),
 # output_dir = '<output_directory_location>'
 tx_fc, rx_fc, wlength = 400e6, 399.95e6, c / 28e9
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
+ant_log_file = '<dataset_location>/antenna_pattern.mat'
 mpc_delay_bins = np.arange(start=0, stop=400e-9, step=20e-9)
 ne_amp_threshold, max_workers, sg_wsize, sg_poly_order = 0.05, 4096, 53, 3
 min_threshold, sample_rate, datetime_format = 1e5, 2e6, '%Y-%m-%d %H:%M:%S.%f'
 plotly.tools.set_credentials_file(username='<user_name>', api_key='<api_key>')
-n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_m = 0.015, 22.0, 20, 0.5, 11, 11
 # d_max, d_step, a_max, a_step, v_max, v_step = 500.0, 1.0, 10.0, 0.05, 10.0, 0.1
-ant_log_file, pn_reps = '<dataset_location>/antenna_pattern.mat', int(pn_m / pn_l)
 delay_tol, doppler_tol, att_tol, aoa_az_tol, aoa_el_tol = 20e-9, 1e3, 0.5, 0.5, 0.5
+n_sigma, max_ant_gain, max_mpcs, pn_v0, pn_l, pn_reps = 0.015, 22.0, 20, 0.5, 11, 11
 tau_min, tau_max, nu_min, nu_max, phi_min, phi_max, the_min, the_max = 0, 400e-9, -5e3, 5e3, -pi, pi, -pi, pi
 time_windowing_config = {'window_multiplier': 2.0, 'truncation_length': int(2e5), 'truncation_multiplier': 4.0}
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
