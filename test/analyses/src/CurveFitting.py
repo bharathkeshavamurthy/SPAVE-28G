@@ -31,10 +31,10 @@ def linear_fit(filename: str, sheetname: str = 'Pathlosses',
         linear_log_fit('urban_vegetation_pl.xlsx')
         (109.9143603013646, 156.2907044554164, array([ 64.7075709 , -26.66147833]))
 
-        linear_log_fit('C:/Users/kesha/Downloads/3gpp_tr38901_pl.xlsx')
+        linear_log_fit('3gpp_tr38901_pl.xlsx')
         (109.9143603013646, 865.2610067590323, array([38.5845435 , 35.20072777]))
 
-        linear_log_fit('C:/Users/kesha/Downloads/itu_m2135_pl.xlsx')
+        linear_log_fit('itu_m2135_pl.xlsx')
         (109.9143603013646, 865.2610067590323, array([38.59140152, 33.87781245]))
     """
     df = pd.read_excel(filename, sheet_name=sheetname, engine=xlengine)

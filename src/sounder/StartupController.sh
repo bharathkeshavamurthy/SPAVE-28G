@@ -13,9 +13,9 @@ sudo ldconfig
 sudo uhd_images_downloader
 
 # Once the images have been downloaded, set the "UHD_IMAGES_DIRECTORY" environment variables in order to set things up for the next stages.
-export UHD_IMAGES_DIRECTORY="/usr/local/share/uhd/images"
+export UHD_IMAGES_DIRECTORY="<uhd_images_directory_location>"
 
 # With the master clock frequency set to 10MHz (sample_rate=200kHz), determine the connected UHD devices -- and, get things ready for the GNURadio Python Script Execution.
 sudo uhd_usrp_probe --args="master_clock_rate=10e6"
 
-python3 /home/pi/Workspaces/odin/sounder/src/Sliding_Correlator_Channel_Sounder.py &
+python3 <source_directory_location>/Sliding_Correlator_Channel_Sounder.py &

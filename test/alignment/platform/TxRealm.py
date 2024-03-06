@@ -157,7 +157,7 @@ def get_file_name_for_events(seq_number: int, key: str) -> str:
 
     Returns: The event log file name w.r.t the specified key and the event sequence number
     """
-    return ''.join(['E:/Odin/logs/rx-realm/controller/simulator-logs/', key, '_', 'event_', str(seq_number), '.json'])
+    return ''.join(['<simulator_logs_directory_location>', key, '_', 'event_', str(seq_number), '.json'])
 
 
 # JSON Representation Routine for GPS Events
@@ -188,7 +188,7 @@ def gps_fetch_publish() -> None:
     kafka_producer = None
     kafka_topic_name = 'ODIN_TX_GPS_EVENTS'
     try:
-        kafka_producer = KafkaProducer(client_id='Pseudo_Heimdall_Tx', bootstrap_servers='155.98.37.207:9092', acks=1,
+        kafka_producer = KafkaProducer(client_id='Pseudo_Heimdall_Tx', bootstrap_servers='<ip_addr>:<port>', acks=1,
                                        retry_backoff_ms=3000, api_version=(0, 10))
         # Receive, Parse, and Publish: indefinitely
         while 1:

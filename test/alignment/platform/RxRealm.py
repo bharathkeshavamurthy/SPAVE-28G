@@ -32,7 +32,7 @@ def start():
     """
     init, rotated, data_read = True, False, False
     i, j = 0, 0
-    uc = Serial(port='COM10', baudrate=115200, timeout=1000.0)
+    uc = Serial(port='COMxx', baudrate=115200, timeout=1000.0)
     while j < len(yaw_angles):
         try:
             # noinspection PyUnresolvedReferences
