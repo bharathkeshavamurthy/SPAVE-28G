@@ -1,0 +1,128 @@
+% This is the main single-column TAP manuscript.
+\documentclass[12pt, draftcls, onecolumn]{IEEEtran}
+
+% Packages
+\usepackage{bm}
+\usepackage{url}
+\usepackage{bbm}
+\usepackage{cite}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{xspace}
+\usepackage{dsfont}
+\usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{multicol}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{makecell}
+\usepackage{footnote}
+\usepackage{verbatim}
+\usepackage{algorithm}
+\usepackage{subcaption}
+\usepackage{glossaries}
+\usepackage[T1]{fontenc}
+\usepackage{soul, xcolor}
+\usepackage{algpseudocode}
+\usepackage{algcompatible}
+\usepackage[normalem]{ulem}
+\usepackage{multirow, enumitem}
+
+% Setting up packages
+\captionsetup{font=footnotesize}
+\setlength{\textfloatsep}{1.5pt}
+\sisetup{detect-all, range-phrase=--, range-units=single, group-separator={,}}
+
+% Initializing new commands
+\newcommand{\sst}[1]{\st{#1}}
+\newcommand{\tot}{\mathrm{tot}}
+\newcommand{\tfrm}{T_{\mathrm{fr}}}
+\newcommand{\beam}[1]{\mathcal B_{#1}}
+\newcommand{\add}[1]{\textcolor{red}{#1}}
+\newcommand{\size}[1]{\left | #1 \right|}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\morn}[1]{\bigg\lVert#1\bigg\rVert}
+\newcommand{\bk}[1]{\textcolor{blue}{[BK: #1]}}
+\newcommand{\yz}[1]{\textcolor{blue}{[YZ: #1]}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\ca}[1]{\textcolor{magenta}{[CA: #1]}}
+\newcommand{\nm}[1]{\textcolor{magenta}{[NM: #1]}}
+\newcommand{\jvk}[1]{\textcolor{magenta}{[JVK: #1]}}
+\newcommand{\djl}[1]{\textcolor{magenta}{[DJL: #1]}}
+\newcommand{\beambs}[1]{\mathcal B_{{\mathrm t},#1}}
+\newcommand{\beamue}[1]{\mathcal B_{{\mathrm r},#1}}
+\newcommand{\diag}[1]{\mathrm{diag}\left(#1 \right)}
+\newcommand{\suchthat}{\;\ifnum\currentgrouptype=16 \middle\fi|\;}
+\newcommand{\numberthis}{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand\mst[2][red]{\setbox0=\hbox{$#2$}\rlap{\raisebox{.45\ht0}{\textcolor{#1}{\rule{\wd0}{2pt}}}}#2}
+
+% Redefining commands
+\renewcommand\theadalign{c}
+\renewcommand{\tabcolsep}{2pt}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\cellgape{\Gape[2pt]}
+\renewcommand\theadgape{\Gape[2pt]}
+
+% Content begins
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+\setulcolor{red}
+\setul{red}{2pt}
+\setstcolor{red}
+\vspace{-18mm}
+
+\section*{Manuscript Front Page: Responses}
+
+\subsection{Question 1}
+\begin{itemize}
+\item \textbf{Question}: What is the problem being addressed by the manuscript, and why is it important to the Antennas and Propagation community?
+
+\textbf{Response}: Recent trends in vehicular networks have accentuated the benefits of ultra high data rates demonstrated by millimeter-wave (mmWave) communications. To capitalize on these promises of the mmWave spectrum---particularly for Vehicle-to-Everything (V$2$X) applications---it is critical to ensure accurate channel modeling to facilitate the efficient development of next-generation network and device design strategies. Ergo, this paper details a V$2$X mmWave propagation modeling campaign on the NSF POWDER experimental testbed, using a fully autonomous robotic beam-steering platform coupled with a custom broadband sliding correlator channel sounder. The compiled datasets from this measurement campaign are subsequently employed in exhaustive investigations of mmWave propagation characteristics: pathloss analyses, spatial and angular decoherence properties, shadow fading studies and the accompanying fading observations under static and dynamic blockages, and multipath clustering examinations vis-\`{a}-vis cluster inter-arrival times, cluster decay attributes, and RMS delay and direction spreads. In addition to these investigations, this paper highlights the comparisons of the derived pathloss models against popular outdoor micro- and macro-cellular pathloss standards; additionally, this work features the empirical validations of widely used mmWave channel models in V$2$X propagation scenarios.
+\end{itemize}
+
+\subsection{Question 2}
+\begin{itemize}
+\item \textbf{Question}: What is the novelty of your work over the existing work?
+
+\textbf{Response}: The novelties of this work over other similar works in the current literature are:
+\begin{itemize}
+    \item This work highlights the design of a fully autonomous beam-steering system coupled with a sliding correlator channel sounder---which mitigates the cost, computational complexity, and inflexibility drawbacks evident in existing electronic and mechanical beam-steering techniques---rendering our design best-suited for mmWave propagation modeling in V$2$X applications, which necessitates continuous series of measurements to characterize the channel in highly mobile vehicular communication scenarios. Additionally, unlike any other work in the existing literature, the datasets collected during our mmWave V$2$X measurement campaign on the NSF POWDER testbed, exhibit diversity in deployment (urban/suburban/foliage), alignment (full/semi/manual), and platform velocity ($5$-$20$ mph).
+    \item This paper also presents exhaustive sets of analyses spanning multiple areas of concern for mmWave propagation in V$2$X applications. Specifically, unlike any other work in the current literature, we detail the empirical validations of popular outdoor large-scale micro- and macro-cellular pathloss standards, along with investigations that highlight the spatial and angular decorrelation characteristics of mmWave signals under distance and antenna alignment variations. Furthermore, no other work in the state-of-the-art features V$2$X fading studies (vis-\`{a}-vis the average fade depth and duration) under both static (buildings) and dynamic (pedestrians, moving/parked vehicles) blockages, including the empirical validations of the Device-to-Device model. Lastly, again unlike any other existing work, for V$2$X communication scenarios, this paper outlines the empirical validations of the Saleh-Valenzuela, Quasi-Deterministic, and stochastic mmWave channel models, vis-\`{a}-vis cluster inter-arrival times, cluster decay attributes, and RMS delay and direction spreads.
+\end{itemize}
+\end{itemize}
+
+\subsection{Question 3}
+\begin{itemize}
+\item \textbf{Question}: Name up to three references, published or under review, done by the authors or co-authors that are closest to the present work.
+
+\textbf{Response}:
+\begin{itemize}
+    \item B. Keshavamurthy, Y. Zhang, C. R. Anderson, N. Michelusi, D. J. Love and J. V. Krogmeier, ``Propagation Measurements and Analyses at 28 GHz via an Autonomous Beam-Steering Platform,'' ICC 2023 - IEEE International Conference on Communications, Rome, Italy, 2023, pp. 5042-5047, doi: 10.1109/ICC45041.2023.10279397.\label{1}
+    \item B. Keshavamurthy, Y. Zhang, C. R. Anderson, et al., ``A Robotic Antenna Alignment and Tracking System for Millimeter Wave Propagation Modeling,'' 2022 United States National Committee of URSI National Radio Science Meeting (USNC-URSI NRSM), Boulder, CO, USA, 2022, pp. 145-146, doi: 10.23919/USNC-URSINRSM57467.2022.9881448.\label{2}
+    \item Y. Zhang, C. R. Anderson, N. Michelusi, D. J. Love, et al., ``Propagation Modeling Through Foliage in a Coniferous Forest at 28 GHz,'' in IEEE Wireless Communications Letters, vol. 8, no. 3, pp. 901-904, June 2019, doi: 10.1109/LWC.2019.2899299.\label{3}
+\end{itemize}
+\end{itemize}
+
+\subsection{Question 4}
+\begin{itemize}
+\item \textbf{Question}: Name up to three references done by other authors that are most important to the present work.
+
+\textbf{Response}:
+\begin{itemize}
+    \item J. Du et al., ``Directional Measurements in Urban Street Canyons From Macro Rooftop Sites at 28 GHz for 90\% Outdoor Coverage,'' in IEEE Transactions on Antennas and Propagation, vol. 69, no. 6, pp. 3459-3469, June 2021, doi: 10.1109/TAP.2020.3044398.
+    \item C. Gentile et al., ``Millimeter-Wave Channel Measurement and Modeling: A NIST Perspective,'' in IEEE Communications Magazine, vol. 56, no. 12, pp. 30-37, December 2018, doi: 10.1109/MCOM.2018.1800222.
+    \item T. S. Rappaport, Y. Xing, G. R. MacCartney, A. F. Molisch, E. Mellios and J. Zhang, ``Overview of Millimeter Wave Communications for Fifth-Generation (5G) Wireless Networks—With a Focus on Propagation Models,'' in IEEE Transactions on Antennas and Propagation, vol. 65, no. 12, pp. 6213-6230, Dec. 2017, doi: 10.1109/TAP.2017.2734243.
+\end{itemize}
+\end{itemize}
+
+\end{document}

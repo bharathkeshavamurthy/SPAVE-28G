@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="b7dc1150-bc6f-4c7f-a6a8-88cc26847111" name="Changes" comment="IEEE TAP 2024: Setting the Post-Processors up for MPC clustering and SV/QDC/Stochastic comparisons...">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/data/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/TAP_Workspace/related/Cover_Page_Responses.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/TAP_Workspace/related/Cover_Page_Responses.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/TAP_Workspace/related/Previous_Publications_Statement.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/TAP_Workspace/related/Previous_Publications_Statement.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/EarsMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/PurdueMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/RENEWLab" beforeDir="false" afterPath="$PROJECT_DIR$/related/RENEWLab" afterDir="false" />
@@ -14,12 +19,159 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/DTO.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/DTO.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/Realms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/Realms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/RouteVisualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/RouteVisualizer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/RxRealm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/RxRealm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/TxRealm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/TxRealm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alignment/platform/Utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/Utilities.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/antenna_patterns.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/foliage_pathloss.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/pathloss_vs_distance.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/rms_direction_spread.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/rx_deployment.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/rx_power_vs_velocity.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/rx_schematic.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/spatial_consistency_vs_alignment_accuracy.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/spatial_consistency_vs_distance.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/suburban_pathgain_vs_time.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/suburban_pathgain_vs_time_annotated.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/suburban_pathloss.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/system_architecture.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/tx_deployment.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/tx_schematic.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_pathgain_vs_time.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_pathgain_vs_time_annotated.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_pathgain_vs_time_gap_annotated.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_pathloss_1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_pathloss_2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_shadow_fading_1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/FINAL_FIGURES_PDF/urban_campus_shadow_fading_2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/pathloss_distance/figs/pathloss_vs_distance.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/aoa_dirs/suburban_fraternities_angular_analyses.log" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/direction_spread/suburban_fraternities_angular_analyses.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/aoa_dirs/urban_campus_III_angular_analyses.log" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/direction_spread/urban_campus_III_angular_analyses.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/aoa_dirs/urban_campus_II_angular_analyses.log" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/direction_spread/urban_campus_II_angular_analyses.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/aoa_dirs/urban_stadium_angular_analyses.log" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/direction_spread/urban_stadium_angular_analyses.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/aoa_dirs/urban_vegetation_angular_analyses.log" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/direction_spread/urban_vegetation_angular_analyses.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/delays/suburban_fraternities_delay_decay_analyses.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/delays/urban_campus_III_delay_decay_analyses.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/delays/urban_campus_II_delay_decay_analyses.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/delays/urban_stadium_delay_decay_analyses.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/analyses/sage_mpc/dataframes/delays/urban_vegetation_delay_decay_analyses.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Antenna_Pattern_Normalized_2D_Azimuth.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Antenna_Pattern_Normalized_2D_Elevation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Calibration_Curves.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/GPS_Accuracy_Console.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PDP_Dominant_LoS.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PDP_Multiple.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PDP_Reflected.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PN_Output_400MHz_CLK.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PN_Output_50MHz_CLK.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PT2645S_Schematics_I.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/PT2645S_Schematics_II.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Cart_Deployment.JPEG" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Comm_Schematic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Comm_Setup_I.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Comm_Setup_II.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Power_Map_Foliage.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Power_Map_Suburban.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Power_Map_Urban_Campus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Rx_Signal_IF.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/System_Architecture.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Tx_Comm_Schematic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Tx_Comm_Setup_I.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Tx_Comm_Setup_II.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Tx_Remote_Monitoring.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/Tx_Signal_IF.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_azimuth.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_elevation.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_az.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_az.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_combined.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_combined.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_el.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_pattern_el.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/antenna_patterns.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/calibration.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/foliage_pathloss.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pathloss_versus_distance.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pathloss_vs_distance.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pathloss_vs_distance.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pathloss_vs_distance_dotted_fit.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pl_distance_updated.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pl_suburban_fraternities.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pl_urban_campus.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/pl_urban_vegetation.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rms_direction_spread.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rms_direction_spread_updated.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_cart_deployment.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_circuit_implementation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_comm_setup.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_deployment.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_implementation.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_power_vs_velocity.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_schematic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_suburban_fraternities.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_urban_campus.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/rx_urban_vegetation.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/sc_alignment_updated.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/sc_distance_updated.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_versus_distance.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_alignment.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_alignment.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_alignment_accuracy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_alignment_log_no_fitting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_alignment_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_distance.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_distance.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_distance_log_no_fitting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_distance_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_velocity.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_velocity.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_velocity_log_no_fitting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_consistency_vs_velocity_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_correlation_vs_alignment_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_correlation_vs_distance_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/spatial_correlation_vs_velocity_separation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_fraternities_pathgain_vs_time.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_neighborhood_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_neighborhood_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_pathgain_vs_time.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_pathgain_vs_time.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_pathgain_vs_time_annotated.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/suburban_pathloss.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/system_architecture.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/system_architecture_detailed.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/system_architecture_detailed.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/system_architecture_simplified.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/system_architecture_simplified.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_circuit_implementation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_comm_setup.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_deployment.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_deployment_browning.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_implementation.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/tx_schematic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_1_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_1_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_2_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_2_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_3_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_3_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_III_pathgain_vs_time.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_III_shadow_fading.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_II_shadow_fading.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_fading_1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_fading_2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathgain_vs_time.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathgain_vs_time.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathgain_vs_time_annotated.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathgain_vs_time_gap.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathloss_1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_pathloss_2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_shadow_fading.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_shadow_fading_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_campus_shadow_fading_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_garage_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_garage_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_stadium_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_stadium_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_vegetation_pathloss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/backup_figs/urban_vegetation_rx_power.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/manuscript/figs/system_architecture.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/test/manuscript/figs/system_architecture.pdf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,0 +1,103 @@
+% This is the main single-column TAP manuscript.
+\documentclass[12pt, draftcls, onecolumn]{IEEEtran}
+
+% Packages
+\usepackage{bm}
+\usepackage{url}
+\usepackage{bbm}
+\usepackage{cite}
+\usepackage{array}
+\usepackage{ifthen}
+\usepackage{xspace}
+\usepackage{dsfont}
+\usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{caption}
+\usepackage{multicol}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{makecell}
+\usepackage{footnote}
+\usepackage{verbatim}
+\usepackage{algorithm}
+\usepackage{subcaption}
+\usepackage{glossaries}
+\usepackage[T1]{fontenc}
+\usepackage{soul, xcolor}
+\usepackage{algpseudocode}
+\usepackage{algcompatible}
+\usepackage[normalem]{ulem}
+\usepackage{multirow, enumitem}
+
+% Setting up packages
+\captionsetup{font=footnotesize}
+\setlength{\textfloatsep}{1.5pt}
+\sisetup{detect-all, range-phrase=--, range-units=single, group-separator={,}}
+
+% Initializing new commands
+\newcommand{\sst}[1]{\st{#1}}
+\newcommand{\tot}{\mathrm{tot}}
+\newcommand{\tfrm}{T_{\mathrm{fr}}}
+\newcommand{\beam}[1]{\mathcal B_{#1}}
+\newcommand{\add}[1]{\textcolor{red}{#1}}
+\newcommand{\size}[1]{\left | #1 \right|}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\morn}[1]{\bigg\lVert#1\bigg\rVert}
+\newcommand{\bk}[1]{\textcolor{blue}{[BK: #1]}}
+\newcommand{\yz}[1]{\textcolor{blue}{[YZ: #1]}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\ca}[1]{\textcolor{magenta}{[CA: #1]}}
+\newcommand{\nm}[1]{\textcolor{magenta}{[NM: #1]}}
+\newcommand{\jvk}[1]{\textcolor{magenta}{[JVK: #1]}}
+\newcommand{\djl}[1]{\textcolor{magenta}{[DJL: #1]}}
+\newcommand{\beambs}[1]{\mathcal B_{{\mathrm t},#1}}
+\newcommand{\beamue}[1]{\mathcal B_{{\mathrm r},#1}}
+\newcommand{\diag}[1]{\mathrm{diag}\left(#1 \right)}
+\newcommand{\suchthat}{\;\ifnum\currentgrouptype=16 \middle\fi|\;}
+\newcommand{\numberthis}{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand\mst[2][red]{\setbox0=\hbox{$#2$}\rlap{\raisebox{.45\ht0}{\textcolor{#1}{\rule{\wd0}{2pt}}}}#2}
+
+% Redefining commands
+\renewcommand\theadalign{c}
+\renewcommand{\tabcolsep}{2pt}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\cellgape{\Gape[2pt]}
+\renewcommand\theadgape{\Gape[2pt]}
+
+% Content begins
+\begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+\setulcolor{red}
+\setul{red}{2pt}
+\setstcolor{red}
+\vspace{-18mm}
+
+\section*{Previous Publications: A Statement}
+
+\subsection{List of Relevant Prior Publications}
+The most closely related papers published by the authors/co-authors of the present work are:
+\begin{enumerate}
+    \item B. Keshavamurthy, Y. Zhang, C. R. Anderson, N. Michelusi, D. J. Love and J. V. Krogmeier, ``Propagation Measurements and Analyses at 28 GHz via an Autonomous Beam-Steering Platform,'' ICC 2023 - IEEE International Conference on Communications, Rome, Italy, 2023, pp. 5042-5047, doi: 10.1109/ICC45041.2023.10279397.\label{1}
+    \item B. Keshavamurthy, Y. Zhang, C. R. Anderson, et al., ``A Robotic Antenna Alignment and Tracking System for Millimeter Wave Propagation Modeling,'' 2022 United States National Committee of URSI National Radio Science Meeting (USNC-URSI NRSM), Boulder, CO, USA, 2022, pp. 145-146, doi: 10.23919/USNC-URSINRSM57467.2022.9881448.\label{2}
+    \item Y. Zhang, C. R. Anderson, N. Michelusi, D. J. Love, et al., ``Propagation Modeling Through Foliage in a Coniferous Forest at 28 GHz,'' in IEEE Wireless Communications Letters, vol. 8, no. 3, pp. 901-904, June 2019, doi: 10.1109/LWC.2019.2899299.\label{3}
+\end{enumerate}
+
+\subsection{Publication Differences}
+The differences between the present work and these previous publications are listed below.
+\begin{itemize}
+    \item The publication \ref{1} is the most closely related paper to our current work. The paper \ref{1} is the conference version of the present work, wherein it consists of summarized descriptions of the measurement system design, the ensuing measurement campaign, and the subsequent pathloss and spatial consistency evaluations. On the other hand, the present work provides detailed descriptions of the fully autonomous mechanical beam-steering platform with the sliding correlator channel sounder, the subsequent propagation modeling activities on the NSF POWDER testbed, and the resultant evaluations which include exhaustive analyses spanning pathloss examinations, spatial consistency studies, shadowing and accompanying fading assessments under static and dynamic blockages, and multipath clustering research.
+    \item While the pathloss studies in \ref{1} focus on one urban campus route (around President's Circle); in the current work, we present pathloss results for two different urban campus routes in our measurement campaign, i.e., around President's Circle (van mount) and around $100$ S St (push-cart mount). Additionally, the pathloss investigations detailed in the current work include empirical validations of popular outdoor micro- and macro-cellular standards ($3$GPP TR$38.901$, ITU-R M$.2135$, METIS, and mmMAGIC). Also, while the spatial consistency analyses in \ref{1} included crude evaluations of the spatial/angular autocorrelation coefficient; here, in the present work, we provide rigorously developed mathematical formulations on the multipath components and their delay bin based discretization, distance/alignment evaluation criteria, and the correlation between two measurements with distance/alignment separations.
+    \item Unlike the evaluations in \ref{1}, here, we highlight shadowing and the accompanying fading studies (vis-\`{a}-vis average fade depth and duration) under both static and dynamic blockages, which constitute necessary analyses for V$2$X propagation modeling. Also, unlike \ref{1}, the current work features detailed multipath clustering analyses (vis-\`{a}-vis cluster inter-arrival times, cluster decay attributes, and RMS delay and direction spreads) in addition to the accompanying empirical validations of the popular Saleh-Valenzuela, Quasi-Deterministic, and stochastic channel models in V$2$X applications via the Kolmogorov-Smirnov statistic.
+    \item The work in \ref{2} only consists of a very brief ($1$-page) summary on the design of our novel measurement platform; while the efforts in \ref{3} constituted measurement campaigns at different deployment sites spanning different types of radio environments, i.e., coniferous forests and suburban neighborhoods at the USNA campus in Annapolis, MD. The present work details our propagation modeling activities across a plethora of radio environments (multiple routes spanning urban, suburban, and foliage sites) on the NSF POWDER testbed in Salt Lake City, UT. Also, while the design of the sounder employed in \ref{3} and the present work is similar, the beam-steering platform used for propagation modeling in \ref{3} is obsolete and is not suited for V$2$X mmWave propagation modeling due to several inflexibilities in tracking response times, alignment (semi-autonomous or manual only), and data collection (lack of continuous series of measurements, lack of diversity in alignment and velocity). Moreover, the evaluation efforts in \ref{3} were limited and did not involve empirical validations of popular pathloss standards, spatial/angular consistency analyses, shadowing and the accompanying fading investigations, and multipath clustering examinations along with empirical validations of widely used mmWave channel models in vehicular communication applications/scenarios.
+\end{itemize}
+
+\end{document}
