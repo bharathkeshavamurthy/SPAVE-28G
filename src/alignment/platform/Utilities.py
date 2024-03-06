@@ -29,7 +29,7 @@ The keywords and separators for identifier/registration-key building
 """
 
 # The name of this project
-PROJECT_NAME = 'Odin'
+PROJECT_NAME = 'Odin'  # SPAVE-28G
 
 # The Realm string key for Kafka topic selection and logging
 REALM_KEY = 'Realm'

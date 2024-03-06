@@ -108,8 +108,8 @@ class Realms(rpyc.Service):
                 # Get the hostname and port properties for this Centralized Realms Python Controller's threaded server
                 #   and its expositions & callbacks
                 threaded_server_details = REALMS_THREADED_SERVER_DETAILS(
-                    hostname=os.getenv(REALMS_HOSTNAME_ENVIRONMENT_VARIABLE, default='155.98.37.215'),
-                    port=int(os.getenv(REALMS_PORT_ENVIRONMENT_VARIABLE, default='18871')))
+                    hostname=os.getenv(REALMS_HOSTNAME_ENVIRONMENT_VARIABLE, default='<ip_address>'),
+                    port=int(os.getenv(REALMS_PORT_ENVIRONMENT_VARIABLE, default='<port>')))
                 if threaded_server_details.hostname == '' or threaded_server_details.port < 1024:
                     raise ThreadedServerNotConfiguredError('Either the hostname or the port for the rpyc.utils.server '
                                                            'ThreadedServer has not been set on the platform.')
@@ -118,8 +118,8 @@ class Realms(rpyc.Service):
                                             self.__zookeeper_start, self.__kafka_server_start,
                                             self.__kafka_topic_create_all])
                 startup_pipeline_output = asyncio.get_event_loop().run_until_complete(startup_pipeline(
-                    MOM_PROPERTIES(zookeeper_properties='/usr/local/kafka-server/config/zookeeper.properties',
-                                   kafka_server_properties='/usr/local/kafka-server/config/server.properties')))
+                    MOM_PROPERTIES(zookeeper_properties='<zookeeper_properties_file_location>',
+                                   kafka_server_properties='<kafka_server_properties_file_location>')))
                 for error_message in startup_pipeline_output.error_message:
                     if error_message is not None and error_message != '':
                         raise RealmsStartupPipelineExecutionError('Error during the execution of the startup '

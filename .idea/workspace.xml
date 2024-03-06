@@ -14,15 +14,12 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/archive/FinalEvaluations.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/archive/FinalEvaluations.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/3GPP_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/3GPP_PLD_Playground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/CurveFitting.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/CurveFitting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ITUR_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ITUR_PLD_Playground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/METIS_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/METIS_PLD_Playground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/MM_MAGIC_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/MM_MAGIC_PLD_Playground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/MapPlayground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/MapPlayground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/Playground.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/SPAVE_28G_PLD_Playground.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/SPAVE_28G_PLD_Playground.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/DTO.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/DTO.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/Realms.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/Realms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/RouteVisualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/RouteVisualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/RxRealm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/RxRealm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/TxRealm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/TxRealm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/alignment/platform/Utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alignment/platform/Utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,18 +83,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.ConsolidatedPostProcessorII.executor": "Debug",
-    "Python.ConsolidatedPostProcessorTestII.executor": "Run",
-    "Python.FinalEvaluations.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "E:/Workspace/ACCUSTOM",
-    "run.code.analysis.last.selected.profile": "aDefault",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.ConsolidatedPostProcessorII.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.ConsolidatedPostProcessorTestII.executor&quot;: &quot;Run&quot;,
+    &quot;Python.FinalEvaluations.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Workspace/ACCUSTOM&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\Workspace\SPAVE-28G\test\analyses" />

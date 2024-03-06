@@ -143,8 +143,8 @@ class KafkaConfig:
     group_id: str = 'yyy'
     broker_id: int = 0
     acks: bool = True
-    bootstrap_server_config: str = '155.98.37.215:9092'
-    zookeeper_config: str = '155.98.37.215:2181'
+    bootstrap_server_config: str = '<ip_address:port>'
+    zookeeper_config: str = '<ip_address:port>'
     retry_backoff: float = 3.0
     poll_interval: float = 3.0
     commit_each_poll: bool = True

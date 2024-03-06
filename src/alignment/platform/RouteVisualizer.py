@@ -25,15 +25,14 @@ field_work = True
 """
 TODO: Change the initial positioning of the Rx installation
 """
-gps_logs_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/tx-realm/' \
-               'rx-subscriptions/urban-vegetation/'
+gps_logs_dir = '<gps_logs_directory_location>'
 number_of_files = len(os.listdir(gps_logs_dir))
 latitudes, longitudes, altitudes = [40.76617367], [-111.84793933], [1451.121]
 
 # Jupyter Dash: Layout Configurations
-app = JupyterDash('Odin | Freya | Dash')
+app = JupyterDash('Odin | SPAVE-28G | Freya | Dash')
 app.layout = html.Div([
-    html.H1('Odin: Real-Time Rx Route Visualization',
+    html.H1('Odin | SPAVE-28G: Real-Time Rx Route Visualization',
             style={'font-color': 'blue', 'font-family': 'rockwell'}),
     dcc.Interval(
         id='interval-component',
@@ -139,7 +138,7 @@ def stream_fig(index):
         return
     latitudes__.append(latitudes[index])
     longitudes__.append(longitudes[index])
-    map_layout = go.Layout(title='Odin: Real-Time Rx Visualization', autosize=True, hovermode='closest',
+    map_layout = go.Layout(title='Odin | SPAVE-28G: Real-Time Rx Visualization', autosize=True, hovermode='closest',
                            margin=dict(t=0, b=0, l=0, r=0), width=2256, height=1504)
     fig__ = go.Figure(data=go.Scattermapbox(lat=latitudes__, lon=longitudes__, mode='markers',
                                             marker=go.scattermapbox.Marker(size=9)),
@@ -149,7 +148,7 @@ def stream_fig(index):
         autosize=True,
         hovermode='closest',
         mapbox=dict(
-            accesstoken='pk.eyJ1IjoiYmtlc2hhdmEiLCJhIjoiY2twemI2ODQ1MG41aDJ2cGRwdG51a2oyOCJ9.enOYuZjEeiSonmI49PgCuQ',
+            accesstoken='<mapbox_access_token>',
             bearing=0,
             center=dict(
                 lat=center[1],
@@ -163,4 +162,4 @@ def stream_fig(index):
 
 
 # Start the server and start visualization
-app.run_server(mode='external', port=8069, dev_tools_ui=True, debug=True, dev_tools_hot_reload=True, threaded=True)
+app.run_server(mode='external', port='<port>', dev_tools_ui=True, debug=True, dev_tools_hot_reload=True, threaded=True)

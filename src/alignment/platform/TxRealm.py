@@ -135,7 +135,7 @@ class TxController(Controller):
     __mobility = Mobility.IMMOBILE
 
     # The serial communication interface between the uC and this XXRealm Python Controller
-    __serial_comm_config = SerialCommConfig(id='Bifrost_Tx', is_wireless=False, port='COM8',
+    __serial_comm_config = SerialCommConfig(id='Bifrost_Tx', is_wireless=False, port='COMxx',
                                             timeout=1000.0, sleep_duration=0.1)
 
     # The configuration instance for the Apache Kafka publish/subscribe framework among XXRealm Python Controllers
@@ -178,8 +178,8 @@ class TxController(Controller):
                 self._registration_key = None
                 LOGGER_Tx.info('Starting the TxRealm Python Controller with UID: {}'.format(self.uid))
                 background_server = None
-                with rpyc.connect(os.getenv(REALMS_HOSTNAME_ENVIRONMENT_VARIABLE, default='155.98.37.207'),
-                                  int(os.getenv(REALMS_PORT_ENVIRONMENT_VARIABLE, default='18871')),
+                with rpyc.connect(os.getenv(REALMS_HOSTNAME_ENVIRONMENT_VARIABLE, default='<ip_address>'),
+                                  int(os.getenv(REALMS_PORT_ENVIRONMENT_VARIABLE, default='<port>')),
                                   config={'allow_all_attrs': True}) as realms_connection:
                     background_server = rpyc.BgServingThread(realms_connection)
                     data_type_associations = self.data_type_associations()
