@@ -187,9 +187,9 @@ gps_events, pdp_segments, pods = [], [], []
 """
 TODO: Configurations-I | GPS logs
 """
-gps_data_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/urban-campus-II/'
-# gps_data_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/urban-vegetation/'
-# gps_data_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/suburban-fraternities/'
+gps_data_dir = '<dataset_location>/routes/gps-data/urban-campus-II/'
+# gps_data_dir = '<dataset_location>/routes/gps-data/urban-vegetation/'
+# gps_data_dir = '<dataset_location>/routes/gps-data/suburban-fraternities/'
 
 """
 TODO: Configurations-II | Power delay profiles and associated metadata
@@ -200,9 +200,9 @@ MANUAL_SETUP: Obtain the 'parsed_metadata.log' file corresponding to a certain t
 pdp_samples_file_name = 'samples.log'
 start_timestamp_file_name = 'timestamp.log'
 parsed_metadata_file_name = 'parsed_metadata.log'
-comm_data_dir = 'D:/playground/backups/urban-campus-II/'
-# comm_data_dir = 'D:/playground/backups/urban-vegetation/'
-# comm_data_dir = 'D:/playground/backups/suburban-fraternities/'
+comm_data_dir = '<comm_data_directory_location>/urban-campus-II/'
+# comm_data_dir = <comm_data_directory_location>/urban-vegetation/'
+# comm_data_dir = '<comm_data_directory_location>/suburban-fraternities/'
 
 """
 TODO: Configurations-III | Rx gain | Sample rate | Pre-filtering options | Temporal truncation & Time-windowing options
@@ -224,7 +224,7 @@ prefilter_config = {'passband_freq': 60e3, 'stopband_freq': 65e3, 'passband_ripp
 """
 TODO: Configurations-IV | Map Visualization Options
 """
-google_maps_api_key = 'AIzaSyDzb5CB4L9l42MyvSmzvaSZ3bnRINIjpUk'
+google_maps_api_key = '<google_maps_api_key>'
 map_type = 'hybrid'  # Allowed types = 'satellite', 'terrain', 'hybrid', 'roadmap'
 png_file_export_timeout = 300  # In seconds [Selenium Requirements: <FireFox, GeckoDriver> | <Chromium, ChromeDriver>]
 
@@ -249,10 +249,10 @@ color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation =
 """
 TODO: Configurations-V | Final Visualized PNG Image File Options
 """
+output_dir = '<output_directory_location>'
 png_file_name = 'urban-campus-II-rx-power.png'
 # png_file_name = 'urban-vegetation-rx-power.png'
 # png_file_name = 'suburban-fraternities-rx-power.png'
-output_dir = 'C:/Users/kesha/Workspaces/Odin/src/rotator/e2e/test/ArkAngel-VI/'
 
 """
 Utility Routines | Extract individual data members from within ODIN_PODs

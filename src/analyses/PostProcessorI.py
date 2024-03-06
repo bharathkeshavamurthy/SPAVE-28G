@@ -34,18 +34,18 @@ visualization_mode = 'route'  # Allowed modes = 'route', 'rx-power'
 
 # Input directories and files
 
-gps_log_files_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/urban-stadium/'
-# gps_log_files_dir = 'C:/Users/kesha/Workspaces/Odin/deployment/measurement-campaign/routes/gps-data/urban-campus-II/'
+gps_log_files_dir = '<dataset_location>/routes/gps-data/urban-stadium/'
+# gps_log_files_dir = '<dataset_location>/routes/gps-data/urban-campus-II/'
 
 rx_power_matched_csv_file = 'urban-stadium-rx-power.csv'
 # rx_power_matched_csv_file = 'urban-campus-II-rx-power.csv'
-rx_power_matched_csv_dir = 'C:/Users/kesha/Workspaces/Odin/src/rotator/e2e/test/ArkAngel-VI/'
+rx_power_matched_csv_dir = '<rx_power_test_dataset_location>'
 
 # Output directories and files
 
 png_file_name = 'urban-stadium-route.png'
+png_file_dir = '<output_directory_location>'
 # png_file_name = 'urban-campus-II-route.png'
-png_file_dir = 'C:/Users/kesha/Workspaces/Odin/src/rotator/e2e/test/ArkAngel-VI/'
 
 """
 TODO: Configurations-II | Map Visualization Options
@@ -70,7 +70,7 @@ color_palette, color_palette_index = 'RdYlGn', 11
 color_bar_width, color_bar_height, color_bar_label_size, color_bar_orientation = 125, 3950, '125px', 'vertical'
 
 color_bar_layout_location = 'right'
-google_maps_api_key = 'AIzaSyDzb5CB4L9l42MyvSmzvaSZ3bnRINIjpUk'
+google_maps_api_key = '<google_maps_api_key>'
 png_file_export_timeout = 300  # In seconds [Selenium Requirements: <FireFox, GeckoDriver> | <Chromium, ChromeDriver>]
 
 # Extraction: Read and Collect the JSON logs (GPS publishes/subscriptions corresponding to a certain realm) AND

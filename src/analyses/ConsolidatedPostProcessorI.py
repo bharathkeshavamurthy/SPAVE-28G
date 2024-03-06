@@ -217,95 +217,95 @@ CONFIGURATIONS I: A few route-specific Bokeh & Plotly visualization options
 """
 
 ''' urban-campus-I route (semi-autonomous) (1400 E St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-I/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_I_pl_df.csv'
+# gps_dir = '<dataset_location>/urban-campus-I/rx-realm/gps/'
+# comm_dir = '<dataset_location>/urban-campus-I/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/urban-campus-I/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/urban_campus_I_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/urban_campus_I_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-campus-I'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'uc_rxp_ffe.png', 'uc_pg_ffe.png', 'uc_shadowing.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-campus-I/tx-realm/imu/', 1, 1000
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_I_pwr.png', 'urban_campus_I_pl.png', 'urban_campus_I_pl_dist.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-I/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7626), longitude=Member(component=-111.8486))
 
 ''' urban-campus-II route (fully-autonomous) (President's Circle) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-II/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_II_pl_df.csv'
+# gps_dir = '<dataset_location>/urban-campus-II/rx-realm/gps/'
+# comm_dir = '<dataset_location>/urban-campus-II/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/urban-campus-II/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/urban_campus_II_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/urban_campus_II_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 8400, 2800, 20, 'urban-campus-II'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'ucc_rxp_ffe.png', 'ucc_pg_ffe.png', 'ucc_shadowing.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-II/tx-realm/imu/', 5, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-campus-II/tx-realm/imu/', 5, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7650), longitude=Member(component=-111.8550))
 # pwr_png, pl_png, pl_dist_png = 'urban_campus_II_pwr.png', 'urban_campus_II_pl.png', 'urban_campus_II_pl_dist.png'
 
 ''' urban-campus-III route (fully-autonomous) (100 S St) '''
-gps_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/gps/'
-comm_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/pdp/'
-rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-campus-III/rx-realm/imu/'
-rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_rx_df.csv'
-pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_campus_III_pl_df.csv'
+gps_dir = '<dataset_location>/urban-campus-III/rx-realm/gps/'
+comm_dir = '<dataset_location>/urban-campus-III/rx-realm/pdp/'
+rx_imu_dir = '<dataset_location>/urban-campus-III/rx-realm/imu/'
+rx_df_op_file = '<output_directory_location>/urban_campus_III_rx_df.csv'
+pl_df_op_file = '<output_directory_location>/urban_campus_III_pl_df.csv'
 map_width, map_height, map_zoom_level, map_title = 5600, 2800, 21, 'urban-campus-III'
 rxp_ffe_png, pg_ffe_png, shadowing_png = 'uccc_rxp_ffe.png', 'uccc_pg_ffe.png', 'uccc_shadowing.png'
+tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-campus-III/tx-realm/imu/', 5, 1000
 map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7651), longitude=Member(component=-111.8500))
-tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-campus-III/tx-realm/imu/', 5, 1000
 pwr_png, pl_png, pl_dist_png = 'urban_campus_III_pwr.png', 'urban_campus_III_pl.png', 'urban_campus_III_pl_dist.png'
 
 ''' urban-garage route (semi-autonomous) (NW Garage on 1460 E St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-garage/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_garage_pl_df.csv'
+# gps_dir = '<dataset_location>/urban-garage/rx-realm/gps/'
+# comm_dir = '<dataset_location>/urban-garage/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/urban-garage/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/urban_garage_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/urban_garage_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-garage'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'ug_rxp_ffe.png', 'ug_pg_ffe.png', 'ug_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'urban_garage_pwr.png', 'urban_garage_pl.png', 'urban_garage_pl_dist.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-garage/tx-realm/imu/', 1, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-garage/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' urban-stadium route (fully-autonomous) (E South Campus Dr) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-stadium/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_stadium_pl_df.csv'
+# gps_dir = '<dataset_location>/urban-stadium/rx-realm/gps/'
+# comm_dir = '<dataset_location>/urban-stadium/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/urban-stadium/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/urban_stadium_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/urban_stadium_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 5500, 3500, 20, 'urban-stadium'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'us_rxp_ffe.png', 'us_pg_ffe.png', 'us_shadowing.png'
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-stadium/tx-realm/imu/', 5, 1000
 # pwr_png, pl_png, pl_dist_png = 'urban_stadium_pwr.png', 'urban_stadium_pl.png', 'urban_stadium_pl_dist.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-stadium/tx-realm/imu/', 5, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
 
 ''' suburban-fraternities route (fully-autonomous) (S Wolcott St) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/suburban-fraternities/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/suburban_frats_pl_df.csv'
+# gps_dir = '<dataset_location>/suburban-fraternities/rx-realm/gps/'
+# comm_dir = '<dataset_location>/suburban-fraternities/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/suburban-fraternities/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/suburban_frats_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/suburban_frats_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'suburban-fraternities'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'sf_rxp_ffe.png', 'sf_pg_ffe.png', 'sf_shadowing.png'
 # pwr_png, pl_png, pl_dist_png = 'suburban_frats_pwr.png', 'suburban_frats_pl.png', 'suburban_frats_pl_dist.png'
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7670), longitude=Member(component=-111.8480))
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/suburban-fraternities/tx-realm/imu/', 1, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/suburban-fraternities/tx-realm/imu/', 1, 1000
 
 ''' urban-vegetation route (fully-autonomous) (Olpin Union Bldg) '''
-# gps_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/gps/'
-# comm_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/pdp/'
-# rx_imu_dir = 'E:/SPAVE-28G/analyses/urban-vegetation/rx-realm/imu/'
-# rx_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_rx_df.csv'
-# pl_df_op_file = 'E:/Workspace/SPAVE-28G/test/analyses/urban_vegetation_pl_df.csv'
+# gps_dir = '<dataset_location>/urban-vegetation/rx-realm/gps/'
+# comm_dir = '<dataset_location>/urban-vegetation/rx-realm/pdp/'
+# rx_imu_dir = '<dataset_location>/urban-vegetation/rx-realm/imu/'
+# rx_df_op_file = '<output_directory_location>/urban_vegetation_rx_df.csv'
+# pl_df_op_file = '<output_directory_location>/urban_vegetation_pl_df.csv'
 # map_width, map_height, map_zoom_level, map_title = 3500, 3500, 21, 'urban-vegetation'
 # rxp_ffe_png, pg_ffe_png, shadowing_png = 'uv_rxp_ffe.png', 'uv_pg_ffe.png', 'uv_shadowing.png'
-# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = 'E:/SPAVE-28G/analyses/urban-vegetation/tx-realm/imu/', 1, 1000
+# tx_imu_dir, tx_imu_skip_step, sfe_norm_fit_num = '<dataset_location>/urban-vegetation/tx-realm/imu/', 1, 1000
 # map_central = GPSEvent(seq_number=-1, latitude=Member(component=40.7655), longitude=Member(component=-111.8479))
 # pwr_png, pl_png, pl_dist_png = 'urban_vegetation_pwr.png', 'urban_vegetation_pl.png', 'urban_vegetation_pl_dist.png'
 
 ''' Generic configurations '''
-output_dir = 'E:/Workspace/SPAVE-28G/test/analyses/'
-ant_log_file = 'E:/SPAVE-28G/analyses/antenna_pattern.mat'
+output_dir = '<output_directory_location>'
+ant_log_file = '<dataset_location>/antenna_pattern.mat'
 pdp_samples_file, start_timestamp_file, parsed_metadata_file = 'samples.log', 'timestamp.log', 'parsed_metadata.log'
+cali_dir, cali_samples_file_left, cali_samples_file_right = '<dataset_location>/calibration/', 'u76_', '_samples.log'
 att_indices, cali_metadata_file_left, cali_metadata_file_right = list(range(0, 30, 2)), 'u76_', '_parsed_metadata.log'
-cali_dir, cali_samples_file_left, cali_samples_file_right = 'E:/SPAVE-28G/analyses/calibration/', 'u76_', '_samples.log'
 
 """
 CONFIGURATIONS II: Data post-processing parameters | Time-windowing | Pre-filtering | Noise elimination
@@ -322,12 +322,12 @@ CONFIGURATIONS III: LLA-to-UTM converter | Additional Bokeh & Plotly visualizati
 """
 max_workers, sg_wsize, sg_poly_order = 4096, 53, 3
 lla_utm_proj = Proj(proj='utm', zone=32, ellps='WGS84')
+plotly.tools.set_credentials_file(username='<user_name>', api_key='<api_key>')
 color_bar_width, color_bar_height, color_bar_orientation = 100, 3400, 'vertical'
-plotly.tools.set_credentials_file(username='total.academe', api_key='Xt5ic4JRgdvH8YuKmjEF')
+google_maps_api_key, map_type, timeout = '<google_maps_api_key>', 'hybrid', 12000
 rx_offset, pl_offset, rx_tick_num, pl_tick_num, rx_tilt, pl_tilt = 1.0, 1.0, 5, 5, -45, -45
 color_bar_layout_location, color_palette, color_bar_label_size = 'right', 'Magma256', '75px'
 tx_pin_size, tx_pin_alpha, tx_pin_color, rx_pins_size, rx_pins_alpha = 80, 1.0, 'blue', 40, 1.0
-google_maps_api_key, map_type, timeout = 'AIzaSyCQq7tZREFvb8G1NbirMweUKv_TTp4aUUA', 'hybrid', 12000
 
 """
 CONFIGURATIONS IV: Tx location fixed on the rooftop of the William Browning Building in SLC, UT
