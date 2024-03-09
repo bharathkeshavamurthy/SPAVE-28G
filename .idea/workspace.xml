@@ -14,13 +14,6 @@
       <change beforePath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" beforeDir="false" afterPath="$PROJECT_DIR$/related/UtahMeasurementCampaignCode" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-renew" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-renew" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/related/faros-simple" beforeDir="false" afterPath="$PROJECT_DIR$/related/faros-simple" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/analyses/ConsolidatedPostProcessorII.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorFull.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorFull.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorMPC.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorMPC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorSC.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorSC.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorTestI.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorTestI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorTestII.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorTestII.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorVel.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/analyses/src/ConsolidatedPostProcessorVel.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
